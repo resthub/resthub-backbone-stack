@@ -10,4 +10,4 @@ It also provides the following functionalities :
  * A simple but powerfull pub/sub mecanism
 
 This stack is inspired of principles described on `Organizing your application using Modules <http://backbonetutorials.com/organizing-backbone-using-modules/>`_ blog post and is based on the `modular-backbone-updated sample <https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone-updated>`_ by 
-`thomasdavis<https://github.com/thomasdavis/>`_.
+`thomasdavis <https://github.com/thomasdavis/>`_.
