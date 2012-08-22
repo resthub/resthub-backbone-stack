@@ -13,6 +13,13 @@ require.config({
         },
         'handlebars':{
             exports:'Handlebars'
+        },
+        'backbone':{
+            deps:[
+                'underscore',
+                'jquery'
+            ],
+            exports:'Backbone'
         }
     },
 
