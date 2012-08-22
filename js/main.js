@@ -10,7 +10,8 @@ require.config({
     localstorage: "libs/localstorage",
     use: "libs/use",
     text: "libs/text",
-    i18n: "libs/i18n"
+    i18n: "libs/i18n",
+    pubsub: "libs/resthub/pubsub"
   },
   locale: localStorage.getItem('locale') || 'en-us'
 });
