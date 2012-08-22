@@ -35,8 +35,7 @@ require.config({
         i18n:"libs/i18n",
         pubsub:"libs/resthub/pubsub",
         handlebars:"libs/handlebars"
-    },
-    locale:localStorage.getItem('locale') || 'en-us'
+    }
 });
 
 // Load our app module and pass it to our definition function
