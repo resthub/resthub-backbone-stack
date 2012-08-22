@@ -2,6 +2,15 @@
 require.config({
 
     shim:{
+        'underscore':{
+            exports:'_'
+        },
+        'underscore.string':{
+            deps:[
+                'underscore'
+            ],
+            exports:'_s'
+        },
         'handlebars':{
             exports:'Handlebars'
         }
@@ -24,12 +33,7 @@ require.config({
 });
 
 // Load our app module and pass it to our definition function
-require(['underscore', 'underscore.string', 'view/app'], function (_, _s, App) {
-
-    // Merge Underscore and Underscore.String
-    _.str = _s;
-    _.mixin(_.str.exports());
-    _.str.include('Underscore.string', 'string');
+require(['view/app'], function (App) {
 
     App.initialize();
 });

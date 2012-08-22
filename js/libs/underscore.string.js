@@ -4,52 +4,41 @@
 // Documentation: https://github.com/epeli/underscore.string
 // Some code is borrowed from MooTools and Alexandru Marasteanu.
 
-// Version 2.2.0rc
+// Version 2.0.0
 
-!function(root){
+(function(root){
   'use strict';
 
   // Defining helper functions.
 
   var nativeTrim = String.prototype.trim;
-  var nativeTrimRight = String.prototype.trimRight;
-  var nativeTrimLeft = String.prototype.trimLeft;
 
   var parseNumber = function(source) { return source * 1 || 0; };
-  
-  var strRepeat = function(str, qty, separator){
-    // ~~var — is the fastest available way to convert anything to Integer in javascript.
-    // We'll use it extensively in this lib.
-    str += ''; qty = ~~qty;
-    for (var repeat = []; qty > 0; repeat[--qty] = str) {}
-    return repeat.join(separator == null ? '' : separator);
+
+  var strRepeat = function(i, m) {
+    for (var o = []; m > 0; o[--m] = i) {}
+    return o.join('');
   };
 
   var slice = function(a){
     return Array.prototype.slice.call(a);
   };
 
-  var replace = function(str, pattern, something){
-    return (''+str).replace(pattern, something);
-  }
-
   var defaultToWhiteSpace = function(characters){
-    if (characters != null) {
-      return '[' + _s.escapeRegExp(''+characters) + ']';
+    if (characters) {
+      return _s.escapeRegExp(characters);
     }
     return '\\s';
   };
-  
-  var escapeChars = {
-    lt: '<',
-    gt: '>',
-    quot: '"',
-    apos: "'",
-    amp: '&'
+
+  var sArgs = function(method){
+    return function(){
+      var args = slice(arguments);
+      for(var i=0; i<args.length; i++)
+        args[i] = args[i] == null ? '' : '' + args[i];
+      return method.apply(null, args);
+    };
   };
-  
-  var reversedEscapeChars = {};
-  for(var key in escapeChars){ reversedEscapeChars[escapeChars[key]] = key; }
 
   // sprintf() for JavaScript 0.7-beta1
   // http://www.diveintojavascript.com/projects/javascript-sprintf
@@ -84,7 +73,7 @@
             arg = argv[cursor];
             for (k = 0; k < match[2].length; k++) {
               if (!arg.hasOwnProperty(match[2][k])) {
-                throw new Error(sprintf('[_.sprintf] property "%s" does not exist', match[2][k]));
+                throw(sprintf('[_.sprintf] property "%s" does not exist', match[2][k]));
               }
               arg = arg[match[2][k]];
             }
@@ -96,7 +85,7 @@
           }
 
           if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
-            throw new Error(sprintf('[_.sprintf] expecting number but found %s', get_type(arg)));
+            throw(sprintf('[_.sprintf] expecting number but found %s', get_type(arg)));
           }
           switch (match[8]) {
             case 'b': arg = arg.toString(2); break;
@@ -145,12 +134,12 @@
                   field_list.push(field_match[1]);
                 }
                 else {
-                  throw new Error('[_.sprintf] huh?');
+                  throw('[_.sprintf] huh?');
                 }
               }
             }
             else {
-              throw new Error('[_.sprintf] huh?');
+              throw('[_.sprintf] huh?');
             }
             match[2] = field_list;
           }
@@ -158,12 +147,12 @@
             arg_names |= 2;
           }
           if (arg_names === 3) {
-            throw new Error('[_.sprintf] mixing positional and named placeholders is not (yet) supported');
+            throw('[_.sprintf] mixing positional and named placeholders is not (yet) supported');
           }
           parse_tree.push(match);
         }
         else {
-          throw new Error('[_.sprintf] huh?');
+          throw('[_.sprintf] huh?');
         }
         _fmt = _fmt.substring(match[0].length);
       }
@@ -178,229 +167,226 @@
   // Defining underscore.string
 
   var _s = {
+              
+    VERSION: '2.0.0',
 
-    VERSION: '2.2.0rc',
-
-    isBlank: function(str){
+    isBlank: sArgs(function(str){
       return (/^\s*$/).test(str);
-    },
+    }),
 
-    stripTags: function(str){
-      return replace(str, /<\/?[^>]+>/g, '');
-    },
+    stripTags: sArgs(function(str){
+      return str.replace(/<\/?[^>]+>/ig, '');
+    }),
 
-    capitalize : function(str) {
-      str += '';
-      return str.charAt(0).toUpperCase() + str.substring(1);
-    },
+    capitalize : sArgs(function(str) {
+      return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
+    }),
 
-    chop: function(str, step){
-      str = str+'';
-      step = ~~step || str.length;
+    chop: sArgs(function(str, step){
+      step = parseNumber(step) || str.length;
       var arr = [];
-      for (var i = 0; i < str.length; i += step)
+      for (var i = 0; i < str.length;) {
         arr.push(str.slice(i,i + step));
+        i = i + step;
+      }
       return arr;
-    },
+    }),
 
-    clean: function(str){
-      return _s.strip(str).replace(/\s+/g, ' ');
-    },
+    clean: sArgs(function(str){
+      return _s.strip(str.replace(/\s+/g, ' '));
+    }),
 
-    count: function(str, substr){
-      str += ''; substr += '';
-      return str.split(substr).length - 1;
-    },
+    count: sArgs(function(str, substr){
+      var count = 0, index;
+      for (var i=0; i < str.length;) {
+        index = str.indexOf(substr, i);
+        index >= 0 && count++;
+        i = i + (index >= 0 ? index : 0) + substr.length;
+      }
+      return count;
+    }),
 
-    chars: function(str) {
-      return (''+str).split('');
-    },
+    chars: sArgs(function(str) {
+      return str.split('');
+    }),
 
-    escapeHTML: function(str) {
-      return replace(str, /[&<>"']/g, function(match){ return '&' + reversedEscapeChars[match] + ';'; });
-    },
+    escapeHTML: sArgs(function(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                            .replace(/"/g, '&quot;').replace(/'/g, "&apos;");
+    }),
 
-    unescapeHTML: function(str) {
-      return replace(str, /\&([^;]+);/g, function(entity, entityCode){
-        var match;
-        
-        if (entityCode in escapeChars) {
-          return escapeChars[entityCode];
-        } else if (match = entityCode.match(/^#x([\da-fA-F]+)$/)) {
-          return String.fromCharCode(parseInt(match[1], 16));
-        } else if (match = entityCode.match(/^#(\d+)$/)) {
-          return String.fromCharCode(~~match[1]);
-        } else {
-          return entity;
-        }
-      });
-    },
+    unescapeHTML: sArgs(function(str) {
+      return str.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+                            .replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+    }),
 
-    escapeRegExp: function(str){
+    escapeRegExp: sArgs(function(str){
       // From MooTools core 1.2.4
       return str.replace(/([-.*+?^${}()|[\]\/\\])/g, '\\$1');
-    },
+    }),
 
-    insert: function(str, i, substr){
-      var arr = _s.chars(str);
-      arr.splice(~~i, 0, ''+substr);
+    insert: sArgs(function(str, i, substr){
+      var arr = str.split('');
+      arr.splice(parseNumber(i), 0, substr);
       return arr.join('');
-    },
+    }),
 
-    include: function(str, needle){
-      return !!~(''+str).indexOf(needle);
-    },
+    include: sArgs(function(str, needle){
+      return str.indexOf(needle) !== -1;
+    }),
 
-    join: function() {
+    join: sArgs(function(sep) {
       var args = slice(arguments);
       return args.join(args.shift());
-    },
+    }),
 
-    lines: function(str) {
-      return (''+str).split("\n");
-    },
+    lines: sArgs(function(str) {
+      return str.split("\n");
+    }),
 
-    reverse: function(str){
-      return _s.chars(str).reverse().join('');
-    },
+    reverse: sArgs(function(str){
+        return Array.prototype.reverse.apply(String(str).split('')).join('');
+    }),
 
-    splice: function(str, i, howmany, substr){
-      var arr = _s.chars(str);
-      arr.splice(~~i, ~~howmany, substr);
+    splice: sArgs(function(str, i, howmany, substr){
+      var arr = str.split('');
+      arr.splice(parseNumber(i), parseNumber(howmany), substr);
       return arr.join('');
-    },
+    }),
 
-    startsWith: function(str, starts){
-      str += ''; starts += '';
+    startsWith: sArgs(function(str, starts){
       return str.length >= starts.length && str.substring(0, starts.length) === starts;
-    },
+    }),
 
-    endsWith: function(str, ends){
-      str += ''; ends += '';
+    endsWith: sArgs(function(str, ends){
       return str.length >= ends.length && str.substring(str.length - ends.length) === ends;
-    },
+    }),
 
-    succ: function(str){
-      str += '';
-      var arr = _s.chars(str);
+    succ: sArgs(function(str){
+      var arr = str.split('');
       arr.splice(str.length-1, 1, String.fromCharCode(str.charCodeAt(str.length-1) + 1));
       return arr.join('');
-    },
+    }),
 
-    titleize: function(str){
-      return replace(str, /(?:^|\s)\S/g, function(ch){ return ch.toUpperCase(); });
-    },
+    titleize: sArgs(function(str){
+      var arr = str.split(' '),
+          word;
+      for (var i=0; i < arr.length; i++) {
+        word = arr[i].split('');
+        if(typeof word[0] !== 'undefined') word[0] = word[0].toUpperCase();
+        i+1 === arr.length ? arr[i] = word.join('') : arr[i] = word.join('') + ' ';
+      }
+      return arr.join('');
+    }),
 
-    camelize: function(str){
-      return _s.trim(str).replace(/[-_\s]+(.)?/g, function(match, chr){
-        return chr && chr.toUpperCase();
+    camelize: sArgs(function(str){
+      return _s.trim(str).replace(/(\-|_|\s)+(.)?/g, function(match, separator, chr) {
+        return chr ? chr.toUpperCase() : '';
       });
-    },
+    }),
 
     underscored: function(str){
-      return _s.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/[-\s]+/g, '_').toLowerCase();
+      return _s.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1_$2').replace(/\-|\s+/g, '_').toLowerCase();
     },
 
     dasherize: function(str){
-      return _s.trim(str).replace(/[_\s]+/g, '-').replace(/([A-Z])/g, '-$1').replace(/-+/g, '-').toLowerCase();
-    },
-
-    classify: function(str){
-      return _s.titleize(replace(str, /_/g, ' ')).replace(/\s/g, '');
+      return _s.trim(str).replace(/([a-z\d])([A-Z]+)/g, '$1-$2').replace(/^([A-Z]+)/, '-$1').replace(/\_|\s+/g, '-').toLowerCase();
     },
 
     humanize: function(str){
-      return _s.capitalize(_s.underscored(str).replace(/_id$/,'').replace(/_/g, ' '));
+      return _s.capitalize(this.underscored(str).replace(/_id$/,'').replace(/_/g, ' '));
     },
 
-    trim: function(str, characters){
-      str += '';
-      if (!characters && nativeTrim) { return nativeTrim.call(str); }
-      characters = defaultToWhiteSpace(characters);
-      return str.replace(new RegExp('\^' + characters + '+|' + characters + '+$', 'g'), '');
-    },
-
-    ltrim: function(str, characters){
-      str += '';
-      if (!characters && nativeTrimLeft) {
-        return nativeTrimLeft.call(str);
+    trim: sArgs(function(str, characters){
+      if (!characters && nativeTrim) {
+        return nativeTrim.call(str);
       }
       characters = defaultToWhiteSpace(characters);
-      return str.replace(new RegExp('^' + characters + '+'), '');
-    },
+      return str.replace(new RegExp('\^[' + characters + ']+|[' + characters + ']+$', 'g'), '');
+    }),
 
-    rtrim: function(str, characters){
-      str += '';
-      if (!characters && nativeTrimRight) {
-        return nativeTrimRight.call(str);
-      }
+    ltrim: sArgs(function(str, characters){
       characters = defaultToWhiteSpace(characters);
-      return str.replace(new RegExp(characters + '+$'), '');
-    },
+      return str.replace(new RegExp('\^[' + characters + ']+', 'g'), '');
+    }),
 
-    truncate: function(str, length, truncateStr){
-      str += ''; truncateStr = truncateStr || '...';
-      length = ~~length;
-      return str.length > length ? str.slice(0, length) + truncateStr : str;
-    },
+    rtrim: sArgs(function(str, characters){
+      characters = defaultToWhiteSpace(characters);
+      return str.replace(new RegExp('[' + characters + ']+$', 'g'), '');
+    }),
+
+    truncate: sArgs(function(str, length, truncateStr){
+      truncateStr = truncateStr || '...';
+      length = parseNumber(length);
+      return str.length > length ? str.slice(0,length) + truncateStr : str;
+    }),
 
     /**
      * _s.prune: a more elegant version of truncate
      * prune extra chars, never leaving a half-chopped word.
      * @author github.com/sergiokas
      */
-    prune: function(str, length, pruneStr){
-      str += ''; length = ~~length;
-      pruneStr = pruneStr != null ? ''+pruneStr : '...';
+    prune: sArgs(function(str, length, pruneStr){
+      // Function to check word/digit chars including non-ASCII encodings. 
+      var isWordChar = function(c) { return ((c.toUpperCase() != c.toLowerCase()) || /[-_\d]/.test(c)); }
       
-      var pruned, borderChar, template = str.replace(/\W/g, function(ch){
-        return (ch.toUpperCase() !== ch.toLowerCase()) ? 'A' : ' ';
-      });
+      var template = '';
+      var pruned = '';
+      var i = 0;
       
-      borderChar = template.charAt(length);
+      // Set default values
+      pruneStr = pruneStr || '...';
+      length = parseNumber(length);
       
-      pruned = template.slice(0, length);
-      
+      // Convert to an ASCII string to avoid problems with unicode chars.
+      for (i in str) {
+        template += (isWordChar(str[i]))?'A':' ';
+      } 
+
       // Check if we're in the middle of a word
-      if (borderChar && borderChar.match(/\S/))
-        pruned = pruned.replace(/\s\S+$/, '');
-        
-      pruned = _s.rtrim(pruned);
-      
-      return (pruned+pruneStr).length > str.length ? str : str.substring(0, pruned.length)+pruneStr;
-    },
+      if( template.substring(length-1, length+1).search(/^\w\w$/) === 0 )
+        pruned = _s.rtrim(template.slice(0,length).replace(/([\W][\w]*)$/,''));
+      else
+        pruned = _s.rtrim(template.slice(0,length));
+
+      pruned = pruned.replace(/\W+$/,'');
+
+      return (pruned.length+pruneStr.length>str.length) ? str : str.substring(0, pruned.length)+pruneStr;
+    }),
 
     words: function(str, delimiter) {
-      return _s.trim(str, delimiter).split(delimiter || /\s+/);
+      return String(str).split(delimiter || " ");
     },
 
-    pad: function(str, length, padStr, type) {
-      str += '';
-      
-      var padlen  = 0;
+    pad: sArgs(function(str, length, padStr, type) {
+      var padding = '',
+          padlen  = 0;
 
-      length = ~~length;
-      
-      if (!padStr) {
-        padStr = ' ';
-      } else if (padStr.length > 1) {
-        padStr = padStr.charAt(0);
-      }
-      
+      length = parseNumber(length);
+
+      if (!padStr) { padStr = ' '; }
+      else if (padStr.length > 1) { padStr = padStr.charAt(0); }
       switch(type) {
         case 'right':
           padlen = (length - str.length);
-          return str + strRepeat(padStr, padlen);
+          padding = strRepeat(padStr, padlen);
+          str = str+padding;
+          break;
         case 'both':
           padlen = (length - str.length);
-          return strRepeat(padStr, Math.ceil(padlen/2)) + 
-                 str + 
-                 strRepeat(padStr, Math.floor(padlen/2));
+          padding = {
+            'left' : strRepeat(padStr, Math.ceil(padlen/2)),
+            'right': strRepeat(padStr, Math.floor(padlen/2))
+          };
+          str = padding.left+str+padding.right;
+          break;
         default: // 'left'
           padlen = (length - str.length);
-          return strRepeat(padStr, padlen) + str;
+          padding = strRepeat(padStr, padlen);;
+          str = padding+str;
         }
-    },
+      return str;
+    }),
 
     lpad: function(str, length, padStr) {
       return _s.pad(str, length, padStr);
@@ -422,84 +408,41 @@
     },
 
     toNumber: function(str, decimals) {
-      str += '';
-      var num = parseNumber(parseNumber(str).toFixed(~~decimals));
-      return num === 0 && !str.match(/^0+$/) ? Number.NaN : num;
+      var num = parseNumber(parseNumber(str).toFixed(parseNumber(decimals)));
+      return (!(num === 0 && (str !== "0" && str !== 0))) ? num : Number.NaN;
     },
 
-    strRight: function(str, sep){
-      str += ''; sep = sep != null ? ''+sep : sep;
-      var pos = !sep ? -1 : str.indexOf(sep);
-      return ~pos ? str.slice(pos+sep.length, str.length) : str;
-    },
+    strRight: sArgs(function(sourceStr, sep){
+      var pos =  (!sep) ? -1 : sourceStr.indexOf(sep);
+      return (pos != -1) ? sourceStr.slice(pos+sep.length, sourceStr.length) : sourceStr;
+    }),
 
-    strRightBack: function(str, sep){
-      str += ''; sep = sep != null ? ''+sep : sep;
-      var pos = !sep ? -1 : str.lastIndexOf(sep);
-      return ~pos ? str.slice(pos+sep.length, str.length) : str;
-    },
+    strRightBack: sArgs(function(sourceStr, sep){
+      var pos =  (!sep) ? -1 : sourceStr.lastIndexOf(sep);
+      return (pos != -1) ? sourceStr.slice(pos+sep.length, sourceStr.length) : sourceStr;
+    }),
 
-    strLeft: function(str, sep){
-      str += ''; sep = sep != null ? ''+sep : sep;
-      var pos = !sep ? -1 : str.indexOf(sep);
-      return ~pos ? str.slice(0, pos) : str;
-    },
+    strLeft: sArgs(function(sourceStr, sep){
+      var pos = (!sep) ? -1 : sourceStr.indexOf(sep);
+      return (pos != -1) ? sourceStr.slice(0, pos) : sourceStr;
+    }),
 
-    strLeftBack: function(str, sep){
-      str += ''; sep = sep != null ? ''+sep : sep;
-      var pos = str.lastIndexOf(sep);
-      return ~pos ? str.slice(0, pos) : str;
-    },
-
-    toSentence: function(array, separator, lastSeparator) {
-        separator || (separator = ', ');
-        lastSeparator || (lastSeparator = ' and ');
-        var length = array.length, str = '';
-
-        for (var i = 0; i < length; i++) {
-            str += array[i];
-            if (i === (length - 2)) { str += lastSeparator; }
-            else if (i < (length - 1)) { str += separator; }
-        }
-
-        return str;
-    },
-
-    slugify: function(str) {
-      var from  = "?àáäâã??èéëêìíïî??òóöôõùúüûñç??",
-          to    = "aaaaaaceeeeeiiiilnooooouuuunczz",
-          regex = new RegExp(defaultToWhiteSpace(from), 'g');
-
-      str = (''+str).toLowerCase();
-
-      str = str.replace(regex, function(ch){
-        var index = from.indexOf(ch);
-        return to.charAt(index) || '-';
-      });
-
-      return _s.trim(str.replace(/[^\w\s-]/g, '').replace(/[-\s]+/g, '-'), '-');
-    },
-
-    surround: function(str, wrapper) {
-      return [wrapper, str, wrapper].join('');
-    },
-
-    quote: function(str) {
-      return _s.surround(str, '"');
-    },
+    strLeftBack: sArgs(function(sourceStr, sep){
+      var pos = sourceStr.lastIndexOf(sep);
+      return (pos != -1) ? sourceStr.slice(0, pos) : sourceStr;
+    }),
 
     exports: function() {
       var result = {};
 
       for (var prop in this) {
-        if (!this.hasOwnProperty(prop) || ~['include', 'contains', 'reverse'].indexOf(prop)) continue;
+        if (!this.hasOwnProperty(prop) || prop == 'include' || prop == 'contains' || prop == 'reverse') continue;
         result[prop] = this[prop];
       }
 
       return result;
-    },
-    
-    repeat: strRepeat
+    }
+
   };
 
   // Aliases
@@ -508,10 +451,9 @@
   _s.lstrip   = _s.ltrim;
   _s.rstrip   = _s.rtrim;
   _s.center   = _s.lrpad;
-  _s.rjust    = _s.lpad;
-  _s.ljust    = _s.rpad;
+  _s.ljust    = _s.lpad;
+  _s.rjust    = _s.rpad;
   _s.contains = _s.include;
-  _s.q        = _s.quote;
 
   // CommonJS module is defined
   if (typeof exports !== 'undefined') {
@@ -521,17 +463,18 @@
     }
     exports._s = _s;
 
-  } else if (typeof define === 'function' && define.amd) {
-    // Register as a named module with AMD.
-    define('underscore.string', function() {
-      return _s;
-    });
-    
+  // Integrate with Underscore.js
+  } else if (typeof root._ !== 'undefined') {
+    // root._.mixin(_s);
+    root._.string = _s;
+    root._.str = root._.string;
+
+  // Or define it
   } else {
-    // Integrate with Underscore.js if defined
-    // or create our own underscore object.
-    root._ = root._ || {};
-    root._.string = root._.str = _s;
+    root._ = {
+      string: _s,
+      str: _s
+    };
   }
 
-}(this);
+}(this || window));
