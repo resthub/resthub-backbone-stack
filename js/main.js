@@ -40,7 +40,7 @@ require.config({
 });
 
 // Load our app module and pass it to our definition function
-require(['view/app'], function (App) {
+require(['app'], function (App) {
 
     App.initialize();
 });
