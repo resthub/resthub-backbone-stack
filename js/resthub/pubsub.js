@@ -9,7 +9,7 @@
  * Dual licensed under the MIT and GPL licenses.
  * http://benalman.com/about/license/
  */
-define(['../libs/jquery'], function($) {
+define(['jquery'], function($) {
 
 	/**
 	 * Stores event handlers
