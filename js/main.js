@@ -28,7 +28,7 @@ require.config({
     paths:{
         jquery:"libs/jquery",
         underscore:"libs/underscore",
-        'underscore.string':"libs/underscore.string",
+        'underscore-string':"libs/underscore.string",
         backbone:"libs/backbone",
         localstorage:"libs/localstorage",
         use:"libs/use",
@@ -38,12 +38,14 @@ require.config({
         handlebars:"libs/handlebars",
         'handlebars-helpers':"libs/resthub/handlebars-helpers",
         'bootstrap':'libs/bootstrap',
-        'backbone-validation':'resthub/backbone-validation.ext'
+        'backbone-validation':'resthub/backbone-validation.ext',
+        'backbone-queryparams':'libs/backbone.queryparams'
     }
 });
 
 // Preload main libs
-require(['app', 'backbone', 'handlebars', 'handlebars-helpers'], function (App) {
+require(['router', 'backbone', 'handlebars', 'handlebars-helpers'], function (Router) {
 
-    App.initialize();
+    // Pass in our Router module and call it's initialize function
+    Router.initialize();
 });
