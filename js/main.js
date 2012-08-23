@@ -17,6 +17,7 @@ require.config({
         'backbone':{
             deps:[
                 'underscore',
+                'underscore.string',
                 'jquery'
             ],
             exports:'Backbone'
@@ -38,8 +39,8 @@ require.config({
     }
 });
 
-// Load our app module and pass it to our definition function
-require(['app'], function (App) {
+// Preload main libs
+require(['backbone', 'handlebars', 'app'], function (App) {
 
     App.initialize();
 });
