@@ -37,7 +37,8 @@ require.config({
         pubsub:"libs/resthub/pubsub",
         handlebars:"libs/handlebars",
         'handlebars-helpers':"libs/resthub/handlebars-helpers",
-        'bootstrap':'libs/bootstrap'
+        'bootstrap':'libs/bootstrap',
+        'backbone-validation':'resthub/backbone-validation.ext'
     }
 });
 
