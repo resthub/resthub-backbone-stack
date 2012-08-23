@@ -34,13 +34,15 @@ require.config({
         i18n:"libs/i18n",
         pubsub:"resthub/pubsub",
         handlebars:"libs/handlebars",
-        'handlebars-helpers':"resthub/handlebars-helpers"
-        'bootstrap':'libs/bootstrap'
+        'handlebars-helpers':"libs/resthub/handlebars-helpers",
+        'bootstrap':'libs/bootstrap',
+        'backbone-validation':'resthub/backbone-validation.ext',
+        'backbone-queryparams':'libs/backbone.queryparams'
     }
 });
 
 // Preload main libs
-require(['app', 'backbone', 'handlebars', 'handlebars-helpers'], function (App) {
+require(['router', 'backbone', 'handlebars', 'handlebars-helpers'], function (Router) {
 
-    App.initialize();
+    Router.initialize();
 });
