@@ -10,6 +10,8 @@
  * http://benalman.com/about/license/
  */
 define(['jquery'], function($) {
+    
+        Pubsub = {};
 
 	/**
 	 * Stores event handlers

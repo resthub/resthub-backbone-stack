@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>RESThub Backbone stack test suite</title>
+		<link rel="stylesheet" href="../css/qunit.css"/>
+
+		<script src="../js/libs/qunit.js"></script>
+		
+		<script data-main="suite" src="../js/libs/require.js"></script>
+		
+	</head>
+	<body>
+		<h1 id="qunit-header">RESThub Backbone stack test suite</h1>
+		<h2 id="qunit-banner"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="qunit-fixture">
+			<p>
+				For tests that modify the DOM, we can use the #qunit-fixture element. We can put static markup in there and have each test use that or we can leave it empty and have each test append the elements it needs, without having to worry about removing them. QUnit will automatically reset the innerHTML property of the #qunit-fixture element after each test to the initial value. If jQuery is available, QUnit uses jQuery�s html() method instead, which also cleans up jQuery event handlers
+			</p>
+
+			<ul></ul>
+			
+			<div id="main"></div>
+		</div>	
+	</body>
+</html>

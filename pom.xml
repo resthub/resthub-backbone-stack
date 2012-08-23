@@ -24,7 +24,7 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<warSourceDirectory>${basedir}</warSourceDirectory>
-					<packagingExcludes>pom.xml,license.txt,.gitignore,WEB-INF/**,META-INF/**,target/**</packagingExcludes>
+					<packagingExcludes>pom.xml,license.txt,.gitignore,tests,WEB-INF/**,META-INF/**,target/**</packagingExcludes>
 				</configuration>
 			</plugin>
 			<plugin>

@@ -8,8 +8,7 @@ require.config({
         'underscore.string':{
             deps:[
                 'underscore'
-            ],
-            exports:'_s'
+            ]
         },
         'handlebars':{
             exports:'Handlebars'
@@ -31,10 +30,9 @@ require.config({
         'underscore-string':"libs/underscore.string",
         backbone:"libs/backbone",
         localstorage:"libs/localstorage",
-        use:"libs/use",
         text:"libs/text",
         i18n:"libs/i18n",
-        pubsub:"libs/resthub/pubsub",
+        pubsub:"resthub/pubsub",
         handlebars:"libs/handlebars",
         'handlebars-helpers':"libs/resthub/handlebars-helpers",
         'bootstrap':'libs/bootstrap',
