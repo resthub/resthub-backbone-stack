@@ -41,7 +41,7 @@ require.config({
 });
 
 // Preload main libs
-require(['app', 'backbone', 'handlebars'], function (App) {
+require(['app', 'backbone', 'handlebars', 'handlebars-helpers'], function (App) {
 
     App.initialize();
 });
