@@ -36,7 +36,8 @@ require.config({
         i18n:"libs/i18n",
         pubsub:"libs/resthub/pubsub",
         handlebars:"libs/handlebars",
-        'handlebars-helpers':"libs/resthub/handlebars-helpers"
+        'handlebars-helpers':"libs/resthub/handlebars-helpers",
+        'bootstrap':'libs/bootstrap'
     }
 });
 
