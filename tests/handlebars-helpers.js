@@ -12,4 +12,85 @@ require(['handlebars', 'handlebars-helpers'], function (Handlebars) {
         equal(template(), 'This is a test, and the sky is blue');
     });
 
+    test('ifinline', function () {
+        expect(5);
+        var template = Handlebars.compile('{{ifinline done "done"}}');
+        equal(template({done:true}), 'done');
+        equal(template({done:false}), '');
+        equal(template({}), '');
+        equal(template({done:null}), '');
+        equal(template({done:[]}), '');
+    });
+
+    test('unlessinline', function () {
+        expect(5);
+        var template = Handlebars.compile('{{unlessinline done "todo"}}');
+        equal(template({done:true}), '');
+        equal(template({done:false}), 'todo');
+        equal(template({}), 'todo');
+        equal(template({done:null}), 'todo');
+        equal(template({done:[]}), 'todo');
+    });
+
+    test('ifequalsinline', function () {
+        expect(5);
+        var template = Handlebars.compile('{{ifequalsinline id 1 "active"}}');
+        equal(template({id:1}), 'active');
+        equal(template({id:0}), '');
+        equal(template({id:"1"}), '');
+        equal(template({}), '');
+        equal(template({id:null}), '');
+    });
+
+    test('unlessequalsinline', function () {
+        expect(5);
+        var template = Handlebars.compile('{{unlessequalsinline id 1 "disabled"}}');
+        equal(template({id:1}), '');
+        equal(template({id:0}), 'disabled');
+        equal(template({id:"1"}), 'disabled');
+        equal(template({}), 'disabled');
+        equal(template({id:null}), 'disabled');
+    });
+
+    test('ifequals', function () {
+        expect(5);
+        var template = Handlebars.compile('{{#ifequals id 1}}<span>1</span>{{/ifequals}}');
+        equal(template({id:1}), '<span>1</span>');
+        equal(template({id:0}), '');
+        equal(template({id:"1"}), '');
+        equal(template({}), '');
+        equal(template({id:null}), '');
+    });
+
+    test('unlessequals', function () {
+        expect(5);
+        var template = Handlebars.compile('{{#unlessequals id 1}}<span>0</span>{{/unlessequals}}');
+        equal(template({id:1}), '');
+        equal(template({id:0}), '<span>0</span>');
+        equal(template({id:"1"}), '<span>0</span>');
+        equal(template({}), '<span>0</span>');
+        equal(template({id:null}), '<span>0</span>');
+    });
+
+    test('for', function () {
+        expect(14);
+        var template = Handlebars.compile('{{#for 0 5}}{{this}}{{/for}}');
+        equal(template(), '012345');
+
+        template = Handlebars.compile('{{#for start end}}{{this}}{{/for}}');
+        equal(template({}), '');
+        equal(template({start:0, end:5}), '012345');
+        equal(template({start:"0", end:"5"}), '012345');
+        equal(template({start:1, end:1}), '1');
+        equal(template({start:"1", end:"1"}), '1');
+        equal(template({start:null, end:5}), '');
+        equal(template({start:0, end:null}), '');
+        equal(template({start:null, end:null}), '');
+        equal(template({end:5}), '');
+        equal(template({start:0}), '');
+        equal(template({start:5, end:0}), '');
+        equal(template({start:-1, end:5}), '');
+        equal(template({start:0, end:-1}), '');
+    });
+
 });
