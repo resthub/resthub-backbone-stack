@@ -35,6 +35,7 @@ require.config({
         pubsub:"resthub/pubsub",
         handlebars:"libs/handlebars",
         'handlebars-helpers':"resthub/handlebars-helpers"
+        'bootstrap':'libs/bootstrap'
     }
 });
 
