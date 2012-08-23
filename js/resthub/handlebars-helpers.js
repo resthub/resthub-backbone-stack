@@ -45,7 +45,7 @@ define(['handlebars', 'underscore.string'], function (Handlebars, _s) {
     /**
      * Opposite of ifequalsinline helper
      *
-     * If the two values are not strictly equals ('===') return the returnValue
+     * If the two values are not strictly equals ('!==') return the returnValue
      * argument, '' otherwise.
      *
      * Usage: class='{{unlessequalsinline id 1 "disabled"}}'
@@ -57,7 +57,7 @@ define(['handlebars', 'underscore.string'], function (Handlebars, _s) {
     /**
      * This helper provides a if comparing two values
      *
-     * If only the two values are strictly equals ('!==') display the block
+     * If only the two values are strictly equals ('===') display the block
      *
      * Usage:
      *        {{#ifequals type "details"}}
