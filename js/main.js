@@ -35,12 +35,13 @@ require.config({
         text:"libs/text",
         i18n:"libs/i18n",
         pubsub:"libs/resthub/pubsub",
-        handlebars:"libs/handlebars"
+        handlebars:"libs/handlebars",
+        'handlebars-helpers':"libs/resthub/handlebars-helpers"
     }
 });
 
 // Preload main libs
-require(['backbone', 'handlebars', 'app'], function (App) {
+require(['app', 'backbone', 'handlebars'], function (App) {
 
     App.initialize();
 });
