@@ -1,19 +1,7 @@
 /**
  * Set of generic handlebars helpers
- *
- * Author: Baptiste Meurant <baptiste.meurant@gmail.com>
- * Date: 23/08/12
- * Time: 12:14
  */
-
-(function (factory) {
-    if (typeof exports === 'object') {
-        module.exports = factory(require('handlebars'));
-    } else if (typeof define === 'function' && define.amd) {
-        define(['handlebars'], factory);
-    }
-}(function (Handlebars) {
-
+define(['handlebars', 'underscore.string'], function(Handlebars, _s) {
     /**
      * This helper provides a more fluent syntax for inline ifs. i.e. if
      * embedded in quoted strings
@@ -110,4 +98,14 @@
 
         return ret;
     });
-}));
+    
+    /**
+     * sprintf support, useful for internationalization when used with RequireJS i18n extension
+     *
+     * Usage: class='{{sprintf "Welcome %s !" username}}'
+     */
+    Handlebars.registerHelper('sprintf', function () {
+        return _.str.sprintf.apply(this, arguments);
+    });
+    
+});

@@ -25,22 +25,18 @@ require.config({
 
     // Libraries
     paths:{
-        jquery:"libs/jquery",
-        underscore:"libs/underscore",
-        'underscore.string':"libs/underscore.string",
-        backbone:"libs/backbone",
-        localstorage:"libs/localstorage",
-        text:"libs/text",
-        i18n:"libs/i18n",
-        pubsub:"resthub/pubsub",
-        handlebars:"libs/handlebars",
-        'handlebars-helpers':"resthub/handlebars-helpers"
-        'bootstrap':'libs/bootstrap'
+        jquery:"../js/libs/jquery",
+        underscore:"../js/libs/underscore",
+        'underscore.string':"../js/libs/underscore.string",
+        backbone:"../js/libs/backbone",
+        localstorage:"../js/libs/localstorage",
+        text:"../js/libs/text",
+        i18n:"../js/libs/i18n",
+        pubsub:"../js/resthub/pubsub",
+        handlebars:"../js/libs/handlebars",
+        'handlebars-helpers':"../js/resthub/handlebars-helpers"
     }
 });
 
-// Preload main libs
-require(['app', 'backbone', 'handlebars', 'handlebars-helpers'], function (App) {
-
-    App.initialize();
-});
+require({baseUrl: "../"}, ['tests/pubsub',
+                           'tests/handlebars-helpers']);
