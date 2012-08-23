@@ -27,7 +27,7 @@ require.config({
     paths:{
         jquery:"libs/jquery",
         underscore:"libs/underscore",
-        'underscore-string':"libs/underscore.string",
+        'underscore.string':"libs/underscore.string",
         backbone:"libs/backbone",
         localstorage:"libs/localstorage",
         text:"libs/text",
@@ -44,6 +44,5 @@ require.config({
 // Preload main libs
 require(['router', 'backbone', 'handlebars', 'handlebars-helpers'], function (Router) {
 
-    // Pass in our Router module and call it's initialize function
-    Router.initialize();
+    App.initialize();
 });
