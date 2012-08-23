@@ -20,6 +20,14 @@ require.config({
                 'jquery'
             ],
             exports:'Backbone'
+        },
+        'backbone-paginator':{
+            deps:[
+                'backbone',
+                'underscore',
+                'jquery'
+            ],
+            exports:'Backbone.Paginator'
         }
     },
 
@@ -37,7 +45,8 @@ require.config({
         'handlebars-helpers':"libs/resthub/handlebars-helpers",
         'bootstrap':'libs/bootstrap',
         'backbone-validation':'resthub/backbone-validation.ext',
-        'backbone-queryparams':'libs/backbone.queryparams'
+        'backbone-queryparams':'libs/backbone.queryparams',
+        'backbone-paginator':'libs/backbone.paginator'
     }
 });
 
