@@ -28,6 +28,11 @@ require.config({
                 'jquery'
             ],
             exports:'Backbone.Paginator'
+        },
+        async:{
+            deps:[
+                'underscore'
+            ]
         }
     },
 
@@ -46,7 +51,8 @@ require.config({
         'bootstrap':'libs/bootstrap',
         'backbone-validation':'resthub/backbone-validation.ext',
         'backbone-queryparams':'libs/backbone.queryparams',
-        'backbone-paginator':'libs/backbone.paginator'
+        'backbone-paginator':'libs/backbone.paginator',
+        async:'libs/async.js'
     }
 });
 
