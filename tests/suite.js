@@ -20,6 +20,20 @@ require.config({
                 'jquery'
             ],
             exports:'Backbone'
+        },
+        'backbone-queryparams':{
+            deps:[
+                'backbone',
+                'underscore'
+            ]
+        },
+        'backbone-paginator':{
+            deps:[
+                'backbone',
+                'underscore',
+                'jquery'
+            ],
+            exports:'Backbone.Paginator'
         }
     },
 
@@ -34,8 +48,14 @@ require.config({
         i18n:'libs/i18n',
         pubsub:'resthub/pubsub',
         handlebars:'libs/handlebars',
-        'resthub-handlebars':'resthub/handlebars-helpers'
+        'resthub-handlebars':'resthub/handlebars-helpers',
+        async:'libs/async',
+        'backbone-validation':'libs/backbone-validation',
+        'resthub-backbone-validation':'resthub/backbone-validation.ext',
+        'backbone-paginator':'libs/backbone.paginator',
+        'backbone-queryparams':'libs/backbone.queryparams',
+        keymaster:'libs/keymaster'
     }
 });
 
-require(['../tests/pubsub', '../tests/handlebars-helpers']);
+require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions']);
