@@ -9,9 +9,9 @@
 
 (function (factory) {
     if (typeof exports === 'object') {
-        module.exports = factory(require('jquery', 'backbone', 'libs/backbone-validation'));
+        module.exports = factory(require('jquery', 'backbone', 'backbone-validation'));
     } else if (typeof define === 'function' && define.amd) {
-        define(['jquery', 'backbone', 'libs/backbone-validation'], factory);
+        define(['jquery', 'backbone', 'backbone-validation'], factory);
     }
 }(function ($, Backbone) {
 
