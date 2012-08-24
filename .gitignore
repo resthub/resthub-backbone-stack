@@ -5,3 +5,4 @@ build/node_modules/grunt/node_modules/glob/build
 target/
 .idea/*
 *.iml
+node_modules/
