@@ -131,4 +131,6 @@ define(['handlebars', 'underscore.string'], function (Handlebars, _s) {
         return _.str.sprintf.apply(this, arguments);
     });
 
+    return Handlebars;
+
 });

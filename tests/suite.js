@@ -1,6 +1,6 @@
 // Set the require.js configuration for your application.
 require.config({
-
+    baseUrl:'../js',
     shim:{
         'underscore':{
             exports:'_'
@@ -25,18 +25,17 @@ require.config({
 
     // Libraries
     paths:{
-        jquery:"js/libs/jquery",
-        underscore:"js/libs/underscore",
-        'underscore.string':"js/libs/underscore.string",
-        backbone:"js/libs/backbone",
-        localstorage:"js/libs/localstorage",
-        text:"js/libs/text",
-        i18n:"js/libs/i18n",
-        pubsub:"js/resthub/pubsub",
-        handlebars:"js/libs/handlebars",
-        'handlebars-helpers':"js/resthub/handlebars-helpers"
+        jquery:'libs/jquery',
+        underscore:'libs/underscore',
+        'underscore.string':'libs/underscore.string',
+        backbone:'libs/backbone',
+        localstorage:'libs/localstorage',
+        text:'libs/text',
+        i18n:'libs/i18n',
+        pubsub:'resthub/pubsub',
+        handlebars:'libs/handlebars',
+        'resthub-handlebars':'resthub/handlebars-helpers'
     }
 });
 
-require({baseUrl: "../"}, ['tests/pubsub',
-                           'tests/handlebars-helpers']);
+require(['../tests/pubsub', '../tests/handlebars-helpers']);

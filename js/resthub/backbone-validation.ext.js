@@ -40,4 +40,6 @@
         }
     });
 
+    return Backbone.Validation;
+
 }));
