@@ -1,16 +1,18 @@
 /**
  * Set of generic handlebars helpers
  */
-define(['handlebars', 'underscore.string'], function(Handlebars, _s) {
+define(['handlebars', 'underscore.string'], function(Handlebars) {
     /**
      * This helper provides a more fluent syntax for inline ifs. i.e. if
-     * embedded in quoted strings
+     * embedded in quoted strings and provide optional else support
      *
-     * Usage: class='{{ifinline done "done"}}'
+     * Usage: class='{{ifinline done "done"}}' or class='{{ifinline done "done" "todo"}}'
      */
-    Handlebars.registerHelper('ifinline', function (value, returnVal) {
-        return value ? returnVal : '';
-    });
+     Handlebars.registerHelper('ifinline', function (value, returnValTrue, options) {
+        var returnValFalse = '';
+        if(arguments.length == 4) {returnValFalse = options}
+        return value ? returnValTrue : returnValFalse;
+     });
 
     /**
      * Opposite of ifinline helper
@@ -22,12 +24,14 @@ define(['handlebars', 'underscore.string'], function(Handlebars, _s) {
     });
 
     /**
-     * This helper provides a if inline comparing two values
+     * This helper provides a if inline comparing two values and provide optional else support
      *
-     * Usage: class='{{ifequalsinline type "details" "active"}}'
+     * Usage: class='{{ifequalsinline type "details" "active"}}' or class='{{ifequalsinline type "details" "active" "inactive"}}'
      */
-    Handlebars.registerHelper('ifequalsinline', function (value1, value2, returnVal) {
-        return (value1 == value2) ? returnVal : '';
+    Handlebars.registerHelper('ifequalsinline', function (value1, value2, returnValTrue, options) {
+        var returnValFalse = '';
+        if(arguments.length == 5) {returnValFalse = options}
+        return (value1 === value2) ? returnValTrue : returnValFalse;
     });
 
     /**
@@ -36,7 +40,7 @@ define(['handlebars', 'underscore.string'], function(Handlebars, _s) {
      * Usage: class='{{unlessequalsinline type "details" "disabled"}}'
      */
     Handlebars.registerHelper('unlessequalsinline', function (value1, value2, returnVal) {
-        return (value1 == value2) ? '' : returnVal;
+        return (value1 === value2) ? '' : returnVal;
     });
 
     /**
