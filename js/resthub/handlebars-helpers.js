@@ -1,21 +1,23 @@
 /**
  * Set of generic handlebars helpers
  */
-define(['handlebars', 'underscore.string'], function (Handlebars, _s) {
+define(['handlebars', 'underscore.string'], function(Handlebars) {
+    
     /**
      * This helper provides a more fluent syntax for inline ifs. i.e. if
-     * embedded in quoted strings
+     * embedded in quoted strings and provide optional else support
      *
      * As with Handlebars 'if', if its first argument returns false, undefined,
-     * null or [] (a "falsy" value), '' is returned, otherwise returnVal
+     * null or [] (a "falsy" value), '' is returned, otherwise returnValTrue
      * argument is rendered.
-     *
-     * Usage: class='{{ifinline done "done"}}'
-     *
+     * 
+     * Usage: class='{{ifinline done "done"}}' or class='{{ifinline done "done" "todo"}}'
      */
-    Handlebars.registerHelper('ifinline', function (value, returnVal) {
-        return (value && !Handlebars.Utils.isEmpty(value)) ? returnVal : '';
-    });
+     Handlebars.registerHelper('ifinline', function (value, returnValTrue, options) {
+        var returnValFalse = '';
+        if(arguments.length == 4) {returnValFalse = options}
+        return (value && !Handlebars.Utils.isEmpty(value)) ? returnValTrue : returnValFalse;
+     });
 
     /**
      * Opposite of ifinline helper
@@ -36,10 +38,12 @@ define(['handlebars', 'underscore.string'], function (Handlebars, _s) {
      * If the two values are strictly equals ('===') return the returnValue
      * argument, '' otherwise.
      *
-     * Usage: class='{{ifequalsinline id 1 "active"}}'
+     * Usage: class='{{ifequalsinline type "details" "active"}}' or class='{{ifequalsinline type "details" "active" "inactive"}}'
      */
-    Handlebars.registerHelper('ifequalsinline', function (value1, value2, returnVal) {
-        return (value1 === value2) ? returnVal : '';
+    Handlebars.registerHelper('ifequalsinline', function (value1, value2, returnValTrue, options) {
+        var returnValFalse = '';
+        if(arguments.length == 5) {returnValFalse = options}
+        return (value1 === value2) ? returnValTrue : returnValFalse;
     });
 
     /**
