@@ -96,7 +96,7 @@ define(['handlebars', 'underscore.string'], function (Handlebars, _s) {
      *
      * start and end parameters have to be integers >= 0 or their
      * string representation. start should be <= end.
-     * In all other cases, not block is rendered.
+     * In all other cases, the block is not rendered.
      *
      * Usage:
      *        <ul>
