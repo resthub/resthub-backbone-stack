@@ -59,7 +59,7 @@ require.config({
 });
 
 // Preload main libs
-require(['router', 'backbone', 'handlebars', 'handlebars-helpers'], function (Router) {
+require(['router'], function (Router) {
 
     Router.initialize();
 });
