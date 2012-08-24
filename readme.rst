@@ -11,3 +11,9 @@ It also provides the following functionalities :
 
 This stack is inspired of principles described on `Organizing your application using Modules <http://backbonetutorials.com/organizing-backbone-using-modules/>`_ blog post and is based on the `modular-backbone-updated sample <https://github.com/thomasdavis/backbonetutorials/tree/gh-pages/examples/modular-backbone-updated>`_ by 
 `thomasdavis <https://github.com/thomasdavis/>`_.
+
+Build status on Travis CI:
+
+.. image:: https://secure.travis-ci.org/resthub/resthub-backbone-stack.png
+   :alt: Build Status
+   :target: http://travis-ci.org/resthub/resthub-backbone-stack
