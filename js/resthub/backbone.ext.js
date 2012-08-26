@@ -36,17 +36,18 @@ define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
         subscribeHandles:function (handles) {
             if (!(handles || (handles = getValue(this, 'handles')))) return;
             this.unsubscribeHandles();
-            for (var type in handles) {
-                var callback = handles[key];
-                if (!_.isFunction(callback)) callback = this[handles[type]];
-                if (!callback) throw new Error('Method "' + handles[type] + '" does not exist');
+            _.each(handles, function (handle) {
+                var type = handle[0]
+                var callback = handle[1];
+                if (!_.isFunction(callback)) callback = this[handle[1]];
+                if (!callback) throw new Error('Method "' + handle[1] + '" does not exist');
                 callback = _.bind(callback, this);
                 this._subscriptions.push(PubSub.subscribe(type, callback));
-            }
+            }.bind(this));
         },
 
-        unsubscribeHandles: function() {
-            _.each(this._subscriptions, function(handle, index){
+        unsubscribeHandles:function () {
+            _.each(this._subscriptions, function (handle, index) {
                 PubSub.unsubscribe(handle);
             });
 
