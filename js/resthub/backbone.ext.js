@@ -7,7 +7,7 @@ define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
     var originalConstructor = Backbone.View;
     var originalExtend = Backbone.View.extend;
 
-    Backbone.View = function () {
+    Backbone.View = function (options) {
         originalConstructor.apply(this, arguments);
         this.subscribeHandles();
     };
@@ -36,14 +36,17 @@ define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
         subscribeHandles:function (handles) {
             if (!(handles || (handles = getValue(this, 'handles')))) return;
             this.unsubscribeHandles();
-            _.each(handles, function (handle) {
-                var type = handle[0]
-                var callback = handle[1];
+
+            var handle, type, callback;
+            for (var index in handles) {
+                handle = handles[index];
+                type = handle[0],
+                callback = handle[1];
                 if (!_.isFunction(callback)) callback = this[handle[1]];
                 if (!callback) throw new Error('Method "' + handle[1] + '" does not exist');
                 callback = _.bind(callback, this);
                 this._subscriptions.push(PubSub.subscribe(type, callback));
-            }.bind(this));
+            };
         },
 
         unsubscribeHandles:function () {
