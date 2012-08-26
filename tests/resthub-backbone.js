@@ -12,7 +12,9 @@ require(['resthub-backbone', 'pubsub'], function (Backbone, PubSub) {
                     ["type3", "callback3"],
                     ["type4", "callback4"],
                     [TYPE5, "callback5"],
-                    ["type6", function () {this.counts[5] += 1;}]
+                    ["type6", function () {
+                        this.counts[5] += 1;
+                    }]
                 ],
 
                 initialize:function () {
@@ -126,6 +128,33 @@ require(['resthub-backbone', 'pubsub'], function (Backbone, PubSub) {
         equal(testView.counts[5], 1, "callback6 called once and only once");
 
         testView.unsubscribeHandles();
+    });
+
+    test('subscribers recorded func bound', 1, function () {
+
+        var testView = new this.TestView();
+
+        PubSub.publish("type6");
+
+        equal(testView.counts[5], 1, "callback6 called once and only once");
+
+        testView.unsubscribeHandles();
+    });
+
+    test('error management', 1, function () {
+
+        var ErrorView = Backbone.View.extend({
+
+            handles:[
+                ["type", "callback"]
+            ]
+        });
+
+        throws(function () {
+            ErrorView();
+            }, Error, "Must throw error to pass.");
+
+        PubSub.publish("type");
     });
 
     test('unsubscribing', 2, function () {
