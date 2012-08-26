@@ -184,5 +184,4 @@ require(['resthub-backbone', 'pubsub'], function (Backbone, PubSub) {
         equal(testView2.counts[1], 1, "testView2 callback2 called once");
     });
 
-})
-;
+});
