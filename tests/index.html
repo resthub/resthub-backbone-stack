@@ -6,9 +6,16 @@
 		<link rel="stylesheet" href="../css/qunit.css"/>
 
 		<script src="../js/libs/qunit.js"></script>
-		
+        <script>
+            QUnit.log(function(details) {
+                if (!details.result) {
+                    console.log(details.message);
+                }
+            });
+        </script>
+
 		<script data-main="suite" src="../js/libs/require.js"></script>
-		
+
 	</head>
 	<body>
 		<h1 id="qunit-header">RESThub Backbone stack test suite</h1>
@@ -22,8 +29,8 @@
 			</p>
 
 			<ul></ul>
-			
+
 			<div id="main"></div>
-		</div>	
+		</div>
 	</body>
 </html>
