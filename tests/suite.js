@@ -54,8 +54,9 @@ require.config({
         'resthub-backbone-validation':'resthub/backbone-validation.ext',
         'backbone-paginator':'libs/backbone.paginator',
         'backbone-queryparams':'libs/backbone.queryparams',
-        keymaster:'libs/keymaster'
+        keymaster:'libs/keymaster',
+        hb: 'resthub/handlebars-require'
     }
 });
 
-require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions']);
+require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions', '../tests/handlebars-require']);
