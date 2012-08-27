@@ -23,19 +23,6 @@ require(['resthub-handlebars'], function (Handlebars) {
         var template = Handlebars.compile('{{sprintf "This is a %s, and the sky is %s" "test" "blue"}}');
         equal(template(), 'This is a test, and the sky is blue');
     });
-     
-    test('ifinline with else return value', function() {
-            var template = Handlebars.compile('class={{ifinline done "done" "todo"}}');
-            equal( template({done:true}), 'class=done');
-            equal( template({done:false}), 'class=todo');
-    });
-
-    test('ifequalsinline with else return value', function() {
-            var template = Handlebars.compile('class={{ifequalsinline done "done" "yes" "no"}}');
-            equal( template({done:'done'}), 'class=yes');
-            equal( template({done:'not'}), 'class=no');
-            equal( template({done:''}), 'class=no');
-    });
 		
     test('ifinline', function () {
         expect(5);
@@ -45,6 +32,12 @@ require(['resthub-handlebars'], function (Handlebars) {
         equal(template({}), '');
         equal(template({done:null}), '');
         equal(template({done:[]}), '');
+    });
+    
+    test('ifinline with else return value', function() {
+            var template = Handlebars.compile('class={{ifinline done "done" "todo"}}');
+            equal( template({done:true}), 'class=done');
+            equal( template({done:false}), 'class=todo');
     });
 
     test('unlessinline', function () {
@@ -66,6 +59,13 @@ require(['resthub-handlebars'], function (Handlebars) {
         equal(template({}), '');
         equal(template({id:null}), '');
     });
+    
+    test('ifequalsinline with else return value', function() {
+            var template = Handlebars.compile('class={{ifequalsinline done "done" "yes" "no"}}');
+            equal( template({done:'done'}), 'class=yes');
+            equal( template({done:'not'}), 'class=no');
+            equal( template({done:''}), 'class=no');
+    });
 
     test('unlessequalsinline', function () {
         expect(5);
@@ -85,6 +85,16 @@ require(['resthub-handlebars'], function (Handlebars) {
         equal(template({id:"1"}), '');
         equal(template({}), '');
         equal(template({id:null}), '');
+    });
+    
+    test('ifequals with else return value', function () {
+        expect(5);
+        var template = Handlebars.compile('{{#ifequals id 1}}<span>1</span>{{else}}<span>0</span>{{/ifequals}}');
+        equal(template({id:1}), '<span>1</span>');
+        equal(template({id:0}), '<span>0</span>');
+        equal(template({id:"1"}), '<span>0</span>');
+        equal(template({}), '<span>0</span>');
+        equal(template({id:null}), '<span>0</span>');
     });
 
     test('unlessequals', function () {
