@@ -2,6 +2,18 @@ require(['resthub-handlebars'], function (Handlebars) {
 
     module('handlebars-helpers');
 
+    test('Handlebars & helpers inclusion', function () {
+        ok(Handlebars, "Handlebars exists and is not undefined");
+        ok(Handlebars.helpers.ifinline, "ifinline helper exists and is not undefined");
+        ok(Handlebars.helpers.unlessinline, "unlessinline helper exists and is not undefined");
+        ok(Handlebars.helpers.ifequalsinline, "ifequalsinline helper exists and is not undefined");
+        ok(Handlebars.helpers.unlessequalsinline, "unlessequalsinline helper exists and is not undefined");
+        ok(Handlebars.helpers.ifequals, "ifequals helper exists and is not undefined");
+        ok(Handlebars.helpers.unlessequals, "unlessequals helper exists and is not undefined");
+        ok(Handlebars.helpers.for, "for helper exists and is not undefined");
+        ok(Handlebars.helpers.sprintf, "sprintf helper exists and is not undefined");
+    });
+
     test('sprintf with 2 params', function () {
         var template = Handlebars.compile('{{sprintf "This is a %s" "test"}}');
         equal(template(), 'This is a test');
