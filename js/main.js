@@ -61,7 +61,7 @@ require.config({
         'backbone-paginator':'libs/backbone.paginator',
         async:'libs/async.js',
         keymaster:'libs/keymaster',
-        hb: 'resthub/handlebars-require'
+        hbs: 'resthub/handlebars-require'
     }
 });
 

@@ -1,4 +1,4 @@
-require(['hb!../tests/templates/template1.html'], function (template1) {
+require(['hbs!../tests/templates/template1.html'], function (template1) {
 
     module('handlebars-require');
 
