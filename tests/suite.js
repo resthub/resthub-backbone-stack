@@ -59,4 +59,4 @@ require.config({
     }
 });
 
-require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions', '../tests/resthub-backbone']);
+require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions', '../tests/resthub-backbone-pubsub']);
