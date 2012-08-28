@@ -8,6 +8,7 @@ define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], f
     var originalUndelegateEvents = originalPrototype.undelegateEvents;
     var originalSetElement = originalPrototype.setElement;
     var originalRemove = originalPrototype.remove;
+    var originalDispose = originalPrototype.dispose;
     var originalConstructor = Backbone.View;
     var originalExtend = Backbone.View.extend;
 
@@ -77,6 +78,18 @@ define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], f
         remove:function () {
             this.$el.off("destroyed");
             return originalRemove.call(this);
+        },
+
+        // Override Backbone dispose method to unbind Backbone Validation
+        // Bindings if defined
+        dispose:function () {
+            originalDispose.call(this);
+
+            if (Backbone.Validation) {
+                Backbone.Validation.unbind(this)
+            }
+
+            return this;
         }
 
     });
