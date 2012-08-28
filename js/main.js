@@ -48,6 +48,7 @@ require.config({
         underscore:'libs/underscore',
         'underscore.string':'libs/underscore.string',
         backbone:'libs/backbone',
+        'resthub-backbone':'resthub/backbone.ext',
         localstorage:'libs/localstorage',
         text:'libs/text',
         i18n:'libs/i18n',

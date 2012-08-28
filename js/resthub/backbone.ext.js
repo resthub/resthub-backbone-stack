@@ -58,9 +58,6 @@ define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
 
     });
 
-    // Cached regex to split keys for `delegate`.
-    var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-
     // Helper function to get a value from a Backbone object as a property
     // or as a function.
     var getValue = function (object, prop) {
