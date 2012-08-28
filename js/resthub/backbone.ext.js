@@ -1,4 +1,4 @@
-define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
+define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], function (_, Backbone, PubSub) {
 
     // Backbone.View extension
     // -----------------------
@@ -6,6 +6,8 @@ define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
     var originalPrototype = Backbone.View.prototype;
     var originalDelegateEvents = originalPrototype.delegateEvents;
     var originalUndelegateEvents = originalPrototype.undelegateEvents;
+    var originalSetElement = originalPrototype.setElement;
+    var originalRemove = originalPrototype.remove;
     var originalConstructor = Backbone.View;
     var originalExtend = Backbone.View.extend;
 
@@ -54,6 +56,27 @@ define(['underscore', 'backbone', 'pubsub'], function (_, Backbone, PubSub) {
         undelegateEvents:function () {
             PubSub.off(null, null, this);
             originalUndelegateEvents.call(this);
+        },
+
+        // Override backbone setElement to bind a destroyed special event
+        // when el is detached from DOM
+        setElement:function (element, delegate) {
+            originalSetElement.call(this, element, delegate);
+
+            var self = this;
+            // call backbone dispose method on el DOM removing
+            this.$el.on("destroyed", function () {
+                self.dispose();
+            });
+
+            return this;
+        },
+
+        // Override Backbone method unbind destroyed special event
+        // after remove : this prevents dispose to be called twice
+        remove:function () {
+            this.$el.off("destroyed");
+            return originalRemove.call(this);
         }
 
     });
