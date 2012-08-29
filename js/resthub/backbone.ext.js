@@ -43,6 +43,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         delegateEvents:function (events) {
 
             originalDelegateEvents.call(this, events);
+            this._eventsSubscriptions = [];
 
             if (!(events || (events = getValue(this, 'events')))) return;
             _.each(events, _.bind(function (method, key) {
@@ -50,11 +51,15 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
                 PubSub.on(key, method, this);
+                this._eventsSubscriptions.push(key);
             }, this));
         },
 
         undelegateEvents:function () {
-            PubSub.off(null, null, this);
+
+            if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
+                PubSub.off(this._eventsSubscriptions.join(' '), null, this);
+            }
             originalUndelegateEvents.call(this);
         },
 
@@ -87,12 +92,21 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         // Override Backbone dispose method to unbind Backbone Validation
         // Bindings if defined
         dispose:function () {
+
+            // perform actions before effective close
+            this.onDispose();
+
             originalDispose.call(this);
+            PubSub.off(null, null, this);
 
             if (Backbone.Validation) {
                 Backbone.Validation.unbind(this)
             }
 
+            return this;
+        },
+
+        onDispose:function () {
             return this;
         },
 
