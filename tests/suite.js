@@ -13,7 +13,7 @@ require.config({
         'handlebars':{
             exports:'Handlebars'
         },
-        'backbone':{
+        'backbone-orig':{
             deps:[
                 'underscore',
                 'underscore.string',
@@ -23,13 +23,13 @@ require.config({
         },
         'backbone-queryparams':{
             deps:[
-                'backbone',
+                'backbone-orig',
                 'underscore'
             ]
         },
         'backbone-paginator':{
             deps:[
-                'backbone',
+                'backbone-orig',
                 'underscore',
                 'jquery'
             ],
@@ -42,8 +42,8 @@ require.config({
         jquery:'libs/jquery',
         underscore:'libs/underscore',
         'underscore.string':'libs/underscore.string',
-        backbone:'libs/backbone',
-        'resthub-backbone':'resthub/backbone.ext',
+        'backbone-orig':'libs/backbone',
+        backbone:'resthub/backbone.ext',
         localstorage:'libs/localstorage',
         text:'libs/text',
         i18n:'libs/i18n',

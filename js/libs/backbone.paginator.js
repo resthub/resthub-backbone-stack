@@ -42,7 +42,7 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 
 			// Create default values if no others are specified
 			_.defaults(self.paginator_ui, {
-				firstPage: 0,
+				firstPage: 1,
 				currentPage: 1,
 				perPage: 5,
 				totalPages: 10
@@ -80,7 +80,7 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 				timeout: 25000,
 				cache: false,
 				type: 'GET',
-				dataType: 'jsonp'
+				dataType: 'json'
 			});
 
 			queryOptions = _.extend(queryOptions, {
@@ -688,7 +688,7 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 			
 			// Create default values if no others are specified
 			_.defaults(self.paginator_ui, {
-				firstPage: 0,
+				firstPage: 1,
 				currentPage: 1,
 				perPage: 5,
 				totalPages: 10
@@ -726,7 +726,7 @@ Backbone.Paginator = (function ( Backbone, _, $ ) {
 				timeout: 25000,
 				cache: false,
 				type: 'GET',
-				dataType: 'jsonp'
+				dataType: 'json'
 			});
 
 			// Allows the passing in of {data: {foo: 'bar'}} at request time to overwrite server_api defaults
