@@ -14,6 +14,10 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
     Backbone.View = function(options) {
         originalConstructor.apply(this, arguments);
+        if (this.root) {
+            this._ensureRoot();
+            this._insertRoot();
+        }
     };
 
     // Restore original prototype
@@ -24,6 +28,27 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
     _.extend(Backbone.View.prototype, {
 
         globalEventsIdentifier: '!',
+
+        strategy: 'replace',
+
+        _ensureRoot: function() {
+            var root = $(this.root);
+            if (root.length != 1) {
+                throw new Error('Root element "' + this.root + '" does not exist or is not unique.');
+            }
+            this.root = root;
+        },
+
+        _insertRoot: function() {
+            var strategy = this.strategy;
+            if (strategy == 'replace') {
+                strategy = 'html';
+            }
+            if (_.indexOf(['html', 'append', 'prepend'], strategy) === -1) {
+                throw new Error('Invalid strategy "' + strategy + '", must be one of replace, append or prepend.');
+            }
+            this.root[strategy](this.el);
+        },
 
         // Override Backbone delegateEvents() method
         // to add support of global events declarations :
