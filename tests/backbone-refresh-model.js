@@ -42,14 +42,14 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
 
     test("no error if no model", 1, function () {
         var testView = new this.TestView();
-        testView.refreshModel();
+        testView.populateModel();
 
         ok(true, "no error");
     });
 
     test("model should be set with default values", 3, function () {
         var testView = new this.TestView2();
-        testView.refreshModel();
+        testView.populateModel();
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), "myName", "model name set");
@@ -58,7 +58,7 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
 
     test("model should be set with explicit jquery form element", 3, function () {
         var testView = new this.TestView2();
-        testView.refreshModel($("#myForm"));
+        testView.populateModel($("#myForm"));
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), "myName", "model name set");
@@ -67,7 +67,7 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
 
     test("model should be set with explicit jquery selector", 3, function () {
         var testView = new this.TestView2();
-        testView.refreshModel("#myForm");
+        testView.populateModel("#myForm");
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), "myName", "model name set");
@@ -76,13 +76,13 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
 
     test("no error with insistent form", 6, function () {
         var testView = new this.TestView2();
-        testView.refreshModel("#noForm");
+        testView.populateModel("#noForm");
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), undefined, "model name undefined");
         equal(testView.model.get('email'), undefined, "model email undefined");
 
-        testView.refreshModel($("#noForm"));
+        testView.populateModel($("#noForm"));
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), undefined, "model name undefined");
@@ -91,7 +91,7 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
 
     test("model should be set with explicit model", 6, function () {
         var testView = new this.TestView2();
-        testView.refreshModel(null, testView.model2);
+        testView.populateModel(null, testView.model2);
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), undefined, "model name undefined");
@@ -104,7 +104,7 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
 
     test("model should be set with explicit model and form", 6, function () {
         var testView = new this.TestView2();
-        testView.refreshModel($("#myForm"), testView.model2);
+        testView.populateModel($("#myForm"), testView.model2);
 
         ok(testView.model, "model defined");
         equal(testView.model.get('name'), undefined, "model name undefined");
