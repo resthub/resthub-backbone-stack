@@ -5,6 +5,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
     var originalPrototype = Backbone.View.prototype;
     var originalDelegateEvents = originalPrototype.delegateEvents;
+    var originalUndelegateEvents = originalPrototype.undelegateEvents;
     var originalSetElement = originalPrototype.setElement;
     var originalRemove = originalPrototype.remove;
     var originalDispose = originalPrototype.dispose;
@@ -42,6 +43,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         delegateEvents:function (events) {
 
             originalDelegateEvents.call(this, events);
+            this._eventsSubscriptions = [];
 
             if (!(events || (events = getValue(this, 'events')))) return;
             _.each(events, _.bind(function (method, key) {
@@ -49,7 +51,16 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
                 PubSub.on(key, method, this);
+                this._eventsSubscriptions.push(key);
             }, this));
+        },
+
+        undelegateEvents:function () {
+
+            if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
+                PubSub.off(this._eventsSubscriptions.join(' '), null, this);
+            }
+            originalUndelegateEvents.call(this);
         },
 
         // Override backbone setElement to bind a destroyed special event
