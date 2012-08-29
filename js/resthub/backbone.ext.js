@@ -1,4 +1,4 @@
-define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], function (_, Backbone, PubSub) {
+define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed'], function (_, Backbone, PubSub) {
 
     // Backbone.View extension
     // -----------------------
@@ -15,7 +15,6 @@ define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], f
     Backbone.View = function (options) {
         originalConstructor.apply(this, arguments);
     };
-
 
     // Restore original prototype
     Backbone.View.prototype = originalPrototype;

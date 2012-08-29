@@ -1,4 +1,4 @@
-require(["resthub-backbone", "pubsub"], function (Backbone, pubsub) {
+require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
     var TYPE5 = "type5";
 
