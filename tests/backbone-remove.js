@@ -54,12 +54,12 @@ require(["jquery", "resthub-backbone"], function ($, Backbone) {
         equal(testView.counts.dispose, 1, "dispose called only once");
 
         testView.$el.remove();
-        equal(testView.counts.dispose, 1, "dispose not called anymore");
+        equal(testView.counts.dispose, 2, "dispose called once again");
 
         testView = new this.TestView2();
 
         testView.$el.remove();
-        equal(testView.counts.dispose, 1, "dispose called once");
+        equal(testView.counts.dispose, 1, "dispose called once again");
     });
 
     test("remove on parent should call dispose", 1, function () {

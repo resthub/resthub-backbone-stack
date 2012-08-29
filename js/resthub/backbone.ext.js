@@ -77,7 +77,12 @@ define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], f
         // after remove : this prevents dispose to be called twice
         remove:function () {
             this.$el.off("destroyed");
-            return originalRemove.call(this);
+            originalRemove.call(this);
+            var self = this;
+            // call backbone dispose method on el DOM removing
+            this.$el.on("destroyed", function () {
+                self.dispose();
+            });
         },
 
         // Override Backbone dispose method to unbind Backbone Validation
