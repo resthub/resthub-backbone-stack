@@ -1,4 +1,4 @@
-require(["jquery", "resthub-backbone"], function ($, Backbone) {
+require(["jquery", "backbone-orig"], function ($, Backbone) {
 
     var originalHistPrototype = Backbone.History.prototype;
 
