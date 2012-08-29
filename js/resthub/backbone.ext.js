@@ -81,6 +81,10 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         // Override Backbone dispose method to unbind Backbone Validation
         // Bindings if defined
         dispose:function () {
+
+            // perform actions before effective close
+            this.onDispose();
+
             originalDispose.call(this);
             PubSub.off(null, null, this);
 
@@ -88,6 +92,10 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
                 Backbone.Validation.unbind(this)
             }
 
+            return this;
+        },
+
+        onDispose:function () {
             return this;
         },
 
