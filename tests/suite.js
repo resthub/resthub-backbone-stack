@@ -56,8 +56,10 @@ require.config({
         'backbone-paginator':'libs/backbone.paginator',
         'backbone-queryparams':'libs/backbone.queryparams',
         keymaster:'libs/keymaster',
-        hbs: 'resthub/handlebars-require'
+        hbs:'resthub/handlebars-require'
     }
 });
 
-require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions', '../tests/handlebars-require', '../tests/resthub-backbone-pubsub']);
+require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions',
+    '../tests/handlebars-require', '../tests/resthub-backbone-pubsub', '../tests/backbone-remove',
+    '../tests/backbone-refresh-model']);

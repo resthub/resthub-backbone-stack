@@ -48,6 +48,7 @@ require.config({
         underscore:'libs/underscore',
         'underscore.string':'libs/underscore.string',
         backbone:'libs/backbone',
+        'resthub-backbone':'resthub/backbone.ext',
         localstorage:'libs/localstorage',
         text:'libs/text',
         i18n:'libs/i18n',
@@ -61,11 +62,10 @@ require.config({
         'backbone-paginator':'libs/backbone.paginator',
         async:'libs/async.js',
         keymaster:'libs/keymaster',
-        hbs: 'resthub/handlebars-require'
+        hbs:'resthub/handlebars-require'
     }
 });
 
-// Preload main libs
 require(['router'], function (Router) {
 
     Router.initialize();
