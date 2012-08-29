@@ -5,7 +5,6 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
     var originalPrototype = Backbone.View.prototype;
     var originalDelegateEvents = originalPrototype.delegateEvents;
-    var originalUndelegateEvents = originalPrototype.undelegateEvents;
     var originalSetElement = originalPrototype.setElement;
     var originalRemove = originalPrototype.remove;
     var originalDispose = originalPrototype.dispose;
@@ -53,11 +52,6 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             }, this));
         },
 
-        undelegateEvents:function () {
-            PubSub.off(null, null, this);
-            originalUndelegateEvents.call(this);
-        },
-
         // Override backbone setElement to bind a destroyed special event
         // when el is detached from DOM
         setElement:function (element, delegate) {
@@ -88,6 +82,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         // Bindings if defined
         dispose:function () {
             originalDispose.call(this);
+            PubSub.off(null, null, this);
 
             if (Backbone.Validation) {
                 Backbone.Validation.unbind(this)
