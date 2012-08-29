@@ -98,17 +98,17 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
         // utility method providing a default and basic handler that
         // populate model from a form input
-        refreshModel:function (form, model) {
+        populateModel:function (form, model) {
             var attributes = {};
 
             form = form || this.$el.find("form");
             form = form instanceof Backbone.$ ? form : this.$el.find((Backbone.$(form)));
-            form = form.find("input[type!='submit']");
+            var fields = form.find("input[type!='submit']");
 
             if (arguments.length < 2) model = this.model;
 
             // build array of form attributes to refresh model
-            form.each(_.bind(function (index, value) {
+            fields.each(_.bind(function (index, value) {
                 attributes[value.name] = value.value;
                 if (model) {
                     model.set(value.name, value.value);
@@ -116,6 +116,36 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             }, this));
         }
 
+    });
+
+    var originalHistPrototype = Backbone.History.prototype;
+    var originalStart = originalHistPrototype.start;
+
+    // extend **Backbone.History** properties and methods.
+    _.extend(Backbone.History.prototype, {
+        // Override backbone History start to bind intercept a clicks in case of pushstate activated
+        // and execute a Backbone.navigate instead of defaults
+        start:function (options) {
+            var ret = originalStart.call(this, options);
+
+            if (options && options.pushState) {
+                // force all links to be handled by Backbone pushstate - no get will be send to server
+                $(window.document).on('click', 'a:not([data-bypass])', function (evt) {
+
+                    var href = this.href;
+                    var protocol = this.protocol + '//';
+                    href = href.slice(protocol.length);
+                    href = href.slice(href.indexOf("/") + 1);
+
+                    if (href.slice(protocol.length) !== protocol) {
+                        evt.preventDefault();
+                        Backbone.history.navigate(href, true);
+                    }
+                });
+            }
+
+            return ret;
+        }
     });
 
     // Helper function to get a value from a Backbone object as a property
