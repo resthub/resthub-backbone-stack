@@ -119,6 +119,36 @@ define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], f
 
     });
 
+    var originalHistPrototype = Backbone.History.prototype;
+    var originalStart = originalHistPrototype.start;
+
+    // extend **Backbone.History** properties and methods.
+    _.extend(Backbone.History.prototype, {
+        // Override backbone History start to bind intercept a clicks in case of pushstate activated
+        // and execute a Backbone.navigate instead of defaults
+        start:function (options) {
+            var ret = originalStart.call(this, options);
+
+            if (options && options.pushState) {
+                // force all links to be handled by Backbone pushstate - no get will be send to server
+                $(window.document).on('click', 'a:not([data-bypass])', function (evt) {
+
+                    var href = this.href;
+                    var protocol = this.protocol + '//';
+                    href = href.slice(protocol.length);
+                    href = href.slice(href.indexOf("/") + 1);
+
+                    if (href.slice(protocol.length) !== protocol) {
+                        evt.preventDefault();
+                        Backbone.history.navigate(href, true);
+                    }
+                });
+            }
+
+            return ret;
+        }
+    });
+
     // Helper function to get a value from a Backbone object as a property
     // or as a function.
     var getValue = function (object, prop) {
