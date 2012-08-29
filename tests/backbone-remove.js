@@ -1,4 +1,4 @@
-require(["jquery", "resthub-backbone"], function ($, Backbone) {
+require(["jquery", "backbone"], function ($, Backbone) {
 
     module("backbone-remove", {
         setup:function () {
