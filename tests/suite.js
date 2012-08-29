@@ -61,4 +61,5 @@ require.config({
 });
 
 require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions',
-    '../tests/handlebars-require', '../tests/resthub-backbone-pubsub', '../tests/backbone-remove']);
+    '../tests/handlebars-require', '../tests/resthub-backbone-pubsub', '../tests/backbone-remove',
+    '../tests/backbone-refresh-model']);

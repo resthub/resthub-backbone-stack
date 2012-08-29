@@ -95,6 +95,26 @@ define(['underscore', 'backbone', 'pubsub', 'resthub/jquery-event-destroyed'], f
             }
 
             return this;
+        },
+
+        // utility method providing a default and basic handler that
+        // populate model from a form input
+        refreshModel:function (form, model) {
+            var attributes = {};
+
+            form = form || this.$el.find("form");
+            form = form instanceof Backbone.$ ? form : this.$el.find((Backbone.$(form)));
+            form = form.find("input[type!='submit']");
+
+            if (arguments.length < 2) model = this.model;
+
+            // build array of form attributes to refresh model
+            form.each(_.bind(function (index, value) {
+                attributes[value.name] = value.value;
+                if (model) {
+                    model.set(value.name, value.value);
+                }
+            }, this));
         }
 
     });
