@@ -32,11 +32,12 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         strategy: 'replace',
 
         _ensureRoot: function() {
-            var root = $(this.root);
-            if (root.length != 1) {
-                throw new Error('Root element "' + this.root + '" does not exist or is not unique.');
+            var $root = $(this.root);
+            if ($root.length != 1) {
+                throw new Error('Root element "' + $root + '" does not exist or is not unique.');
             }
-            this.root = root;
+            this.root = $root[0];
+            this.$root = $root;
         },
 
         _insertRoot: function() {
@@ -47,7 +48,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             if (_.indexOf(['html', 'append', 'prepend'], strategy) === -1) {
                 throw new Error('Invalid strategy "' + strategy + '", must be one of replace, append or prepend.');
             }
-            this.root[strategy](this.el);
+            this.$root[strategy](this.el);
         },
 
         render: function(context) {
