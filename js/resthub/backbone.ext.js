@@ -12,6 +12,8 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
     var originalConstructor      = Backbone.View;
     var originalExtend           = Backbone.View.extend;
 
+    var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'];
+
     Backbone.View = function(options) {
         originalConstructor.apply(this, arguments);
         if (this.root) {
@@ -77,6 +79,15 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             // Maybe throw an error if the context could not be determined
             // instead of returning {}
             return context || {};
+        },
+
+        _configure: function(options) {
+          if (this.options) options = _.extend({}, this.options, options);
+          for (var i = 0, l = viewOptions.length; i < l; i++) {
+            var attr = viewOptions[i];
+            if (options[attr]) this[attr] = options[attr];
+          }
+          this.options = options;
         },
 
         // Override Backbone delegateEvents() method
