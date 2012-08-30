@@ -61,15 +61,16 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
         _ensureContext: function(context) {
             if (!context) {
-                var key = _.find([this.context, 'model', 'collection'], function(key) {
-                    return this[key];
-                }, this);
-                if (key) {
-                    if (this[key].toJSON) {
-                        context = this[key].toJSON();
-                    } else {
-                        context = this[key];
-                    }
+                if (typeof this.context === 'object') {
+                    context = this.context;
+                } else {
+                    var key = _.find([this.context, 'model', 'collection'], function(key) {
+                        return this[key];
+                    }, this);
+                    context = this[key];
+                }
+                if (context && context.toJSON) {
+                    context = context.toJSON();
                 }
             }
             // Maybe throw an error if the context could not be determined
