@@ -50,6 +50,33 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             this.root[strategy](this.el);
         },
 
+        render: function(context) {
+            if (!this.template || typeof this.template !== 'function') {
+                throw new Error('Invalid template provided.');
+            }
+            context = this._ensureContext(context);
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        _ensureContext: function(context) {
+            if (!context) {
+                var key = _.find([this.context, 'model', 'collection'], function(key) {
+                    return this[key];
+                }, this);
+                if (key) {
+                    if (this[key].toJSON) {
+                        context = this[key].toJSON();
+                    } else {
+                        context = this[key];
+                    }
+                }
+            }
+            // Maybe throw an error if the context could not be determined
+            // instead of returning {}
+            return context || {};
+        },
+
         // Override Backbone delegateEvents() method
         // to add support of global events declarations :
         //
