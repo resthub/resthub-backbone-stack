@@ -1,29 +1,94 @@
-define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed'], function (_, Backbone, PubSub) {
+define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
 
     // Backbone.View extension
     // -----------------------
 
-    var originalPrototype = Backbone.View.prototype;
-    var originalDelegateEvents = originalPrototype.delegateEvents;
+    var originalPrototype        = Backbone.View.prototype;
+    var originalDelegateEvents   = originalPrototype.delegateEvents;
     var originalUndelegateEvents = originalPrototype.undelegateEvents;
-    var originalSetElement = originalPrototype.setElement;
-    var originalRemove = originalPrototype.remove;
-    var originalDispose = originalPrototype.dispose;
-    var originalConstructor = Backbone.View;
-    var originalExtend = Backbone.View.extend;
+    var originalSetElement       = originalPrototype.setElement;
+    var originalRemove           = originalPrototype.remove;
+    var originalDispose          = originalPrototype.dispose;
+    var originalConstructor      = Backbone.View;
+    var originalExtend           = Backbone.View.extend;
 
-    Backbone.View = function (options) {
+    var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'];
+
+    Backbone.View = function(options) {
         originalConstructor.apply(this, arguments);
+        if (this.root) {
+            this._ensureRoot();
+            this._insertRoot();
+        }
     };
 
     // Restore original prototype
     Backbone.View.prototype = originalPrototype;
-    Backbone.View.extend = originalExtend;
+    Backbone.View.extend    = originalExtend;
 
     // extend **Backbone.View** properties and methods.
     _.extend(Backbone.View.prototype, {
 
-        globalEventsIdentifier:'!',
+        globalEventsIdentifier: '!',
+
+        strategy: 'replace',
+
+        _ensureRoot: function() {
+            var $root = $(this.root);
+            if ($root.length != 1) {
+                throw new Error('Root element "' + $root + '" does not exist or is not unique.');
+            }
+            this.root = $root[0];
+            this.$root = $root;
+        },
+
+        _insertRoot: function() {
+            var strategy = this.strategy;
+            if (strategy == 'replace') {
+                strategy = 'html';
+            }
+            if (_.indexOf(['html', 'append', 'prepend'], strategy) === -1) {
+                throw new Error('Invalid strategy "' + strategy + '", must be one of replace, append or prepend.');
+            }
+            this.$root[strategy](this.el);
+        },
+
+        render: function(context) {
+            if (!this.template || typeof this.template !== 'function') {
+                throw new Error('Invalid template provided.');
+            }
+            context = this._ensureContext(context);
+            this.$el.html(this.template(context));
+            return this;
+        },
+
+        _ensureContext: function(context) {
+            if (!context) {
+                if (typeof this.context === 'object') {
+                    context = this.context;
+                } else {
+                    var key = _.find([this.context, 'model', 'collection'], function(key) {
+                        return this[key];
+                    }, this);
+                    context = this[key];
+                }
+                if (context && context.toJSON) {
+                    context = context.toJSON();
+                }
+            }
+            // Maybe throw an error if the context could not be determined
+            // instead of returning {}
+            return context || {};
+        },
+
+        _configure: function(options) {
+          if (this.options) options = _.extend({}, this.options, options);
+          for (var i = 0, l = viewOptions.length; i < l; i++) {
+            var attr = viewOptions[i];
+            if (options[attr]) this[attr] = options[attr];
+          }
+          this.options = options;
+        },
 
         // Override Backbone delegateEvents() method
         // to add support of global events declarations :
@@ -40,13 +105,13 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         //       '!viewDeleted': function(e) { ... }
         //     }
         //
-        delegateEvents:function (events) {
+        delegateEvents: function(events) {
 
             originalDelegateEvents.call(this, events);
             this._eventsSubscriptions = [];
 
             if (!(events || (events = getValue(this, 'events')))) return;
-            _.each(events, _.bind(function (method, key) {
+            _.each(events, _.bind(function(method, key) {
                 if (key.indexOf(this.globalEventsIdentifier) != 0) return;
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
@@ -55,7 +120,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             }, this));
         },
 
-        undelegateEvents:function () {
+        undelegateEvents: function() {
 
             if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
                 PubSub.off(this._eventsSubscriptions.join(' '), null, this);
@@ -65,12 +130,12 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
         // Override backbone setElement to bind a destroyed special event
         // when el is detached from DOM
-        setElement:function (element, delegate) {
+        setElement: function(element, delegate) {
             originalSetElement.call(this, element, delegate);
 
             var self = this;
             // call backbone dispose method on el DOM removing
-            this.$el.on("destroyed", function () {
+            this.$el.on("destroyed", function() {
                 self.dispose();
             });
 
@@ -79,19 +144,19 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
         // Override Backbone method unbind destroyed special event
         // after remove : this prevents dispose to be called twice
-        remove:function () {
+        remove: function() {
             this.$el.off("destroyed");
             originalRemove.call(this);
             var self = this;
             // call backbone dispose method on el DOM removing
-            this.$el.on("destroyed", function () {
+            this.$el.on("destroyed", function() {
                 self.dispose();
             });
         },
 
         // Override Backbone dispose method to unbind Backbone Validation
         // Bindings if defined
-        dispose:function () {
+        dispose: function() {
 
             // perform actions before effective close
             this.onDispose();
@@ -106,7 +171,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             return this;
         },
 
-        onDispose:function () {
+        onDispose: function() {
             return this;
         },
 
@@ -118,7 +183,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
          * @param model model instance to populate. if no model instance is provided,
          * search for 'this.model'
          **/
-        populateModel:function (form, model) {
+        populateModel: function(form, model) {
             var attributes = {};
 
             form = form || this.$el.find("form");
@@ -128,7 +193,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             if (arguments.length < 2) model = this.model;
 
             // build array of form attributes to refresh model
-            fields.each(_.bind(function (index, value) {
+            fields.each(_.bind(function(index, value) {
                 attributes[value.name] = value.value;
                 if (model) {
                     model.set(value.name, value.value);
@@ -138,22 +203,26 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
     });
 
+
+    // Backbone.History extension
+    // --------------------------
+
     var originalHistPrototype = Backbone.History.prototype;
-    var originalStart = originalHistPrototype.start;
+    var originalStart         = originalHistPrototype.start;
 
     // extend **Backbone.History** properties and methods.
     _.extend(Backbone.History.prototype, {
         // Override backbone History start to bind intercept a clicks in case of pushstate activated
         // and execute a Backbone.navigate instead of defaults
-        start:function (options) {
+        start: function(options) {
             var ret = originalStart.call(this, options);
 
             if (options && options.pushState) {
                 // force all links to be handled by Backbone pushstate - no get will be send to server
-                $(window.document).on('click', 'a:not([data-bypass])', function (evt) {
+                $(window.document).on('click', 'a:not([data-bypass])', function(evt) {
 
-                    var href = this.href;
                     var protocol = this.protocol + '//';
+                    var href = this.href;
                     href = href.slice(protocol.length);
                     href = href.slice(href.indexOf("/") + 1);
 
@@ -170,7 +239,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
     // Helper function to get a value from a Backbone object as a property
     // or as a function.
-    var getValue = function (object, prop) {
+    var getValue = function(object, prop) {
         if (!(object && object[prop])) return null;
         return _.isFunction(object[prop]) ? object[prop]() : object[prop];
     };
