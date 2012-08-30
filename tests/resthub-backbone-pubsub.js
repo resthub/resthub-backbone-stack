@@ -63,10 +63,20 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
                 initialize:function () {
                     this.counts = {};
+                    Pubsub.on("!global2", this.global2Fired, this);
+                    Pubsub.on("!global3", this.global3Fired, this);
                 },
 
                 globalFired:function () {
                     this.counts.globalFired = (this.counts.globalFired || 0) + 1;
+                },
+
+                global2Fired:function () {
+                    this.counts.global2Fired = (this.counts.global2Fired || 0) + 1;
+                },
+
+                global3Fired:function () {
+                    this.counts.global3Fired = (this.counts.global3Fired || 0) + 1;
                 }
             });
         },
@@ -190,6 +200,34 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
         equal(testView.counts.globalFired, 1, "globalFired not called on testView");
         equal(testView2.counts.globalFired, 2, "globalFired called on testView2");
+
+    });
+
+    test("should publish pubsub events declared on initialize", 6, function () {
+
+        var testView = new this.TestView3();
+
+        pubsub.trigger("!global2");
+        pubsub.trigger("!global3");
+
+        equal(testView.counts.global2Fired, 1, "global2Fired called on testView");
+        equal(testView.counts.global3Fired, 1, "global3Fired called on testView");
+
+        testView.undelegateEvents();
+
+        pubsub.trigger("!global2");
+        pubsub.trigger("!global3");
+
+        equal(testView.counts.global2Fired, 2, "global2Fired called on testView");
+        equal(testView.counts.global3Fired, 2, "global3Fired called on testView");
+
+        testView.dispose();
+
+        pubsub.trigger("!global2");
+        pubsub.trigger("!global3");
+
+        equal(testView.counts.global2Fired, 2, "global2Fired not called on testView");
+        equal(testView.counts.global3Fired, 2, "global3Fired not called on testView");
 
     });
 

@@ -60,7 +60,7 @@ require.config({
         'resthub-handlebars':'resthub/handlebars-helpers',
         'backbone-queryparams':'libs/backbone.queryparams',
         'backbone-paginator':'libs/backbone.paginator',
-        async:'libs/async.js',
+        async:'libs/async',
         keymaster:'libs/keymaster',
         hbs:'resthub/handlebars-require'
     }
