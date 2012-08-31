@@ -1,53 +1,53 @@
-require(["jquery", "backbone"], function ($, Backbone) {
+require(["jquery", "backbone"], function($, Backbone) {
 
     module("backbone-refresh-model", {
-        setup:function () {
+        setup: function() {
 
-            var Person = Backbone.Model.extend({initialize:function () {
+            var Person = Backbone.Model.extend({initialize: function() {
             }});
 
             this.TestView = Backbone.View.extend({
-                initialize:function () {
+                initialize: function() {
                     this.render();
                 },
 
-                render:function () {
+                render: function() {
                     this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/></form>");
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
 
             this.TestView2 = Backbone.View.extend({
-                initialize:function () {
+                initialize: function() {
                     this.model = new Person();
                     this.model2 = new Person();
                     this.render();
                 },
 
-                render:function () {
+                render: function() {
                     this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/></form>");
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
         },
-        teardown:function () {
+        teardown: function() {
         }
     });
 
-    test("View should be rendered", 1, function () {
+    test("View should be rendered", 1, function() {
         new this.TestView();
 
         ok($("#qunit-fixture > #main > div").find("myForm"), "HTML content should be rendered");
     });
 
-    test("no error if no model", 1, function () {
+    test("no error if no model", 1, function() {
         var testView = new this.TestView();
         testView.populateModel();
 
         ok(true, "no error");
     });
 
-    test("model should be set with default values", 3, function () {
+    test("model should be set with default values", 3, function() {
         var testView = new this.TestView2();
         testView.populateModel();
 
@@ -56,7 +56,7 @@ require(["jquery", "backbone"], function ($, Backbone) {
         equal(testView.model.get('email'), "email@email.fr", "model email set");
     });
 
-    test("model should be set with explicit jquery form element", 3, function () {
+    test("model should be set with explicit jquery form element", 3, function() {
         var testView = new this.TestView2();
         testView.populateModel($("#myForm"));
 
@@ -65,7 +65,7 @@ require(["jquery", "backbone"], function ($, Backbone) {
         equal(testView.model.get('email'), "email@email.fr", "model email set");
     });
 
-    test("model should be set with explicit jquery selector", 3, function () {
+    test("model should be set with explicit jquery selector", 3, function() {
         var testView = new this.TestView2();
         testView.populateModel("#myForm");
 
@@ -74,7 +74,7 @@ require(["jquery", "backbone"], function ($, Backbone) {
         equal(testView.model.get('email'), "email@email.fr", "model email set");
     });
 
-    test("no error with insistent form", 6, function () {
+    test("no error with insistent form", 6, function() {
         var testView = new this.TestView2();
         testView.populateModel("#noForm");
 
@@ -89,7 +89,7 @@ require(["jquery", "backbone"], function ($, Backbone) {
         equal(testView.model.get('email'), undefined, "model email undefined");
     });
 
-    test("model should be set with explicit model", 6, function () {
+    test("model should be set with explicit model", 6, function() {
         var testView = new this.TestView2();
         testView.populateModel(null, testView.model2);
 
@@ -102,7 +102,7 @@ require(["jquery", "backbone"], function ($, Backbone) {
         equal(testView.model2.get('email'), "email@email.fr", "model email set");
     });
 
-    test("model should be set with explicit model and form", 6, function () {
+    test("model should be set with explicit model and form", 6, function() {
         var testView = new this.TestView2();
         testView.populateModel($("#myForm"), testView.model2);
 

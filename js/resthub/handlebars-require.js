@@ -1,16 +1,16 @@
-define(['handlebars'], function (Handlebars) {
+define(['handlebars'], function(Handlebars) {
 
-    var loadResource = function (resourceName, parentRequire, callback, config) {
-        parentRequire([("text!" + resourceName)],
-            function (templateContent) {
-                var template = Handlebars.compile(templateContent);
-                callback(template);
+    var load = function(name, req, load, config) {
+        req([("text!" + name)],
+            function(templateContent) {
+                template = Handlebars.compile(templateContent);
+                load(template);
             }
         );
     };
 
     return {
-        load: loadResource
+        load: load
     };
 
 });

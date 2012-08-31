@@ -1,9 +1,8 @@
-define(['backbone-orig', 'underscore'], function (Backbone, _) {
+define(['backbone-orig', 'underscore'], function(Backbone, _) {
 
     var Pubsub = window.Pubsub;
 
     if (!Pubsub) {
-
         Pubsub = {};
         _.extend(Pubsub, Backbone.Events);
     }
