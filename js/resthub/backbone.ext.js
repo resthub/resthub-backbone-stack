@@ -14,14 +14,6 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
 
     var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'];
 
-    Backbone.View = function(options) {
-        originalConstructor.apply(this, arguments);
-        if (this.root) {
-            this._ensureRoot();
-            this._insertRoot();
-        }
-    };
-
     // Restore original prototype
     Backbone.View.prototype = originalPrototype;
     Backbone.View.extend    = originalExtend;
@@ -34,7 +26,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         strategy: 'replace',
 
         _ensureRoot: function() {
-            var $root = $(this.root);
+            var $root = this.root instanceof $ ? this.root : $(this.root);
             if ($root.length != 1) {
                 throw new Error('Root element "' + $root + '" does not exist or is not unique.');
             }
@@ -132,6 +124,11 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
         // when el is detached from DOM
         setElement: function(element, delegate) {
             originalSetElement.call(this, element, delegate);
+
+            if (this.root) {
+                this._ensureRoot();
+                this._insertRoot();
+            }
 
             var self = this;
             // call backbone dispose method on el DOM removing
