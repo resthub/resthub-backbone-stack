@@ -1,39 +1,39 @@
-require(["backbone", "pubsub"], function (Backbone, pubsub) {
+require(["backbone", "pubsub"], function(Backbone, pubsub) {
 
     var TYPE5 = "type5";
 
     module("resthub-backbone-pubsub", {
-        setup:function () {
+        setup: function() {
             this.TestView = Backbone.View.extend({
 
-                events:{
-                    "click #btn1":"buttonClicked",
-                    "click #btn2":"buttonClicked",
-                    "!global":"globalFired",
-                    "!global1":"globalFired",
-                    "!globalParams":"globalFiredParams"
+                events: {
+                    "click #btn1": "buttonClicked",
+                    "click #btn2": "buttonClicked",
+                    "!global": "globalFired",
+                    "!global1": "globalFired",
+                    "!globalParams": "globalFiredParams"
                 },
 
-                initialize:function () {
+                initialize: function() {
                     this.counts = {};
                     this.setElement("#qunit-fixture #main");
                     this.html = "<button id='btn1' type='button' data-toggle='button'><button id='btn2' type='button' data-toggle='button'>";
                     this.render();
                 },
 
-                render:function () {
+                render: function() {
                     this.$el.html(this.html);
                 },
 
-                buttonClicked:function () {
+                buttonClicked: function() {
                     this.counts.buttonClicked = (this.counts.buttonClicked || 0) + 1;
                 },
 
-                globalFired:function () {
+                globalFired: function() {
                     this.counts.globalFired = (this.counts.globalFired || 0) + 1;
                 },
 
-                globalFiredParams:function (arg1, arg2) {
+                globalFiredParams: function(arg1, arg2) {
                     this.counts.globalFiredParams = {};
                     this.counts.globalFiredParams.arg1 = arg1;
                     this.counts.globalFiredParams.arg2 = arg2;
@@ -42,56 +42,56 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
             this.TestView2 = Backbone.View.extend({
 
-                events:{
-                    "!global":"globalFired",
-                    "!global2":"globalFired",
-                    "!globalInline":function () {
+                events: {
+                    "!global": "globalFired",
+                    "!global2": "globalFired",
+                    "!globalInline": function() {
                         this.counts.globalInline = (this.counts.globalInline || 0) + 1;
                     }
                 },
 
-                initialize:function () {
+                initialize: function() {
                     this.counts = {};
                 },
 
-                globalFired:function () {
+                globalFired: function() {
                     this.counts.globalFired = (this.counts.globalFired || 0) + 1;
                 }
             });
 
             this.TestView3 = Backbone.View.extend({
 
-                initialize:function () {
+                initialize: function() {
                     this.counts = {};
                     Pubsub.on("!global2", this.global2Fired, this);
                     Pubsub.on("!global3", this.global3Fired, this);
                 },
 
-                globalFired:function () {
+                globalFired: function() {
                     this.counts.globalFired = (this.counts.globalFired || 0) + 1;
                 },
 
-                global2Fired:function () {
+                global2Fired: function() {
                     this.counts.global2Fired = (this.counts.global2Fired || 0) + 1;
                 },
 
-                global3Fired:function () {
+                global3Fired: function() {
                     this.counts.global3Fired = (this.counts.global3Fired || 0) + 1;
                 }
             });
         },
-        teardown:function () {
+        teardown: function() {
             pubsub.off();
         }
     });
 
-    test("Pubsub should be defined", 3, function () {
+    test("Pubsub should be defined", 3, function() {
         ok(pubsub, "local variable defined");
         ok(window.Pubsub, "global variable defined");
         ok(Pubsub, "global variable defined");
     });
 
-    test("Pubsub correct inheritance", 5, function () {
+    test("Pubsub correct inheritance", 5, function() {
         ok(pubsub.bind, "pubsub.bind defined");
         ok(pubsub.on, "pubsub.on defined");
         ok(pubsub.off, "pubsub.off defined");
@@ -99,7 +99,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         ok(pubsub.unbind, "pubsub.unbind defined");
     });
 
-    test("should trigger regular Backbone events", 2, function () {
+    test("should trigger regular Backbone events", 2, function() {
 
         var testView = new this.TestView();
 
@@ -113,7 +113,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView.counts.buttonClicked, 1, "buttonClicked not called after unbind");
     });
 
-    test("should trigger global events", 2, function () {
+    test("should trigger global events", 2, function() {
 
         var testView = new this.TestView();
 
@@ -126,7 +126,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView.counts.globalFired, 1, "globalFired not called after unbind");
     });
 
-    test("should trigger global events multiples functions", 2, function () {
+    test("should trigger global events multiples functions", 2, function() {
 
         var testView = new this.TestView();
 
@@ -137,7 +137,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView.counts.globalFired, 2, "globalFired called once and only once");
     });
 
-    test("should publish global events to all listeners", 2, function () {
+    test("should publish global events to all listeners", 2, function() {
 
         var testView = new this.TestView();
         var testView2 = new this.TestView();
@@ -148,7 +148,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView2.counts.globalFired, 1, "globalFired called on testView2");
     });
 
-    test("should not publish to other listeners", 2, function () {
+    test("should not publish to other listeners", 2, function() {
 
         var testView = new this.TestView();
         var testView2 = new this.TestView2();
@@ -159,7 +159,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView2.counts.globalFired, undefined, "globalFired not called on testView2");
     });
 
-    test("should unsubscribe", 2, function () {
+    test("should unsubscribe", 2, function() {
 
         var testView = new this.TestView();
 
@@ -171,7 +171,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView.counts.globalFired, 1, "globalFired not called after unbind");
     });
 
-    test("should unsubscribe callbacks bound twice", 2, function () {
+    test("should unsubscribe callbacks bound twice", 2, function() {
 
         var testView = new this.TestView();
 
@@ -185,7 +185,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView.counts.globalFired, 2, "globalFired not called after unbind of all");
     });
 
-    test("should publish but prevent unsubscribed listeners", 4, function () {
+    test("should publish but prevent unsubscribed listeners", 4, function() {
 
         var testView = new this.TestView();
         var testView2 = new this.TestView2();
@@ -203,7 +203,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
     });
 
-    test("should publish pubsub events declared on initialize", 6, function () {
+    test("should publish pubsub events declared on initialize", 6, function() {
 
         var testView = new this.TestView3();
 
@@ -231,7 +231,7 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
     });
 
-    test("should trigger global events with params", 9, function () {
+    test("should trigger global events with params", 9, function() {
 
         var testView = new this.TestView();
 
@@ -255,25 +255,25 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
 
     });
 
-    test("should subscribe to one or multiple events", 3, function () {
+    test("should subscribe to one or multiple events", 3, function() {
 
         var testView3 = new this.TestView3();
 
         pubsub.trigger("!global");
         equal(testView3.counts.globalFired, undefined, "globalFired never called");
 
-        testView3.delegateEvents({"!global":"globalFired"});
+        testView3.delegateEvents({"!global": "globalFired"});
         pubsub.trigger("!global");
 
         equal(testView3.counts.globalFired, 1, "globalFired called");
 
-        testView3.delegateEvents({"!global1":"globalFired", "!global2":"globalFired"});
+        testView3.delegateEvents({"!global1": "globalFired", "!global2": "globalFired"});
         pubsub.trigger("!global1 !global2");
 
         equal(testView3.counts.globalFired, 3, "globalFired called");
     });
 
-    test("should execute an inline function callback", 1, function () {
+    test("should execute an inline function callback", 1, function() {
 
         var testView = new this.TestView2();
 
@@ -282,16 +282,16 @@ require(["backbone", "pubsub"], function (Backbone, pubsub) {
         equal(testView.counts.globalInline, 1, "globalInline called once and only once");
     });
 
-    test("should throw error", 1, function () {
+    test("should throw error", 1, function() {
 
         var ErrorView = Backbone.View.extend({
 
-            events:{
-                "!error":"notFoundCallback"
+            events: {
+                "!error": "notFoundCallback"
             }
         });
 
-        throws(function () {
+        throws(function() {
             ErrorView();
         }, Error, "Must throw error to pass.");
     });
