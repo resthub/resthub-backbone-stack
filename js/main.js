@@ -34,11 +34,6 @@ require.config({
                 'jquery'
             ],
             exports: 'Backbone.Paginator'
-        },
-        async: {
-            deps: [
-                'underscore'
-            ]
         }
     },
 

@@ -7,12 +7,12 @@
     var root = this,
         previous_async = root.async;
 
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = async;
-    }
-    else {
+    //if (typeof module !== 'undefined' && module.exports) {
+    //    module.exports = async;
+    //}
+    //else {
         root.async = async;
-    }
+    //}
 
     async.noConflict = function () {
         root.async = previous_async;
