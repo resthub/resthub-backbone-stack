@@ -172,14 +172,11 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             return this;
         },
 
-        /** utility method providing a default and basic handler that
-         * populate model from a form input
-         *
-         * @param form form element to 'parse'. form parameter could be a css selector or a
-         * jQuery element. if undefined, the first form of this view el is used.
-         * @param model model instance to populate. if no model instance is provided,
-         * search for 'this.model'
-         **/
+        // populate model from a form input
+        //
+        // form parameter could be a css selector or a jQuery element. if undefined,
+        // the first form of this view el is used.
+        // if no model instance is provided, search for 'this.model'
         populateModel: function(form, model) {
             var attributes = {};
 
@@ -192,10 +189,11 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             // build array of form attributes to refresh model
             fields.each(_.bind(function(index, value) {
                 attributes[value.name] = value.value;
-                if (model) {
-                    model.set(value.name, value.value);
-                }
             }, this));
+
+            if (model) {
+                model.set(attributes);
+            }
         }
 
     });
