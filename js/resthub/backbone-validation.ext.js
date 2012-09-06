@@ -27,7 +27,7 @@
             // get the control group element
             view.$(attrSelector).closest('.control-group').removeClass('error');
             // get the controls element
-            view.$(attrSelector).closest('.controls').find('span.help-inline').text('');
+            view.$(attrSelector).closest('.control-group').find('span.help-inline').text('');
         },
         invalid: function(view, attr, error, selector) {
 
@@ -36,7 +36,7 @@
             // get the control group element
             view.$(attrSelector).closest('.control-group').addClass('error');
             // get the controls element
-            view.$(attrSelector).closest('.controls').find('span.help-inline').text(error);
+            view.$(attrSelector).closest('.control-group').find('span.help-inline').text(error);
         }
     });
 
