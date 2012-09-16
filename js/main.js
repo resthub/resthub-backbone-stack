@@ -61,8 +61,8 @@ require.config({
     }
 });
 
-require(['router'], function(Router) {
+require(['router'], function(AppRouter) {
 
-    Router.initialize();
+    new AppRouter();
 
 });
