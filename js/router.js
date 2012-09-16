@@ -1,6 +1,11 @@
 define(['backbone', 'backbone-queryparams'], function(Backbone) {
 
     var AppRouter = Backbone.Router.extend({
+        
+        initialize: function() {
+            Backbone.history.start({ pushState: true, root: "/" });
+        },
+        
         routes: {
             '*path': 'defaultAction'
         },
@@ -8,12 +13,7 @@ define(['backbone', 'backbone-queryparams'], function(Backbone) {
         defaultAction: function() {
         }
     });
-
-    return {
-        initialize: function() {
-            new AppRouter;
-            Backbone.history.start({ pushState: true, root: "/" });
-        };
-    };
+    
+    return AppRouter;
 
 });
