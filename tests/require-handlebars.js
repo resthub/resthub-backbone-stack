@@ -1,6 +1,6 @@
-require(['hbs!../tests/templates/template1.html'], function(template1) {
+require(['hbs!../tests/templates/template1'], function(template1) {
 
-    module('handlebars-require');
+    module('require-handlebars');
 
     test('Handlebars require plugin', function() {
         ok(template1, "Template exists and is not undefined");
