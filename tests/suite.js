@@ -43,20 +43,20 @@ require.config({
         underscore: 'libs/underscore',
         'underscore.string': 'libs/underscore.string',
         'backbone-orig': 'libs/backbone',
-        backbone: 'resthub/backbone.ext',
+        backbone: 'libs/resthub/backbone.ext',
         localstorage: 'libs/localstorage',
         text: 'libs/text',
         i18n: 'libs/i18n',
-        pubsub: 'resthub/pubsub',
+        pubsub: 'libs/resthub/pubsub',
         handlebars: 'libs/handlebars',
-        'resthub-handlebars': 'resthub/handlebars-helpers',
+        'resthub-handlebars': 'libs/resthub/handlebars-helpers',
         async: 'libs/async',
         'backbone-validation': 'libs/backbone-validation',
-        'resthub-backbone-validation': 'resthub/backbone-validation.ext',
+        'resthub-backbone-validation': 'libs/resthub/backbone-validation.ext',
         'backbone-paginator': 'libs/backbone.paginator',
         'backbone-queryparams': 'libs/backbone.queryparams',
         keymaster: 'libs/keymaster',
-        hbs: 'resthub/require-handlebars'
+        hbs: 'libs/resthub/require-handlebars'
     }
 });
 

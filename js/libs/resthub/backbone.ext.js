@@ -1,4 +1,4 @@
-define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
+define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
 
     // Backbone.View extension
     // -----------------------
@@ -162,7 +162,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'resthub/jquery-event-destroyed
             PubSub.off(null, null, this);
 
             if (Backbone.Validation) {
-                Backbone.Validation.unbind(this)
+                Backbone.Validation.unbind(this);
             }
 
             return this;
