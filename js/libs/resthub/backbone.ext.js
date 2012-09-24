@@ -180,16 +180,16 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
         populateModel: function(form, model) {
             var attributes = {};
 
-            form = form || this.$el.find("form");
-            form = form instanceof Backbone.$ ? form : this.$el.find((Backbone.$(form)));
-            var fields = form.find("input[type!='submit']");
+            form = form || (this.el.tagName === 'FORM' ? this.$el : this.$el.find("form"));
+            form = form instanceof Backbone.$ ? form : this.$el.find(form);
+            var fields = form.find("input[type!='submit'][type!='button'], textarea");
 
             if (arguments.length < 2) model = this.model;
 
             // build array of form attributes to refresh model
-            fields.each(_.bind(function(index, value) {
-                attributes[value.name] = value.value;
-            }, this));
+            fields.each(function() {
+                attributes[Backbone.$(this).attr('name')] = Backbone.$(this).val();
+            });
 
             if (model) {
                 model.set(attributes);
