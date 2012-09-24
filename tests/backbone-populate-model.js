@@ -1,6 +1,6 @@
 require(["jquery", "backbone"], function($, Backbone) {
 
-    module("backbone-refresh-model", {
+    module("backbone-populate-model", {
         setup: function() {
 
             var Person = Backbone.Model.extend({initialize: function() {
@@ -26,6 +26,50 @@ require(["jquery", "backbone"], function($, Backbone) {
 
                 render: function() {
                     this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView3 = Backbone.View.extend({
+
+                tagName: 'form',
+
+                attributes: {
+                    id: 'myForm'
+                },
+
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView4 = Backbone.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/><textarea name='description'>description</textarea></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView5 = Backbone.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.model2 = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/><input type='button' name='input' value='Input'/></form>");
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
@@ -74,7 +118,7 @@ require(["jquery", "backbone"], function($, Backbone) {
         equal(testView.model.get('email'), "email@email.fr", "model email set");
     });
 
-    test("no error with insistent form", 6, function() {
+    test("no error with inexistent form", 6, function() {
         var testView = new this.TestView2();
         testView.populateModel("#noForm");
 
@@ -113,6 +157,35 @@ require(["jquery", "backbone"], function($, Backbone) {
         ok(testView.model2, "model2 defined");
         equal(testView.model2.get('name'), "myName", "model name set");
         equal(testView.model2.get('email'), "email@email.fr", "model email set");
+    });
+
+    test("el as form should be detected", 3, function() {
+        var testView = new this.TestView3();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        equal(testView.model.get('name'), "myName", "model name set");
+        equal(testView.model.get('email'), "email@email.fr", "model email set");
+    });
+
+    test("textarea should not be ignored", 4, function() {
+        var testView = new this.TestView4();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        equal(testView.model.get('name'), "myName", "model name set");
+        equal(testView.model.get('email'), "email@email.fr", "model email set");
+        equal(testView.model.get('description'), "description", "model description set");
+    });
+
+    test("input type button should be ignored", 4, function() {
+        var testView = new this.TestView5();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        equal(testView.model.get('name'), "myName", "model name set");
+        equal(testView.model.get('email'), "email@email.fr", "model email set");
+        equal(testView.model.get('input'), undefined, "input ignored");
     });
 
 });

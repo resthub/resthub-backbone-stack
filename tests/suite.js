@@ -62,4 +62,4 @@ require.config({
 
 require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions',
     '../tests/require-handlebars', '../tests/resthub-backbone-pubsub', '../tests/backbone-remove',
-    '../tests/backbone-refresh-model', '../tests/backbone-history']);
+    '../tests/backbone-populate-model', '../tests/backbone-history']);
