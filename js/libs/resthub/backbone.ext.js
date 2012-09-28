@@ -63,9 +63,9 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
                     }, this);
                     context = this[key];
                 }
-                if (context && context.toJSON) {
-                    context = context.toJSON();
-                }
+            }
+            if (context && context.toJSON) {
+                context = context.toJSON();
             }
             // Maybe throw an error if the context could not be determined
             // instead of returning {}
