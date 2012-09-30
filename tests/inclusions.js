@@ -31,15 +31,6 @@ require(['backbone-validation'], function(BackboneValidation) {
     });
 });
 
-require(['resthub-backbone-validation'], function(BackboneValidation) {
-
-    module('resthub-backbone-validation');
-
-    test('resthub-backbone-validation inclusion', function() {
-        ok(BackboneValidation, "backbone-validation exists and is not undefined");
-    });
-});
-
 require(['backbone-paginator'], function(BackbonePaginator) {
 
     module('backbone-paginator');
