@@ -181,7 +181,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
 
             form = form || (this.el.tagName === 'FORM' ? this.$el : this.$el.find("form"));
             form = form instanceof Backbone.$ ? form : this.$el.find(form);
-            var fields = form.find("input[type!='submit'][type!='button'], textarea");
+            var fields = form.find("input[type!='submit'][type!='button'], textarea, select");
 
             if (arguments.length < 2) model = this.model;
 
