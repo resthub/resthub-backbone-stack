@@ -73,6 +73,18 @@ require(["jquery", "backbone"], function($, Backbone) {
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
+
+            this.TestView6 = Backbone.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/><textarea name='description'>description</textarea><select name='list'><option selected='selected' value='7'>value</option></select></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
         },
         teardown: function() {
         }
@@ -188,4 +200,14 @@ require(["jquery", "backbone"], function($, Backbone) {
         equal(testView.model.get('input'), undefined, "input ignored");
     });
 
+    test("select should not be ignored", 5, function() {
+        var testView = new this.TestView6();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        equal(testView.model.get('name'), "myName", "model name set");
+        equal(testView.model.get('email'), "email@email.fr", "model email set");
+        equal(testView.model.get('description'), "description", "model description set");
+        equal(testView.model.get('list'), "7", "model list set");
+    });
 });
