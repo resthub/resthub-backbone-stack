@@ -7,10 +7,17 @@ define(['backbone', 'backbone-queryparams'], function(Backbone) {
         },
         
         routes: {
-            '*path': 'defaultAction'
+            '': 'main',
+            'test': 'test'
+        },
+        
+        main: function() {
+            console.debug("Main route activated");
         },
 
-        defaultAction: function() {
+        test: function() {
+            console.debug("Test route activated");
+            alert("test");
         }
     });
     
