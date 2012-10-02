@@ -134,7 +134,26 @@ define(['handlebars', 'underscore.string'], function(Handlebars) {
     Handlebars.registerHelper('sprintf', function() {
         return _.str.sprintf.apply(this, arguments);
     });
-
+    
+    /**
+     * This helper provides modulo support
+     * 
+     * n is the number to test
+     * m is the modulo to test it with
+     * The block is rendered if n % m equals 0,
+     * else block (if provided) is rendered instead
+     *
+     * Usage: class='{{#modulo 10 2}} even {{else}} odd {{/modulo}}'
+     */
+    Handlebars.registerHelper('modulo', function(n, m, block) {
+        if((n % m) == 0) {
+            return block();
+        }
+        else {
+            return block.inverse();
+        }
+    });
+   
     return Handlebars;
 
 });

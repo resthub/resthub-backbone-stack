@@ -12,6 +12,7 @@ require(['resthub-handlebars'], function(Handlebars) {
         ok(Handlebars.helpers.unlessequals, "unlessequals helper exists and is not undefined");
         ok(Handlebars.helpers.for, "for helper exists and is not undefined");
         ok(Handlebars.helpers.sprintf, "sprintf helper exists and is not undefined");
+        ok(Handlebars.helpers.modulo, "modulo helper exists and is not undefined");
     });
 
     test('sprintf with 2 params', function() {
@@ -127,5 +128,14 @@ require(['resthub-handlebars'], function(Handlebars) {
         equal(template({start: -1, end: 5}), '');
         equal(template({start: 0, end: -1}), '');
     });
-
+    
+    test('modulo', function() {
+        expect(5);
+        var template = Handlebars.compile('{{#modulo n m}}true{{else}}false{{/modulo}}');
+        equal(template({n: 0, m: 2}), 'true');
+        equal(template({n: 1, m: 2}), 'false');
+        equal(template({n: 2, m: 2}), 'true');
+        equal(template({n: 10, m: 5}), 'true');
+        equal(template({n: 11, m: 5}), 'false');
+    });
 });
