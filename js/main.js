@@ -34,6 +34,11 @@ require.config({
                 'jquery'
             ],
             exports: 'Backbone.Paginator'
+        },
+        'bootstrap': {
+            deps: [
+                'jquery'
+            ]
         }
     },
 
