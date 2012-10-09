@@ -57,3 +57,12 @@ require(['keymaster'], function() {
         ok(key, "keymaster exists and is not undefined");
     });
 });
+
+require(['backbone', 'backbone-relational'], function(Backbone) {
+
+	module('backbone-relational');
+
+	test('backbone-relational inclusion', function() {
+        ok(Backbone.RelationalModel, "backbone-relational exists and is not undefined");
+    });
+});
