@@ -34,7 +34,13 @@ require.config({
                 'jquery'
             ],
             exports: 'Backbone.Paginator'
-        }
+        },
+        'backbone-relational': {
+            deps: [
+                 'backbone-orig',  
+                 'underscore'  
+            ]
+          }
     },
 
     // Libraries
@@ -54,6 +60,7 @@ require.config({
         'backbone-validation': 'libs/backbone-validation',
         'resthub-backbone-validation': 'libs/resthub/backbone-validation.ext',
         'backbone-paginator': 'libs/backbone.paginator',
+        'backbone-relational': 'libs/backbone-relational',
         'backbone-queryparams': 'libs/backbone.queryparams',
         keymaster: 'libs/keymaster',
         hbs: 'libs/resthub/require-handlebars'
