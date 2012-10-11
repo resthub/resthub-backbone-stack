@@ -3,23 +3,10 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
     // Backbone.View extension
     // -----------------------
 
-    var originalPrototype        = Backbone.View.prototype;
-    var originalDelegateEvents   = originalPrototype.delegateEvents;
-    var originalUndelegateEvents = originalPrototype.undelegateEvents;
-    var originalSetElement       = originalPrototype.setElement;
-    var originalRemove           = originalPrototype.remove;
-    var originalDispose          = originalPrototype.dispose;
-    var originalConstructor      = Backbone.View;
-    var originalExtend           = Backbone.View.extend;
-
     var viewOptions = ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'];
 
-    // Restore original prototype
-    Backbone.View.prototype = originalPrototype;
-    Backbone.View.extend    = originalExtend;
-
     // extend **Backbone.View** properties and methods.
-    _.extend(Backbone.View.prototype, {
+    Backbone.ResthubView = Backbone.View.extend({
 
         globalEventsIdentifier: '!',
 
@@ -98,7 +85,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
         //
         delegateEvents: function(events) {
 
-            originalDelegateEvents.call(this, events);
+            Backbone.ResthubView.__super__.delegateEvents.call(this, events);
             this._eventsSubscriptions = [];
 
             if (!(events || (events = getValue(this, 'events')))) return;
@@ -116,13 +103,13 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
             if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
                 PubSub.off(this._eventsSubscriptions.join(' '), null, this);
             }
-            originalUndelegateEvents.call(this);
+            Backbone.ResthubView.__super__.undelegateEvents.call(this);
         },
 
         // Override backbone setElement to bind a destroyed special event
         // when el is detached from DOM
         setElement: function(element, delegate) {
-            originalSetElement.call(this, element, delegate);
+            Backbone.ResthubView.__super__.setElement.call(this, element, delegate);
 
             if (this.root) {
                 this._ensureRoot();
@@ -142,7 +129,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
         // after remove : this prevents dispose to be called twice
         remove: function() {
             this.$el.off("destroyed");
-            originalRemove.call(this);
+            Backbone.ResthubView.__super__.remove.call(this);
             var self = this;
             // call backbone dispose method on el DOM removing
             this.$el.on("destroyed", function() {
@@ -157,7 +144,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
             // perform actions before effective close
             this.onDispose();
 
-            originalDispose.call(this);
+            Backbone.ResthubView.__super__.dispose.call(this);
             PubSub.off(null, null, this);
 
             if (Backbone.Validation) {

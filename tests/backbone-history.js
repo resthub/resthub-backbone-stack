@@ -1,76 +1,62 @@
-require(["jquery", "backbone-orig"], function($, Backbone) {
-
-    var originalHistPrototype = Backbone.History.prototype;
+require(["jquery", "backbone"], function($, Backbone) {
 
     module("backbone-history", {
         setup: function() {
 
-            _.extend(Backbone.History.prototype, {
-                navigate: function() {
-                    ok(true, "navigate called");
-                }
-            });
-
-            Backbone.history = new Backbone.History();
-
-            this.TestView = Backbone.View.extend({
-
-                events: {
-                    "click #aTest": "clicked",
-                    "click #aTestBypass": "clicked"
-                },
+            var TestView = Backbone.ResthubView.extend({
 
                 initialize: function() {
-                    this.text = '<a id="aTest" href="/test" /><a id="aTest2" href="/test" /><a id="aTestBypass" data-bypass href="/test" />';
+                    this.text = '<a id="aTest" href="/route1">route1</a><a id="aTest2" href="/route2">route2</a>';
                     this.render();
                 },
 
                 render: function() {
                     this.$el.html(this.text);
                     $("#qunit-fixture #main").html(this.el);
-                },
-
-                clicked: function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.wasClicked = true;
                 }
             });
-        },
-        teardown: function() {
-            Backbone.History.prototype = originalHistPrototype;
-            Backbone.history.stop();
+
+            var TestRouter = Backbone.Router.extend({
+               
+        
+            routes: {
+                'route1': 'route1',
+                'route2': 'route2'
+            },
+           
+            route1: function() {
+                console.debug("titi");
+                ok(true);
+                start();
+            },
+
+            route2: function() {
+                console.debug("tutu");
+                ok(true, "Passed and ready to resume!" );
+                start();
+            }
+
+           
+            });
+
+            var testView = new TestView();
+        var testRouter = new TestRouter();
+        Backbone.history.stop();
+        Backbone.history.start({pushState: true, root: "/tests"});
+        
+
+
         }
+
+    });
+   
+    asyncTest("Route1", 1, function() {
+        QUnit.triggerEvent($("#aTest").get(0), "click");
     });
 
-    test("History start should be defined", 1, function() {
-        ok(Backbone.History.prototype.start, "start is defined");
+    asyncTest("Route2", 1, function() {
+        QUnit.triggerEvent($("#aTest2").get(0), "click");
     });
 
-    test("History navigate should not be called when pushState is false", 1, function() {
-        var testView = new this.TestView();
-        Backbone.history.start();
-
-        QUnit.triggerEvent(testView.$el.find("#aTest").get(0), "click");
-
-        equal(testView.wasClicked, true, "a clicked performed");
-    });
-
-    test("History navigate should be called when pushState is true", 2, function() {
-        var testView = new this.TestView();
-        Backbone.history.start({pushState: true, root: "/"});
-
-        QUnit.triggerEvent(testView.$el.find("#aTest2").get(0), "click");
-
-        equal(testView.wasClicked, undefined, "no click performed");
-    });
-
-    test("History navigate should not be called when pushState is true but data bypassed", 1, function() {
-        var testView = new this.TestView();
-        Backbone.history.start({pushState: true, root: "/"});
-
-        QUnit.triggerEvent(testView.$el.find("#aTestBypass").get(0), "click");
-
-        equal(testView.wasClicked, true, "click performed");
-    });
+    
 });
