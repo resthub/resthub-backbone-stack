@@ -19,6 +19,7 @@ require(['backbone'], function(Backbone) {
 
     test('backbone inclusion', function() {
         ok(Backbone, "backbone exists and is not undefined");
+        ok(Backbone.ResthubView, "backbone resthub view exists and is not undefined");
     });
 });
 

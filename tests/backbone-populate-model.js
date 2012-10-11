@@ -3,7 +3,7 @@ require(["jquery", "backbone"], function($, Backbone) {
     module("backbone-populate-model", {
         setup: function() {
 
-            var Person = Backbone.ResthubView.extend({initialize: function() {
+            var Person = Backbone.Model.extend({initialize: function() {
             }});
 
             this.TestView = Backbone.ResthubView.extend({

@@ -6,7 +6,7 @@ require(["jquery", "backbone"], function($, Backbone) {
             var TestView = Backbone.ResthubView.extend({
 
                 initialize: function() {
-                    this.text = '<a id="aTest" href="/route1">route1</a><a id="aTest2" href="/route2">route2</a>';
+                    this.text = '<a id="aTest" href="/route1">route1</a><a id="aTest2" href="/route2">route2</a><a id="aTest3" href="/">route3</a>';
                     this.render();
                 },
 
@@ -17,34 +17,34 @@ require(["jquery", "backbone"], function($, Backbone) {
             });
 
             var TestRouter = Backbone.Router.extend({
-               
         
             routes: {
                 'route1': 'route1',
-                'route2': 'route2'
+                'route2': 'route2',
+                'route3': 'route3'
             },
            
             route1: function() {
-                console.debug("titi");
                 ok(true);
                 start();
             },
 
             route2: function() {
-                console.debug("tutu");
-                ok(true, "Passed and ready to resume!" );
+                ok(true);
                 start();
+            },
+            
+            route3: function() {
+
             }
 
            
             });
 
             var testView = new TestView();
-        var testRouter = new TestRouter();
-        Backbone.history.stop();
-        Backbone.history.start({pushState: true, root: "/tests"});
-        
-
+            var testRouter = new TestRouter();
+            Backbone.history.stop();
+            Backbone.history.start({pushState: true, root: "/tests"});
 
         }
 
@@ -54,9 +54,9 @@ require(["jquery", "backbone"], function($, Backbone) {
         QUnit.triggerEvent($("#aTest").get(0), "click");
     });
 
-    asyncTest("Route2", 1, function() {
+    asyncTest("Route2", 2, function() {
         QUnit.triggerEvent($("#aTest2").get(0), "click");
+        QUnit.triggerEvent($("#aTest3").get(0), "click");
     });
-
-    
+        
 });
