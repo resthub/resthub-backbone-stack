@@ -2,7 +2,7 @@ require(["jquery", "backbone"], function($, Backbone) {
 
     module("backbone-remove", {
         setup: function() {
-            this.TestView = Backbone.View.extend({
+            this.TestView = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.text = 'HTML Content';
                     this.render();
@@ -13,7 +13,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
-            this.TestView2 = Backbone.View.extend({
+            this.TestView2 = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.counts = {};
                     this.text = 'HTML Content 2';
