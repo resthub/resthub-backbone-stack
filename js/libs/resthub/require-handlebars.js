@@ -14,9 +14,13 @@ define(['module'], function(module) {
             var textName = 'text!' + name + '.' + extension;
 
             return req(['handlebars', textName], function (Handlebars, template) {
-                load((Handlebars ? Handlebars.compile(template) : template));
-            }
-            );
+                if(!config.isBuild) {
+                    load(Handlebars.compile(template));
+                }
+                else {
+                    load(template);
+                }
+            });
         }
     };
 
