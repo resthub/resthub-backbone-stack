@@ -39,7 +39,14 @@ require.config({
             deps: [
                 'jquery'
             ]
-        }
+        },
+        'backbone-relational': {
+            deps: [
+                 'backbone-orig',  
+                 'underscore'  
+            ]
+          }
+
     },
 
     // Libraries
@@ -61,6 +68,7 @@ require.config({
         'backbone-queryparams': 'libs/backbone-queryparams',
         'backbone-paginator': 'libs/backbone-paginator',
         async: 'libs/async',
+        'backbone-relational': 'libs/backbone-relational',
         keymaster: 'libs/keymaster',
         hbs: 'libs/resthub/require-handlebars'
     }
