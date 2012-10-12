@@ -40,7 +40,12 @@ require.config({
                  'backbone-orig',  
                  'underscore'  
             ]
-          }
+        },
+        'moment-fr': {
+            deps: [
+                'moment'
+            ]
+        }
     },
 
     // Libraries
@@ -63,7 +68,9 @@ require.config({
         'backbone-relational': 'libs/backbone-relational',
         'backbone-queryparams': 'libs/backbone.queryparams',
         keymaster: 'libs/keymaster',
-        hbs: 'libs/resthub/require-handlebars'
+        hbs: 'libs/resthub/require-handlebars',
+        'moment': 'libs/moment',
+        'moment-fr': 'libs/moment-lang/fr'
     }
 });
 
