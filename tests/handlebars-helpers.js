@@ -1,4 +1,4 @@
-require(['resthub-handlebars'], function(Handlebars) {
+require(['handlebars'], function(Handlebars) {
 
     module('handlebars-helpers');
 

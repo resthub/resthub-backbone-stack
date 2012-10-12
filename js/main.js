@@ -10,7 +10,7 @@ require.config({
                 'underscore'
             ]
         },
-        'handlebars': {
+        'handlebars-orig': {
             exports: 'Handlebars'
         },
         'backbone-orig': {
@@ -62,8 +62,8 @@ require.config({
         'bootstrap': 'libs/bootstrap',
         'backbone-validation-orig': 'libs/backbone-validation',
         'backbone-validation': 'libs/resthub/backbone-validation-ext',
-        handlebars: 'libs/handlebars',
-        'resthub-handlebars': 'libs/resthub/handlebars-helpers',
+        'handlebars-orig': 'libs/handlebars',
+        'handlebars': 'libs/resthub/handlebars-helpers',
         'backbone-queryparams': 'libs/backbone-queryparams',
         'backbone-paginator': 'libs/backbone-paginator',
         'backbone-relational': 'libs/backbone-relational',
@@ -73,8 +73,8 @@ require.config({
     }
 });
 
-require(['router'], function(AppRouter) {
+require(['router'], function(Router) {
 
-    new AppRouter();
+    new Router();
 
 });

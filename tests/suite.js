@@ -10,7 +10,7 @@ require.config({
                 'underscore'
             ]
         },
-        'handlebars': {
+        'handlebars-orig': {
             exports: 'Handlebars'
         },
         'backbone-orig': {
@@ -41,12 +41,11 @@ require.config({
             ]
         },
         'backbone-relational': {
-            deps: [
-                 'backbone-orig',  
-                 'underscore'  
-            ]
-          }
-
+          deps: [
+               'backbone-orig',  
+               'underscore'  
+          ]
+        }
     },
 
     // Libraries
@@ -63,12 +62,12 @@ require.config({
         'bootstrap': 'libs/bootstrap',
         'backbone-validation-orig': 'libs/backbone-validation',
         'backbone-validation': 'libs/resthub/backbone-validation-ext',
-        handlebars: 'libs/handlebars',
-        'resthub-handlebars': 'libs/resthub/handlebars-helpers',
+        'handlebars-orig': 'libs/handlebars',
+        'handlebars': 'libs/resthub/handlebars-helpers',
         'backbone-queryparams': 'libs/backbone-queryparams',
         'backbone-paginator': 'libs/backbone-paginator',
-        async: 'libs/async',
         'backbone-relational': 'libs/backbone-relational',
+        async: 'libs/async',
         keymaster: 'libs/keymaster',
         hbs: 'libs/resthub/require-handlebars'
     }
