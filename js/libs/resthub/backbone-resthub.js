@@ -4,7 +4,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
     // extend **Backbone.View** properties and methods.
     Backbone.ResthubView = Backbone.View.extend({
         
-        viewOptions : ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'],
+        resthubViewOptions : ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'],
 
         globalEventsIdentifier: '!',
 
@@ -59,8 +59,8 @@ define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-dest
 
         _configure: function(options) {
           if (this.options) options = _.extend({}, this.options, options);
-          for (var i = 0, l = this.viewOptions.length; i < l; i++) {
-            var attr = this.viewOptions[i];
+          for (var i = 0, l = this.resthubViewOptions.length; i < l; i++) {
+            var attr = this.resthubViewOptions[i];
             if (options[attr]) this[attr] = options[attr];
           }
           this.options = options;
