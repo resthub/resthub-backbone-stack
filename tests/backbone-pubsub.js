@@ -4,7 +4,7 @@ require(["backbone", "pubsub"], function(Backbone, pubsub) {
 
     module("resthub-backbone-pubsub", {
         setup: function() {
-            this.TestView = Backbone.View.extend({
+            this.TestView = Backbone.ResthubView.extend({
 
                 events: {
                     "click #btn1": "buttonClicked",
@@ -40,7 +40,7 @@ require(["backbone", "pubsub"], function(Backbone, pubsub) {
                 }
             });
 
-            this.TestView2 = Backbone.View.extend({
+            this.TestView2 = Backbone.ResthubView.extend({
 
                 events: {
                     "!global": "globalFired",
@@ -59,7 +59,7 @@ require(["backbone", "pubsub"], function(Backbone, pubsub) {
                 }
             });
 
-            this.TestView3 = Backbone.View.extend({
+            this.TestView3 = Backbone.ResthubView.extend({
 
                 initialize: function() {
                     this.counts = {};
