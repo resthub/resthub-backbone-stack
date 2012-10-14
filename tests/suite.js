@@ -5,18 +5,18 @@ require.config({
         'underscore': {
             exports: '_'
         },
-        'underscore.string': {
+        'underscore-string': {
             deps: [
                 'underscore'
             ]
         },
-        'handlebars': {
+        'handlebars-orig': {
             exports: 'Handlebars'
         },
         'backbone-orig': {
             deps: [
                 'underscore',
-                'underscore.string',
+                'underscore-string',
                 'jquery'
             ],
             exports: 'Backbone'
@@ -35,11 +35,16 @@ require.config({
             ],
             exports: 'Backbone.Paginator'
         },
-        'backbone-relational': {
+        'bootstrap': {
             deps: [
-                 'backbone-orig',  
-                 'underscore'  
+                'jquery'
             ]
+        },
+        'backbone-relational': {
+          deps: [
+               'backbone-orig',  
+               'underscore'  
+          ]
         },
         'moment-fr': {
             deps: [
@@ -52,21 +57,22 @@ require.config({
     paths: {
         jquery: 'libs/jquery',
         underscore: 'libs/underscore',
-        'underscore.string': 'libs/underscore.string',
+        'underscore-string': 'libs/underscore-string',
         'backbone-orig': 'libs/backbone',
-        backbone: 'libs/resthub/backbone.ext',
+        backbone: 'libs/resthub/backbone-resthub',
         localstorage: 'libs/localstorage',
         text: 'libs/text',
         i18n: 'libs/i18n',
         pubsub: 'libs/resthub/pubsub',
-        handlebars: 'libs/handlebars',
-        'resthub-handlebars': 'libs/resthub/handlebars-helpers',
-        async: 'libs/async',
-        'backbone-validation': 'libs/backbone-validation',
-        'resthub-backbone-validation': 'libs/resthub/backbone-validation.ext',
-        'backbone-paginator': 'libs/backbone.paginator',
+        'bootstrap': 'libs/bootstrap',
+        'backbone-validation-orig': 'libs/backbone-validation',
+        'backbone-validation': 'libs/resthub/backbone-validation-ext',
+        'handlebars-orig': 'libs/handlebars',
+        'handlebars': 'libs/resthub/handlebars-helpers',
+        'backbone-queryparams': 'libs/backbone-queryparams',
+        'backbone-paginator': 'libs/backbone-paginator',
         'backbone-relational': 'libs/backbone-relational',
-        'backbone-queryparams': 'libs/backbone.queryparams',
+        async: 'libs/async',
         keymaster: 'libs/keymaster',
         hbs: 'libs/resthub/require-handlebars',
         'moment': 'libs/moment',
@@ -75,5 +81,5 @@ require.config({
 });
 
 require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions',
-    '../tests/require-handlebars', '../tests/resthub-backbone-pubsub', '../tests/backbone-remove',
+    '../tests/require-handlebars', '../tests/backbone-pubsub', '../tests/backbone-remove',
     '../tests/backbone-populate-model', '../tests/backbone-history']);

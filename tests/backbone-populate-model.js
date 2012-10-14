@@ -6,7 +6,7 @@ require(["jquery", "backbone"], function($, Backbone) {
             var Person = Backbone.Model.extend({initialize: function() {
             }});
 
-            this.TestView = Backbone.View.extend({
+            this.TestView = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.render();
                 },
@@ -17,7 +17,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView2 = Backbone.View.extend({
+            this.TestView2 = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.model2 = new Person();
@@ -30,7 +30,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView3 = Backbone.View.extend({
+            this.TestView3 = Backbone.ResthubView.extend({
 
                 tagName: 'form',
 
@@ -49,7 +49,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView4 = Backbone.View.extend({
+            this.TestView4 = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.render();
@@ -61,7 +61,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView5 = Backbone.View.extend({
+            this.TestView5 = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.model2 = new Person();
@@ -74,7 +74,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView6 = Backbone.View.extend({
+            this.TestView6 = Backbone.ResthubView.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.render();

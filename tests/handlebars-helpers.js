@@ -1,4 +1,4 @@
-require(['resthub-handlebars', 'moment-fr'], function(Handlebars) {
+require(['handlebars', 'moment-fr'], function(Handlebars) {
 
     module('handlebars-helpers');
 
