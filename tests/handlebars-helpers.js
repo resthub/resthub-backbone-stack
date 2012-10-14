@@ -1,4 +1,4 @@
-require(['handlebars'], function(Handlebars) {
+require(['handlebars', 'moment-fr'], function(Handlebars) {
 
     module('handlebars-helpers');
 
@@ -137,5 +137,17 @@ require(['handlebars'], function(Handlebars) {
         equal(template({n: 2, m: 2}), 'true');
         equal(template({n: 10, m: 5}), 'true');
         equal(template({n: 11, m: 5}), 'false');
+    });
+
+    test('formatDate', function() {
+        expect(7);
+        var template = Handlebars.compile('{{formatDate d o i}}');
+        equal(template({d: '2011-10-17 18:56:23', o: 'MM/DD/YYYY'}), '10/17/2011');
+        equal(template({d: '17/02/1982', o: '\\D=DD, \\M=MM, \\Y=YY', i: 'DD/MM/YYYY'}), 'D=17, M=02, Y=82');
+        equal(template({d: new Date(2010, 10, 20), o: 'DD MMMM YYYY'}), '20 novembre 2010');
+        equal(template({d: [2013, 07, 20, 11, 20]}), '2013-08-20 11:20:00');
+        equal(template({}), '');
+        equal(template({ d: 17 }), '17');
+        equal(template({ d: null }), '');
     });
 });
