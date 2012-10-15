@@ -45,6 +45,11 @@ require.config({
                'backbone-orig',  
                'underscore'  
           ]
+        },
+        'moment-fr': {
+            deps: [
+                'moment'
+            ]
         }
     },
 
@@ -69,7 +74,9 @@ require.config({
         'backbone-relational': 'libs/backbone-relational',
         async: 'libs/async',
         keymaster: 'libs/keymaster',
-        hbs: 'libs/resthub/require-handlebars'
+        hbs: 'libs/resthub/require-handlebars',
+        'moment': 'libs/moment',
+        'moment-fr': 'libs/moment-lang/fr'
     }
 });
 
