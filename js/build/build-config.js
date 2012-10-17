@@ -1,4 +1,4 @@
-﻿({
+({
     appDir: "../..",
     baseUrl: "js",
     dir: "../../target/build",
@@ -8,7 +8,7 @@
 	
     inlineText: true,
     removeCombined: true,
-    fileExclusionRegExp: /^_build/,
+    fileExclusionRegExp: /^build/,
 	
     modules: [
     {

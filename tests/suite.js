@@ -50,6 +50,12 @@ require.config({
             deps: [
                 'moment'
             ]
+        },
+        'keymaster': {
+            exports: 'key'
+        },
+        'async': {
+            exports: 'async'
         }
     },
 
