@@ -4,7 +4,7 @@
  * Time: 11:26
  */
 
-require(['async'], function() {
+require(['async'], function(async) {
 
     module('async');
 
@@ -50,7 +50,7 @@ require(['backbone', 'backbone-queryparams'], function(Backbone) {
     });
 });
 
-require(['keymaster'], function() {
+require(['keymaster'], function(key) {
 
     module('keymaster');
 
