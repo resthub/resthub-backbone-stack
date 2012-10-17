@@ -45,6 +45,12 @@ require.config({
             'backbone-orig',  
             'underscore'  
             ]
+        },
+        'keymaster': {
+            exports: 'key'
+        },
+        'async': {
+            exports: 'async'
         }
     },
 
