@@ -1,4 +1,4 @@
-define(['underscore', 'backbone-orig', 'pubsub', 'libs/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
+define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
 
 
     // extend **Backbone.View** properties and methods.
