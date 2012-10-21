@@ -56,32 +56,32 @@ require.config({
 
     // Libraries
     paths: {
-        jquery: 'libs/jquery',
-        underscore: 'libs/underscore',
-        'underscore-string': 'libs/underscore-string',
-        'backbone-orig': 'libs/backbone',
-        backbone: 'libs/resthub/backbone-resthub',
-        localstorage: 'libs/localstorage',
-        text: 'libs/text',
-        i18n: 'libs/i18n',
-        pubsub: 'libs/resthub/pubsub',
-        'bootstrap': 'libs/bootstrap',
-        'backbone-validation-orig': 'libs/backbone-validation',
-        'backbone-validation': 'libs/resthub/backbone-validation-ext',
-        'handlebars-orig': 'libs/handlebars',
-        'handlebars': 'libs/resthub/handlebars-helpers',
-        'backbone-queryparams': 'libs/backbone-queryparams',
-        'backbone-paginator': 'libs/backbone-paginator',
-        'backbone-relational': 'libs/backbone-relational',
-        async: 'libs/async',
-        keymaster: 'libs/keymaster',
-        hbs: 'libs/resthub/require-handlebars',
-        'moment': 'libs/moment'
+        jquery: 'lib/jquery',
+        underscore: 'lib/underscore',
+        'underscore-string': 'lib/underscore-string',
+        'backbone-orig': 'lib/backbone',
+        backbone: 'lib/resthub/backbone-resthub',
+        localstorage: 'lib/localstorage',
+        text: 'lib/text',
+        i18n: 'lib/i18n',
+        pubsub: 'lib/resthub/pubsub',
+        'bootstrap': 'lib/bootstrap',
+        'backbone-validation-orig': 'lib/backbone-validation',
+        'backbone-validation': 'lib/resthub/backbone-validation-ext',
+        'handlebars-orig': 'lib/handlebars',
+        'handlebars': 'lib/resthub/handlebars-helpers',
+        'backbone-queryparams': 'lib/backbone-queryparams',
+        'backbone-paginator': 'lib/backbone-paginator',
+        'backbone-relational': 'lib/backbone-relational',
+        async: 'lib/async',
+        keymaster: 'lib/keymaster',
+        hbs: 'lib/resthub/require-handlebars',
+        'moment': 'lib/moment'
     }
 });
 
-require(['router'], function(Router) {
+require(['router/app-router'], function(AppRouter) {
 
-    new Router();
+    new AppRouter();
 
 });
