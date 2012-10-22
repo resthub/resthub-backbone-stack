@@ -76,7 +76,8 @@ require.config({
         async: 'lib/async',
         keymaster: 'lib/keymaster',
         hbs: 'lib/resthub/require-handlebars',
-        'moment': 'lib/moment'
+        'moment': 'lib/moment',
+        template: '../template'
     }
 });
 
