@@ -34,6 +34,9 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
                 throw new Error('Invalid template provided.');
             }
             context = this._ensureContext(context);
+            if (this.labels) {
+                context.labels = this.labels;
+            }
             this.$el.html(this.template(context));
             return this;
         },
