@@ -41,7 +41,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         _ensureContext: function(context) {
             if (typeof context === "undefined") {
                 // Dynamic context provided as a function
-                if(this.context instanceof Function) {
+                if(_.isFunction(this.context)) {
                     context = this.context();
                 // Context provided as a context object
                 } else if (typeof this.context === 'object') {
@@ -52,7 +52,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
             // Add in the context the property named by this.context String, this.model, this.collection and this.labels if they exist.
             _.each([this.context, 'model', 'collection', 'labels'], function(key) {
                  if(typeof this[key] !== "undefined")
-                     if (this[key] && this[key].toJSON) {
+                     if (this[key].toJSON) {
                         context[key] = this[key].toJSON();
                     } else {
                         context[key] = this[key];
