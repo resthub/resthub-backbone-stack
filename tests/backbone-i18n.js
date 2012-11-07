@@ -1,0 +1,60 @@
+require(["jquery",
+         "backbone",
+         "i18n!../tests/nls/labels",
+         "i18n!../tests/nls/zz-qq/labels",
+         "hbs!../tests/templates/template2"],
+function($, Backbone, labels, labels_zzqq, template2) {
+
+    module("backbone-i18n", {
+        setup: function() {
+            this.TestView = Backbone.ResthubView.extend({
+                labels: labels,
+                template: template2,
+                root: "#qunit-fixture #main",
+                
+                initialize: function() {
+                    this.render();
+                }
+            });
+            
+            this.TestView2 = Backbone.ResthubView.extend({
+                template: template2,
+                root: "#qunit-fixture #main",
+                
+                initialize: function() {
+                    this.render();
+                }
+            });
+            
+            this.TestView3 = Backbone.ResthubView.extend({
+                labels: labels_zzqq,
+                template: template2,
+                root: "#qunit-fixture #main",
+                
+                initialize: function() {
+                    this.render();
+                }
+            });
+        },
+        teardown: function() {
+        }
+    });
+
+    test("'labels.val' should be remplaced by 'value'", 1, function() {
+        new this.TestView();
+
+        equal($("#qunit-fixture > #main > div").html(), "This is a value from labels.");
+    });
+
+    test("'labels.val' should not be rendered", 1, function() {
+        new this.TestView2();
+
+        equal($("#qunit-fixture > #main > div").html(), "This is a  from labels.");
+    });
+
+    test("'labels.val' should be remplaced by 'valeur'", 1, function() {
+        new this.TestView3();
+
+        equal($("#qunit-fixture > #main > div").html(), "This is a valeur from labels.");
+    });
+});
