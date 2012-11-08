@@ -34,30 +34,34 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
                 throw new Error('Invalid template provided.');
             }
             context = this._ensureContext(context);
-            if (this.labels) {
-                context.labels = this.labels;
-            }
             this.$el.html(this.template(context));
             return this;
         },
 
         _ensureContext: function(context) {
-            if (!context) {
-                if (typeof this.context === 'object') {
+            if (typeof context === "undefined") {
+                // Dynamic context provided as a function
+                if(_.isFunction(this.context)) {
+                    context = this.context();
+                // Context provided as a context object
+                } else if (typeof this.context === 'object') {
                     context = this.context;
-                } else {
-                    var key = _.find([this.context, 'model', 'collection'], function(key) {
-                        return this[key];
-                    }, this);
-                    context = this[key];
-                }
+                // Else we automatically populate it with a custom property name set in this.context, model property or collection property
+                } else context = {};                    
             }
-            if (context && context.toJSON) {
-                context = context.toJSON();
-            }
+            // Add in the context the property named by this.context String, this.model, this.collection and this.labels if they exist.
+            _.each([this.context, 'model', 'collection', 'labels'], function(key) {
+                 if(typeof this[key] !== "undefined")
+                     if (this[key].toJSON) {
+                        context[key] = this[key].toJSON();
+                    } else {
+                        context[key] = this[key];
+                    }
+                
+            }, this);
             // Maybe throw an error if the context could not be determined
             // instead of returning {}
-            return context || {};
+            return context;
         },
 
         _configure: function(options) {
