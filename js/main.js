@@ -81,8 +81,5 @@ require.config({
     }
 });
 
-require(['router/app-router'], function(AppRouter) {
-
-    new AppRouter();
-
-});
+// Load our app module and pass it to our definition function
+require(['app']);
