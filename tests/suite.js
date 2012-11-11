@@ -81,10 +81,11 @@ require.config({
         keymaster: 'lib/keymaster',
         hbs: 'lib/resthub/require-handlebars',
         'moment': 'lib/moment',
-        'moment-fr': 'lib/moment-lang/fr'
+        'moment-fr': 'lib/moment-lang/fr',
+        console: 'lib/resthub/console'
     }
 });
 
 require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions',
     '../tests/require-handlebars', '../tests/backbone-pubsub', '../tests/backbone-remove',
-    '../tests/backbone-populate-model', '../tests/backbone-history', '../tests/backbone-i18n']);
+    '../tests/backbone-populate-model', '../tests/backbone-history', '../tests/console', '../tests/backbone-i18n']);

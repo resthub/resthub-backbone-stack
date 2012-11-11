@@ -82,6 +82,11 @@
             <name>Brian Clozel</name>
             <timezone>+1</timezone>
         </developer>
+        <developer>
+            <id>jripault</id>
+            <name>Julien Ripault</name>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
     <scm>
         <connection>scm:git:https://github.com/resthub/resthub-backbone-stack.git</connection>
