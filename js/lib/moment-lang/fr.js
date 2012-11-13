@@ -1,4 +1,4 @@
-﻿// moment.js language configuration
+// moment.js language configuration
 // language : french (fr)
 // author : John Fischer : https://github.com/jfroffice
 (function () {

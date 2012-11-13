@@ -76,10 +76,11 @@ require.config({
         async: 'lib/async',
         keymaster: 'lib/keymaster',
         hbs: 'lib/resthub/require-handlebars',
-        'moment': 'lib/moment',
-        template: '../template'
+        moment: 'lib/moment',
+        template: '../template',
+        console: 'lib/resthub/console'
     }
 });
 
 // Load our app module and pass it to our definition function
-require(['app']);
+require(['console', 'app']);
