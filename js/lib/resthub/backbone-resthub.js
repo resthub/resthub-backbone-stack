@@ -39,7 +39,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         },
 
         _ensureContext: function(context) {
-            // If context provided as parameter in undefined or not an object, use this.context attribute
+            // If context provided as parameter is undefined or not an object, use this.context attribute
             if ((typeof context === "undefined") || (typeof context !== 'object')) {
                 // Dynamic context provided as a function
                 if(_.isFunction(this.context)) {
