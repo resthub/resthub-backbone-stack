@@ -39,6 +39,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         },
 
         _ensureContext: function(context) {
+            // If context provided as parameter in undefined or not an object, use this.context attribute
             if ((typeof context === "undefined") || (typeof context !== 'object')) {
                 // Dynamic context provided as a function
                 if(_.isFunction(this.context)) {
@@ -48,6 +49,15 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
                     context = this.context;
                 // Else we automatically populate it with a custom property name set in this.context, model property or collection property
                 } else context = {};                    
+            }
+            // If context provided as parameter is a Model or Collection instance, we save it for later use
+            if(context instanceof Backbone.Model) {
+                var jsonModel = context.toJSON();
+                context = {};
+            }
+            if(context instanceof Backbone.Collection) {
+                var jsonCollection = context.toJSON();
+                context = {};
             }
             // Add in the context the property named by this.context String, this.model, this.collection and this.labels if they exist.
             _.each([this.context, 'model', 'collection', 'labels'], function(key) {
@@ -59,6 +69,13 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
                     }
                 
             }, this);
+            // Eventually override default model and collection attribute with the one passed as parameter
+            if(context instanceof Backbone.Model) {
+                context['model'] = jsonModel;
+            }
+            if(context instanceof Backbone.Collection) {
+                context['collection'] = jsonCollection;
+            }
             // Maybe throw an error if the context could not be determined
             // instead of returning {}
             return context;
