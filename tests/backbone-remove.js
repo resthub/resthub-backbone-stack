@@ -1,8 +1,8 @@
-require(["jquery", "backbone"], function($, Backbone) {
+require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
 
     module("backbone-remove", {
         setup: function() {
-            this.TestView = Backbone.ResthubView.extend({
+            this.TestView = Resthub.View.extend({
                 initialize: function() {
                     this.text = 'HTML Content';
                     this.render();
@@ -13,7 +13,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
-            this.TestView2 = Backbone.ResthubView.extend({
+            this.TestView2 = Resthub.View.extend({
                 initialize: function() {
                     this.counts = {};
                     this.text = 'HTML Content 2';

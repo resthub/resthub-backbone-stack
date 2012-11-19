@@ -1,10 +1,10 @@
-require(["backbone", "pubsub"], function(Backbone, pubsub) {
+require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
     var TYPE5 = "type5";
 
     module("resthub-backbone-pubsub", {
         setup: function() {
-            this.TestView = Backbone.ResthubView.extend({
+            this.TestView = Resthub.View.extend({
 
                 events: {
                     "click #btn1": "buttonClicked",
@@ -40,7 +40,7 @@ require(["backbone", "pubsub"], function(Backbone, pubsub) {
                 }
             });
 
-            this.TestView2 = Backbone.ResthubView.extend({
+            this.TestView2 = Resthub.View.extend({
 
                 events: {
                     "!global": "globalFired",
@@ -59,7 +59,7 @@ require(["backbone", "pubsub"], function(Backbone, pubsub) {
                 }
             });
 
-            this.TestView3 = Backbone.ResthubView.extend({
+            this.TestView3 = Resthub.View.extend({
 
                 initialize: function() {
                     this.counts = {};

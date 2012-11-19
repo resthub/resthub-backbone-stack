@@ -1,8 +1,9 @@
-define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
+define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
 
+	var Resthub = { };
 
     // extend **Backbone.View** properties and methods.
-    Backbone.ResthubView = Backbone.View.extend({
+    Resthub.View = Backbone.View.extend({
         
         resthubViewOptions : ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'],
 
@@ -39,6 +40,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         },
 
         _ensureContext: function(context) {
+            // If context provided as parameter is undefined or not an object, use this.context attribute
             if ((typeof context === "undefined") || (typeof context !== 'object')) {
                 // Dynamic context provided as a function
                 if(_.isFunction(this.context)) {
@@ -48,6 +50,15 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
                     context = this.context;
                 // Else we automatically populate it with a custom property name set in this.context, model property or collection property
                 } else context = {};                    
+            }
+            // If context provided as parameter is a Model or Collection instance, we save it for later use
+            if(context instanceof Backbone.Model) {
+                var jsonModel = context.toJSON();
+                context = {};
+            }
+            if(context instanceof Backbone.Collection) {
+                var jsonCollection = context.toJSON();
+                context = {};
             }
             // Add in the context the property named by this.context String, this.model, this.collection and this.labels if they exist.
             _.each([this.context, 'model', 'collection', 'labels'], function(key) {
@@ -59,6 +70,13 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
                     }
                 
             }, this);
+            // Eventually override default model and collection attribute with the one passed as parameter
+            if(context instanceof Backbone.Model) {
+                context['model'] = jsonModel;
+            }
+            if(context instanceof Backbone.Collection) {
+                context['collection'] = jsonCollection;
+            }
             // Maybe throw an error if the context could not be determined
             // instead of returning {}
             return context;
@@ -90,7 +108,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         //
         delegateEvents: function(events) {
 
-            Backbone.ResthubView.__super__.delegateEvents.call(this, events);
+            Resthub.View.__super__.delegateEvents.call(this, events);
             this._eventsSubscriptions = [];
 
             if (!(events || (events = getValue(this, 'events')))) return;
@@ -108,13 +126,13 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
             if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
                 PubSub.off(this._eventsSubscriptions.join(' '), null, this);
             }
-            Backbone.ResthubView.__super__.undelegateEvents.call(this);
+            Resthub.View.__super__.undelegateEvents.call(this);
         },
 
         // Override backbone setElement to bind a destroyed special event
         // when el is detached from DOM
         setElement: function(element, delegate) {
-            Backbone.ResthubView.__super__.setElement.call(this, element, delegate);
+            Resthub.View.__super__.setElement.call(this, element, delegate);
 
             if (this.root) {
                 this._ensureRoot();
@@ -134,7 +152,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         // after remove : this prevents dispose to be called twice
         remove: function() {
             this.$el.off("destroyed");
-            Backbone.ResthubView.__super__.remove.call(this);
+            Resthub.View.__super__.remove.call(this);
             var self = this;
             // call backbone dispose method on el DOM removing
             this.$el.on("destroyed", function() {
@@ -149,7 +167,7 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
             // perform actions before effective close
             this.onDispose();
 
-            Backbone.ResthubView.__super__.dispose.call(this);
+            Resthub.View.__super__.dispose.call(this);
             PubSub.off(null, null, this);
 
             if (Backbone.Validation) {
@@ -230,5 +248,5 @@ define(['underscore', 'backbone-orig', 'pubsub', 'lib/resthub/jquery-event-destr
         return _.isFunction(object[prop]) ? object[prop]() : object[prop];
     };
 
-    return Backbone;
+    return Resthub;
 });

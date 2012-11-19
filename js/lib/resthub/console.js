@@ -94,6 +94,8 @@ define(['jquery'], function ($) {
 
     // manage global JS errors
     window.onerror = function(message, url, linenumber){
-        sendLogToServer('error', 'JavaScript error: ' + message + ' on line ' + linenumber + ' for ' + url);
+        if(enabledFor('error')){
+            sendLogToServer('error', 'JavaScript error: ' + message + ' on line ' + linenumber + ' for ' + url);
+        }
     };
 });
