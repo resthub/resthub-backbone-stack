@@ -1,13 +1,14 @@
 require(["jquery",
          "backbone",
+         "resthub",
          "i18n!../tests/nls/labels",
          "i18n!../tests/nls/zz-qq/labels",
          "hbs!../tests/templates/template2"],
-function($, Backbone, labels, labels_zzqq, template2) {
+function($, Backbone, Resthub, labels, labels_zzqq, template2) {
 
     module("backbone-i18n", {
         setup: function() {
-            this.TestView = Backbone.ResthubView.extend({
+            this.TestView = Resthub.View.extend({
                 labels: labels,
                 template: template2,
                 root: "#qunit-fixture #main",
@@ -17,7 +18,7 @@ function($, Backbone, labels, labels_zzqq, template2) {
                 }
             });
             
-            this.TestView2 = Backbone.ResthubView.extend({
+            this.TestView2 = Resthub.View.extend({
                 template: template2,
                 root: "#qunit-fixture #main",
                 
@@ -26,7 +27,7 @@ function($, Backbone, labels, labels_zzqq, template2) {
                 }
             });
             
-            this.TestView3 = Backbone.ResthubView.extend({
+            this.TestView3 = Resthub.View.extend({
                 labels: labels_zzqq,
                 template: template2,
                 root: "#qunit-fixture #main",

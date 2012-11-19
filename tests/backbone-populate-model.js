@@ -1,4 +1,4 @@
-require(["jquery", "backbone"], function($, Backbone) {
+require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
 
     module("backbone-populate-model", {
         setup: function() {
@@ -6,7 +6,7 @@ require(["jquery", "backbone"], function($, Backbone) {
             var Person = Backbone.Model.extend({initialize: function() {
             }});
 
-            this.TestView = Backbone.ResthubView.extend({
+            this.TestView = Resthub.View.extend({
                 initialize: function() {
                     this.render();
                 },
@@ -17,7 +17,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView2 = Backbone.ResthubView.extend({
+            this.TestView2 = Resthub.View.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.model2 = new Person();
@@ -30,7 +30,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView3 = Backbone.ResthubView.extend({
+            this.TestView3 = Resthub.View.extend({
 
                 tagName: 'form',
 
@@ -49,7 +49,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView4 = Backbone.ResthubView.extend({
+            this.TestView4 = Resthub.View.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.render();
@@ -61,7 +61,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView5 = Backbone.ResthubView.extend({
+            this.TestView5 = Resthub.View.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.model2 = new Person();
@@ -74,7 +74,7 @@ require(["jquery", "backbone"], function($, Backbone) {
                 }
             });
 
-            this.TestView6 = Backbone.ResthubView.extend({
+            this.TestView6 = Resthub.View.extend({
                 initialize: function() {
                     this.model = new Person();
                     this.render();

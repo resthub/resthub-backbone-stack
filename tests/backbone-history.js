@@ -1,9 +1,9 @@
-require(["jquery", "backbone"], function($, Backbone) {
+require(['jquery', 'backbone', 'resthub'], function($, Backbone, Resthub) {
 
     module("backbone-history", {
         setup: function() {
 
-            var TestView = Backbone.ResthubView.extend({
+            var TestView = Resthub.View.extend({
 
                 initialize: function() {
                     this.text = '<a id="aTest" href="/route1">route1</a><a id="aTest2" href="/route2">route2</a><a id="aTest3" href="/">route3</a>';

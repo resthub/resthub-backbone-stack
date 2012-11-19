@@ -12,7 +12,7 @@ require.config({
         'handlebars-orig': {
             exports: 'Handlebars'
         },
-        'backbone-orig': {
+        'backbone': {
             deps: [
             'underscore',
             'underscore-string',
@@ -22,13 +22,13 @@ require.config({
         },
         'backbone-queryparams': {
             deps: [
-            'backbone-orig',
+            'backbone',
             'underscore'
             ]
         },
         'backbone-paginator': {
             deps: [
-            'backbone-orig',
+            'backbone',
             'underscore',
             'jquery'
             ],
@@ -41,7 +41,7 @@ require.config({
         },
         'backbone-relational': {
             deps: [
-            'backbone-orig',  
+            'backbone',  
             'underscore'  
             ]
         },
@@ -63,8 +63,8 @@ require.config({
         jquery: 'lib/jquery',
         underscore: 'lib/underscore',
         'underscore-string': 'lib/underscore-string',
-        'backbone-orig': 'lib/backbone',
-        backbone: 'lib/resthub/backbone-resthub',
+        backbone: 'lib/backbone',
+        resthub: 'lib/resthub/resthub',
         localstorage: 'lib/localstorage',
         text: 'lib/text',
         i18n: 'lib/i18n',
@@ -80,8 +80,9 @@ require.config({
         async: 'lib/async',
         keymaster: 'lib/keymaster',
         hbs: 'lib/resthub/require-handlebars',
-        'moment': 'lib/moment',
+        moment: 'lib/moment',
         'moment-fr': 'lib/moment-lang/fr',
+        template: '../template',
         console: 'lib/resthub/console'
     }
 });
