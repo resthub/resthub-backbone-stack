@@ -197,11 +197,39 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
             // build array of form attributes to refresh model
             fields.each(function() {
-                attributes[Backbone.$(this).attr('name')] = Backbone.$(this).val();
+                var $this = Backbone.$(this);
+                var name = $this.attr('name');
+
+                // specific test for radio to get only checked option or null is no option checked
+                if ($this.is(':radio')) {
+                    if ($this.attr('checked')) {
+                        attributes[name] = $this.val();
+                    } else if (!attributes[name]) {
+                        attributes[name] = null;
+                    }
+                } else if ($this.is(':checkbox')) {
+                    if (!attributes[name]) {
+                        attributes[name] = null;
+                        var checkboxes = form.find("input[type='checkbox'][name='"+name+"']");
+                        if (checkboxes.length > 1) {
+                            attributes[name] = [];
+                        }
+                    }
+                    if ($this.is(':checked')){
+                        if (_.isArray(attributes[name])) {
+                            attributes[name].push($this.val());
+                        } else {
+                            attributes[name] = $this.val();
+                        }
+                    }
+                } else {
+                    attributes[name] = $this.val();
+                }
             });
 
             if (model) {
-                model.set(attributes);
+                model.set(attributes, {silent: true});
+                model.set({});
             }
         }
 
