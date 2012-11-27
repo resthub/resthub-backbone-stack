@@ -2,6 +2,201 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
 	var Resthub = { };
 
+    Backbone.ResthubValidation = (function () {
+
+        var synchronized = [];
+
+        var buildValidation = function (resp, model) {
+            var validation = {};
+
+            for (var propKey in resp.constraints) {
+                if (model.prototype.excludes && _.indexOf(model.prototype.excludes, propKey) != -1) {
+                    continue;
+                } else if (model.prototype.includes && _.indexOf(model.prototype.includes, propKey) == -1) {
+                    continue;
+                }
+                var prop = [];
+                var constraints = resp.constraints[propKey];
+                var required = null;
+
+                for (var idx in constraints) {
+                    var constraint = mapConstraint(constraints[idx])
+                    if (constraint.required) required = constraint.required;
+                    prop.push(constraint);
+                }
+
+                if (!required) {
+                    prop.push({required: false});
+                }
+
+                validation[propKey] = prop;
+            }
+
+            model.prototype.validation = validation;
+            console.log(model.prototype.validation);
+        };
+
+        var syncError = function (resp) {};
+
+        var mapConstraint = function (constraint) {
+            var prop = {};
+            switch(constraint.type) {
+                case 'Null' :
+                    prop['fn'] = function (value) {return nullValidator(value, constraint.message)};
+                    break;
+                case 'AssertTrue' :
+                    prop['fn'] = function (value) {return assertTrueValidator(value, constraint.message)};
+                    break;
+                case 'AssertFalse' :
+                    prop['fn'] = function (value) {return assertFalseValidator(value, constraint.message)};
+                    break;
+                case 'Size':
+                    prop['fn'] = function (value) {return sizeValidator(value, constraint.min, constraint.max, constraint.message)};
+                    break;
+                case 'Min':
+                case 'DecimalMin':
+                    prop['fn'] = function (value) {return minValidator(value, constraint.min, constraint.message)};
+                    break;
+                case 'Max':
+                case 'DecimalMax':
+                    prop['fn'] = function (value) {return maxValidator(value, constraint.max, constraint.message)};
+                    break;
+                case 'Pattern':
+                    prop['pattern'] = constraint.regexp;
+                    prop['msg'] = constraint.message;
+                    break;
+                case 'NotNull':
+                    prop['required'] = true;
+                    prop['msg'] = constraint.message;
+                    break;
+                case 'URL':
+                    prop['fn'] = function (value) {return urlValidator(value, constraint.protocol, constraint.host, constraint.port, constraint.regexp, constraint.message)};
+                    break;
+                case 'Range':
+                    prop['range'] = [constraint.min || 0, constraint.max || 0x7fffffffffffffff];
+                    prop['msg'] = constraint.message;
+                    break;
+                case 'Length':
+                    prop['rangeLength'] = [constraint.min || 0, constraint.max || 0x7fffffff];
+                    prop['msg'] = constraint.message;
+                    break;
+                case 'Email':
+                    prop['pattern'] = 'email';
+                    prop['msg'] = constraint.message;
+                    break;
+                case 'CreditCardNumber':
+                    prop['pattern'] = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
+                    prop['msg'] = constraint.message;
+                    break;
+            }
+
+            return prop;
+        };
+
+        var nullValidator = function (value, msg) {
+            if (hasValue(value)) {
+                return msg;
+            }
+        };
+
+        var assertTrueValidator = function (value, msg) {
+            if (hasValue(value) && (_.isString(value) && value.toLowerCase() != "true")) {
+                return msg;
+            }
+        };
+
+        var assertFalseValidator = function (value, msg) {
+            if (hasValue(value) && (_.isString(value) && value.toLowerCase() == "true")) {
+                return msg;
+            }
+        };
+
+        var minValidator = function (value, min, msg) {
+            if (hasValue(value) && (!_.isNumber(value) || (value.length < min))) {
+                return msg;
+            }
+        };
+
+        var maxValidator = function (value, max, msg) {
+            if (hasValue(value) && (!_.isNumber(value) || (value.length > max))) {
+                return msg;
+            }
+        };
+
+        var sizeValidator = function (value, min, max, msg) {
+            if (hasValue(value) && ((_.isString(value) || _.isArray(value)) && (value.length < min || value.length > max))) {
+                return msg;
+            }
+        };
+
+        var urlValidator = function (value, protocol, host, port, regexp, msg) {
+            if (!_.isString(value) || !value.match(Backbone.ResthubValidation.urlPattern)) {
+                return msg;
+            }
+            if (regexp && !value.match(regexp)) {
+                return msg;
+            }
+
+            var urlParts = value.match(Backbone.ResthubValidation.urlParser);
+            var protocolValue = urlParts[2];
+
+            if (protocol && protocol != protocolValue) {
+                return msg;
+            }
+
+            if (host || port != -1) {
+                var hostValue = urlParts[4];
+                var indexOfPort = hostValue.indexOf(':');
+                if (indexOfPort > -1) {
+                    var portValue = hostValue.substring(indexOfPort + 1);
+                    hostValue = hostValue.substring(0, indexOfPort);
+                }
+
+                if (port != -1 && (isNaN (portValue - 0) || (port != portValue))) {
+                    return msg;
+                }
+
+                if (host && host != hostValue) {
+                   return msg;
+                }
+            }
+
+
+        };
+
+        var hasValue = function(value) {
+            return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value === '') || _.isArray(value) && value.length == 0);
+        };
+
+        var trim = String.prototype.trim ?
+            function(text) {
+                return text === null ? '' : String.prototype.trim.call(text);
+            } :
+            function(text) {
+                var trimLeft = /^\s+/,
+                    trimRight = /\s+$/;
+
+                return text === null ? '' : text.toString().replace(trimLeft, '').replace(trimRight, '');
+            };
+
+        return {
+            url : 'api/validation',
+            urlPattern : /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
+            urlParser : /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,
+
+            synchronize: function (model) {
+                if (!synchronized[model.prototype.className]) {
+                    synchronized[model.prototype.className] = true;
+
+                    $.get(this.url+'/' + model.prototype.className)
+                        .success (_.bind(function (resp) {buildValidation(resp, model)}, this))
+                        .error (_.bind(syncError, this));
+                }
+            }
+        };
+
+    })();
+
     // extend **Backbone.View** properties and methods.
     Resthub.View = Backbone.View.extend({
         
