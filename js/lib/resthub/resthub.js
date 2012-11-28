@@ -241,14 +241,14 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         };
 
         ResthubValidation.urlValidator = function (value, protocol, host, port, regexp, msg) {
-            if (!_.isString(value) || !value.match(Backbone.ResthubValidation.urlPattern)) {
+            if (!_.isString(value) || !value.match(ResthubValidation.urlPattern)) {
                 return msg;
             }
             if (regexp && !value.match(regexp)) {
                 return msg;
             }
 
-            var urlParts = value.match(Backbone.ResthubValidation.urlParser);
+            var urlParts = value.match(ResthubValidation.urlParser);
             var protocolValue = urlParts[2];
 
             if (protocol && protocol != protocolValue) {
