@@ -18,8 +18,16 @@ require(['backbone'], function(Backbone) {
     module('backbone');
 
     test('backbone inclusion', function() {
-        ok(Backbone, "backbone exists and is not undefined");
-        ok(Backbone.ResthubView, "backbone resthub view exists and is not undefined");
+        ok(Backbone, "Backbone exists and is not undefined");
+    });
+});
+
+require(['resthub'], function(Resthub) {
+
+    module('resthub');
+
+    test('resthub inclusion', function() {
+        ok(Resthub, "Resthub exists and is not undefined");
     });
 });
 
