@@ -89,8 +89,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://github.com/resthub/resthub-backbone-stack.git</connection>
-        <url>https://github.com/resthub/resthub-backbone-stack/</url>
+        <connection>scm:git:git@github.com:resthub/resthub-backbone-stack.git</connection>
+        <developerConnection>scm:git:git@github.com:resthub/resthub-backbone-stack.git</developerConnection>
+        <url>scm:git:git@github.com:resthub/resthub-backbone-stack.git</url>
     </scm>
 
     <build>
