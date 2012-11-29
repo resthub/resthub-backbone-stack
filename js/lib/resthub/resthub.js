@@ -15,17 +15,19 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         // is locale changed ?
         var localeChanged;
 
+        ResthubValidation.options = {};
+
         // server url for the web service exporting validation constraints
-        ResthubValidation.url = 'api/validation';
+        ResthubValidation.options.url = 'api/validation';
 
         // set to true if we expect only messages keys from server and not localized messages
-        ResthubValidation.keyOnly = false,
+        ResthubValidation.options.keyOnly = false,
 
         // regular expression used to validate urls
-        ResthubValidation.urlPattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
+        ResthubValidation.options.urlPattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
 
         // regular expression used to parse urls
-        ResthubValidation.urlParser = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,
+        ResthubValidation.options.urlParser = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,
 
         // Function to be called by end user once the locale changed on client.
         // set the current locale and a flag
@@ -57,13 +59,14 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
                 var prop = [];
                 var constraints = resp.constraints[propKey];
-                var required, constraint;
+                var constraint;
+                var required = null;
 
                 for (var idx in constraints) {
-                    constraint = required = null;
+                    constraint = null;
                     var currentConstraint = constraints[idx];
                     // replace returned message by the client custom provided message, if any
-                    constraints[idx].message = ResthubValidation.constraintMessage(currentConstraint.message, messages);
+                    constraints[idx].message = ResthubValidation.constraintMessage(propKey, currentConstraint, messages);
 
                     // get the validator for the current constraint type
                     // and execute callback if defined.
@@ -105,6 +108,18 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                     msg: constraint.message
                 }
             },
+            'NotEmpty': function (constraint) {
+                return {
+                    required: true,
+                    msg: constraint.message
+                }
+            },
+            'NotBlank': function (constraint) {
+                return {
+                    required: true,
+                    msg: constraint.message
+                }
+            },
             'Null': function (constraint) {
                 return {
                     fn: function (value) {return ResthubValidation.nullValidator(value, constraint.message)}
@@ -127,22 +142,22 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             },
             'Min': function (constraint) {
                 return {
-                    fn: function (value) {return ResthubValidation.minValidator(value, constraint.min, constraint.message)}
+                    fn: function (value) {return ResthubValidation.minValidator(value, constraint.value, constraint.message)}
                 }
             },
             'DecimalMin': function (constraint) {
                 return {
-                    fn: function (value) {return ResthubValidation.minValidator(value, constraint.min, constraint.message)}
+                    fn: function (value) {return ResthubValidation.decimalMinValidator(value, constraint.value, constraint.message)}
                 }
             },
             'Max': function (constraint) {
                 return {
-                    fn: function (value) {return ResthubValidation.maxValidator(value, constraint.max, constraint.message)}
+                    fn: function (value) {return ResthubValidation.maxValidator(value, constraint.value, constraint.message)}
                 }
             },
             'DecimalMax': function (constraint) {
                 return {
-                    fn: function (value) {return ResthubValidation.maxValidator(value, constraint.max, constraint.message)}
+                    fn: function (value) {return ResthubValidation.decimalMaxValidator(value, constraint.value, constraint.message)}
                 }
             },
             'Pattern': function (constraint) {
@@ -196,10 +211,16 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         // retrieves a message key in the client side defined messages map if any
         // returns the value contained in messages map if any (e.g. for localization
         // purposes) or the original message if no data found in messages object
-        ResthubValidation.constraintMessage = function (messageKey, messages) {
-            var msg = messageKey;
+        ResthubValidation.constraintMessage = function (propKey, constraint, messages) {
+            var msg = constraint.message;
 
-            if (messages && messages[messageKey]) msg = messages[messageKey];
+            if (messages && messages[constraint.message]) {
+                msg = messages[constraint.message];
+
+                for (p in constraint) {
+                    msg = msg.replace(new RegExp('{'+p+'}', 'g'), constraint[p]);
+                }
+            }
 
             return msg;
         };
@@ -223,13 +244,29 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         };
 
         ResthubValidation.minValidator = function (value, min, msg) {
-            if (ResthubValidation.hasValue(value) && (!_.isNumber(value) || (value.length < min))) {
+            var numValue = parseInt(value);
+            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
                 return msg;
             }
         };
 
         ResthubValidation.maxValidator = function (value, max, msg) {
-            if (ResthubValidation.hasValue(value) && (!_.isNumber(value) || (value.length > max))) {
+            var numValue = parseInt(value);
+            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
+                return msg;
+            }
+        };
+
+        ResthubValidation.decimalMinValidator = function (value, min, msg) {
+            var numValue = parseFloat(value);
+            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
+                return msg;
+            }
+        };
+
+        ResthubValidation.decimalMaxValidator = function (value, max, msg) {
+            var numValue = parseFloat(value);
+            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
                 return msg;
             }
         };
@@ -308,14 +345,14 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
                 synchronized[model.prototype.className] = true;
 
-                $.get(this.url + '/' + model.prototype.className, {locale:locale, keyOnly:this.keyOnly})
+                $.get(ResthubValidation.options.url + '/' + model.prototype.className, {locale:locale, keyOnly:model.prototype.keyOnly || ResthubValidation.options.keyOnly})
                     .success (_.bind(function (resp) {buildValidation(resp, model, messages)}, this));
             }
         }
 
         return ResthubValidation;
 
-    })();
+      })();
 
     // extend **Backbone.View** properties and methods.
     Resthub.View = Backbone.View.extend({
