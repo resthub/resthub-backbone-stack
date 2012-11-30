@@ -15,19 +15,18 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         // is locale changed ?
         var localeChanged;
 
-        ResthubValidation.options = {};
+        ResthubValidation.options = {
+            // server url for the web service exporting validation constraints
+            url: 'api/validation',
 
-        // server url for the web service exporting validation constraints
-        ResthubValidation.options.url = 'api/validation';
+            // regular expression used to validate urls
+            urlPattern: /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
 
-        // set to true if we expect only messages keys from server and not localized messages
-        ResthubValidation.options.keyOnly = false,
+            // regular expression used to parse urls
+            urlParser: /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
+        };
 
-        // regular expression used to validate urls
-        ResthubValidation.options.urlPattern = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
-
-        // regular expression used to parse urls
-        ResthubValidation.options.urlParser = /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/,
+        ResthubValidation.messages = {};
 
         // Function to be called by end user once the locale changed on client.
         // set the current locale and a flag
@@ -214,8 +213,10 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         ResthubValidation.constraintMessage = function (propKey, constraint, messages) {
             var msg = constraint.message;
 
-            if (messages && messages[constraint.message]) {
-                msg = messages[constraint.message];
+            var msgKey = 'validation.' + constraint.type + '.message';
+
+            if (messages && messages[msgKey]) {
+                msg = messages[msgKey];
 
                 for (p in constraint) {
                     msg = msg.replace(new RegExp('{'+p+'}', 'g'), constraint[p]);
@@ -345,14 +346,16 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
                 synchronized[model.prototype.className] = true;
 
-                $.get(ResthubValidation.options.url + '/' + model.prototype.className, {locale:locale, keyOnly:model.prototype.keyOnly || ResthubValidation.options.keyOnly})
-                    .success (_.bind(function (resp) {buildValidation(resp, model, messages)}, this));
+                var msgs = {};
+
+                $.get(ResthubValidation.options.url + '/' + model.prototype.className, {locale:locale})
+                    .success (_.bind(function (resp) {buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, messages))}, this));
             }
         }
 
         return ResthubValidation;
 
-      })();
+    })();
 
     // extend **Backbone.View** properties and methods.
     Resthub.View = Backbone.View.extend({
