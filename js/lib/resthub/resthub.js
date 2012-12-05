@@ -380,7 +380,13 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
         // retrieves validation constraints from server from the given model and considering
         // the client side defined messages
-        ResthubValidation.synchronize = function(model, messages) {
+        ResthubValidation.synchronize = function(model, messages, errorCallback) {
+
+            if (arguments.length === 2 && _.isFunction(messages)) {
+                errorCallback = messages;
+                messages = {};
+            }
+
             // perform effective synchronization by sending a REST GET request
             // only if the current model was not already synchronized or if the client
             // locale changed
@@ -396,16 +402,23 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                     model.prototype.validation = model.prototype.originalValidation;
                 }
 
-                synchronized[model.prototype.className] = true;
-
                 var msgs = {};
 
                 $.get(ResthubValidation.options.url + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
-                    buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, messages))
-                }, this));
+                        buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, messages));
+                        synchronized[model.prototype.className] = true;
+                    }, this))
+                    .error(function (resp) {
+                        if (errorCallback) errorCallback(resp);
+                        else ResthubValidation.options.errorCallback(resp);
+                    });
             }
-        }
+        };
+
+        ResthubValidation.options.errorCallback = function (resp) {
+            console.error("error calling server : status code " + resp.status + " and text '" + resp.statusText + "'");
+        };
 
         return ResthubValidation;
 
