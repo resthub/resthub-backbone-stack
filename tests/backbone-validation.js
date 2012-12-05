@@ -1,7 +1,10 @@
 require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/model1", "../tests/validation/model2", "backbone-validation"], function(Backbone, Resthub, $, _, model1, model2) {
 
+    var nbGetCalled;
+
     module("resthub-backbone-validation", {
         setup: function() {
+            nbGetCalled = 0;
 
             this.Model1 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
@@ -13,7 +16,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
             this.Model2 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
-                includes: ['minMax', 'assertTrue'],
+                includes: ['minMax', 'assertTrue', 'telephoneNumber'],
 
                 initialize: _.bind(function() {
                     Resthub.Validation.synchronize(this.Model2);
@@ -22,7 +25,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
             this.Model3 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
-                excludes: ['size', 'assertTrue'],
+                excludes: ['size', 'assertTrue', 'telephoneNumber'],
 
                 initialize: _.bind(function() {
                     Resthub.Validation.synchronize(this.Model3);
@@ -61,6 +64,14 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                 }
             });
 
+            this.Model6 = Backbone.Model.extend({
+                className: 'org.resthub.validation.model.Other',
+
+                initialize: _.bind(function() {
+                    Resthub.Validation.synchronize(this.Model6);
+                }, this)
+            });
+
             this.mockedGet1 = function(url, data) {
                 return {
                     success: function(callback) {
@@ -77,6 +88,15 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                 };
             };
 
+            this.mockedGet3 = function(url, data) {
+                nbGetCalled += 1;
+                return {
+                    success: function(callback) {
+                        callback({});
+                    }
+                };
+            };
+
             _.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
         },
         teardown: function() {
@@ -89,11 +109,9 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
     });
 
     test("default parameters should be set", 2, function() {
-        var locale = window.navigator.language || window.navigator.userLanguage;
-
         $.get = function(url, data) {
             equal(url, "api/validation/org.resthub.validation.model.User", "incorrect url");
-            equal(data.locale, locale, "incorrect locale");
+            ok(data.locale, "locale should be defined");
 
             return {
                 success: function(callback) {
@@ -645,21 +663,102 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(!model5.validate({"size": "aaaaaaaaaa"}), "valid size should be valid");
     });
 
-    test("overriding constraints", 8, function() {
+    test("custom constraints", 13, function() {
         $.get = this.mockedGet2;
 
-        var model5 = new this.Model5();
+        var model2 = new this.Model2();
 
-        ok(!_.isEmpty(model5.validation.size), "validation should contain size");
-        ok(!_.isEmpty(model5.validation.assertTrue), "validation should contain assertTrue");
+        ok(_.isEmpty(model2.validation.telephoneNumber), "validation should contain telephoneNumber");
+        ok(!_.isEmpty(model2.validation.assertTrue), "validation should contain assertTrue");
 
-        ok(model5.validate({"assertTrue": false}), "invalid assertTrue should not be valid");
-        ok(!model5.validate({"assertTrue": "true"}), "valid assertTrue should be valid");
+        ok(model2.validate({"assertTrue": false}), "invalid assertTrue should not be valid");
+        ok(!model2.validate({"assertTrue": "true"}), "valid assertTrue should be valid");
 
-        ok(model5.validate({"size": "aa"}), "invalid size should not be valid");
-        ok(model5.validate({"size": "aaaaa"}), "invalid size should not be valid");
-        ok(!model5.validate({"size": "aaaaaa"}), "valid size should be valid");
-        ok(!model5.validate({"size": "aaaaaaaaaa"}), "valid size should be valid");
+        Resthub.Validation.addValidator('TelephoneNumber', function(constraint, msg) {
+            return {
+                pattern: /^[+]?([0-9]*[\\.\\s\\-\\(\\)]|[0-9]+){6,24}$/,
+                msg: msg
+            };
+        });
+
+        Resthub.Validation.messages = {
+            'validation.TelephoneNumber.message': 'telephone number is not valid'
+        };
+
+        Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
+
+        model2 = new this.Model2();
+
+        ok(!_.isEmpty(model2.validation.telephoneNumber), "validation should contain telephoneNumber");
+        ok(!_.isEmpty(model2.validation.assertTrue), "validation should contain assertTrue");
+
+        ok(model2.validate({"assertTrue": false}), "invalid assertTrue should not be valid");
+        ok(!model2.validate({"assertTrue": "true"}), "valid assertTrue should be valid");
+
+        ok(model2.validate({"telephoneNumber": "aa"}), "invalid telephoneNumber should not be valid");
+        var validationErrs = model2.validate({"telephoneNumber": "04456"});
+        ok(validationErrs && validationErrs.telephoneNumber, "invalid telephoneNumber should not be valid");
+        equal(validationErrs.telephoneNumber, "telephone number is not valid", "invalid telephoneNumber should hold the correct error message");
+
+        ok(!model2.validate({"telephoneNumber": "0504060707"}), "valid telephoneNumber should be valid");
+        ok(!model2.validate({"telephoneNumber": "+33504060707"}), "valid telephoneNumber should be valid");
+    });
+
+    test("synchronize lifecycle", 5, function() {
+        Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
+
+        $.get = this.mockedGet3;
+
+        new this.Model1();
+        equal(nbGetCalled, 1, "get should have been called once");
+
+        new this.Model1();
+        equal(nbGetCalled, 1, "get should have been called once");
+
+        new this.Model2();
+        equal(nbGetCalled, 1, "get should have been called once");
+
+        new this.Model6();
+        equal(nbGetCalled, 2, "get should have been called twice");
+
+        Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
+
+        new this.Model1();
+        equal(nbGetCalled, 3, "get should have been called 3 times");
+
+    });
+
+    test("change locale", 6, function() {
+        Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
+
+        $.get = this.mockedGet3;
+
+        new this.Model1();
+        equal(nbGetCalled, 1, "get should have been called once");
+
+        new this.Model1();
+        equal(nbGetCalled, 1, "get should have been called once");
+
+        Resthub.Validation.locale("fr");
+
+        new this.Model1();
+        equal(nbGetCalled, 1, "get should have been called once");
+
+        Resthub.Validation.locale("en");
+
+        new this.Model1();
+        equal(nbGetCalled, 2, "get should have been called twice");
+
+        Resthub.Validation.locale("fr");
+
+        new this.Model1();
+        equal(nbGetCalled, 3, "get should have been called 3 times");
+
+        Resthub.Validation.locale("en");
+
+        new this.Model1();
+        equal(nbGetCalled, 4, "get should have been called 4 times");
+
     });
 
 });

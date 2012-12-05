@@ -27,6 +27,10 @@ define([], function() {
                 "message": "size must be between 2 and 5",
                 "min": 2,
                 "max": 5
+            }],
+            "telephoneNumber": [{
+                "type": "TelephoneNumber",
+                "message": "invalid telephone number"
             }]
         }
     };
