@@ -1,7 +1,7 @@
 define([], function() {
 
     var model1 = {
-        "model": "org.resthub.validation.model.Sample",
+        "model": "org.resthub.validation.model.User",
         "constraints": {
             "urlDefault": [{
                 "type": "URL",
@@ -17,9 +17,6 @@ define([], function() {
                 "message": "must be true"
             }],
             "min": [{
-                "type": "NotNull",
-                "message": "may not be null"
-            }, {
                 "type": "Min",
                 "message": "must be greater than or equal to 1",
                 "value": 1
@@ -36,9 +33,6 @@ define([], function() {
                 "max": 200
             }],
             "stringSize": [{
-                "type": "NotNull",
-                "message": "may not be null"
-            }, {
                 "type": "Size",
                 "message": "size must be between 2 and 5",
                 "min": 2,
@@ -117,21 +111,11 @@ define([], function() {
             }],
             "length": [{
                 "type": "Length",
-                "message": "length must be between 0 and 2147483647",
-                "min": 0,
-                "max": 2147483647
-            }],
-            "digits": [{
-                "type": "Digits",
-                "message": "numeric value out of bounds (<2 digits>.<3 digits> expected)",
-                "fraction": 3,
-                "integer": 2
+                "message": "length must be between 2 and 10",
+                "min": 2,
+                "max": 10
             }],
             "notNull": [{
-                "type": "NotNull",
-                "message": "may not be null"
-            }],
-            "ignoredProp": [{
                 "type": "NotNull",
                 "message": "may not be null"
             }],
