@@ -6,8 +6,8 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
         var ResthubValidation = {};
 
-        // store the list of already synchronized models class names
-        var synchronized = {};
+        // store the list of already synchronizedClasses models class names
+        var synchronizedClasses = {};
 
         // locale initialization
         var locale = window.navigator.language || window.navigator.userLanguage;
@@ -31,7 +31,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         // Function to be called by end user once the locale changed on client.
         // set the current locale and a flag
         ResthubValidation.locale = function(loc) {
-            if (loc != locale) {localeChanged = true};
+            if (loc != locale) localeChanged = true;
             locale = loc;
         };
 
@@ -113,7 +113,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 return {
                     required: true,
                     fn: function(value) {
-                        return ResthubValidation.notBlankorEmptyValidator(value, msg);
+                        return ResthubValidation.notBlankOrEmptyValidator(value, msg);
                     }
                 };
             },
@@ -121,7 +121,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 return {
                     required: true,
                     fn: function(value) {
-                        return ResthubValidation.notBlankorEmptyValidator(value, msg);
+                        return ResthubValidation.notBlankOrEmptyValidator(value, msg);
                     }
                 };
             },
@@ -254,7 +254,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             if (messages && messages[msgKey]) {
                 msg = messages[msgKey];
 
-                for (p in constraint) {
+                for (var p in constraint) {
                     msg = msg.replace(new RegExp('{' + p + '}', 'g'), constraint[p]);
                 }
             }
@@ -268,7 +268,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             }
         };
 
-        ResthubValidation.notBlankorEmptyValidator = function(value, msg) {
+        ResthubValidation.notBlankOrEmptyValidator = function(value, msg) {
             if (!ResthubValidation.hasValue(value)) {
                 return msg;
             }
@@ -357,8 +357,8 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         };
 
         ResthubValidation.forceSynchroForClass = function(className) {
-            if (synchronized[className]) synchronized[className] = false;
-        }
+            if (synchronizedClasses[className]) synchronizedClasses[className] = false;
+        };
 
         // returns true if the value parameter is defined, not null and not empty (in case of a String or an Array)
         ResthubValidation.hasValue = function(value) {
@@ -392,9 +392,9 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             // locale changed
             if (localeChanged) {
                 localeChanged = false;
-                synchronized = {};
+                synchronizedClasses = {};
             }
-            if (!synchronized[model.prototype.className]) {
+            if (!synchronizedClasses[model.prototype.className]) {
                 // if any, re-populate validation constraints with original client side
                 // expressed constraints (used in case of re-build when the first client
                 // side validation array was already overrided)
@@ -407,7 +407,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 $.get(ResthubValidation.options.url + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
                         buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, messages));
-                        synchronized[model.prototype.className] = true;
+                        synchronizedClasses[model.prototype.className] = true;
                     }, this))
                     .error(function (resp) {
                         if (errorCallback) errorCallback(resp);
