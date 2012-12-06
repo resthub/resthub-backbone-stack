@@ -17,13 +17,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
         ResthubValidation.options = {
             // server url for the web service exporting validation constraints
-            url: 'api/validation',
-
-            // regular expression used to validate urls
-            urlPattern: /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
-
-            // regular expression used to parse urls
-            urlParser: /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
+            apiUrl: 'api/validation'
         };
 
         ResthubValidation.messages = {};
@@ -65,7 +59,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                     constraint = null;
                     var currentConstraint = constraints[idx];
                     // replace returned message by the client custom provided message, if any
-                    var msg = ResthubValidation.constraintMessage(propKey, currentConstraint, messages);
+                    var msg = constraintMessage(propKey, currentConstraint, messages);
 
                     // get the validator for the current constraint type
                     // and execute callback if defined.
@@ -113,7 +107,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 return {
                     required: true,
                     fn: function(value) {
-                        return ResthubValidation.notBlankOrEmptyValidator(value, msg);
+                        return notBlankOrEmptyValidator(value, msg);
                     }
                 };
             },
@@ -121,63 +115,63 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 return {
                     required: true,
                     fn: function(value) {
-                        return ResthubValidation.notBlankOrEmptyValidator(value, msg);
+                        return notBlankOrEmptyValidator(value, msg);
                     }
                 };
             },
             'Null': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.nullValidator(value, msg);
+                        return nullValidator(value, msg);
                     }
                 };
             },
             'AssertTrue': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.assertTrueValidator(value, msg);
+                        return assertTrueValidator(value, msg);
                     }
                 };
             },
             'AssertFalse': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.assertFalseValidator(value, msg);
+                        return assertFalseValidator(value, msg);
                     }
                 };
             },
             'Size': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.sizeValidator(value, constraint.min, constraint.max, msg);
+                        return sizeValidator(value, constraint.min, constraint.max, msg);
                     }
                 };
             },
             'Min': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.minValidator(value, constraint.value, msg);
+                        return minValidator(value, constraint.value, msg);
                     }
                 };
             },
             'DecimalMin': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.decimalMinValidator(value, constraint.value, msg);
+                        return decimalMinValidator(value, constraint.value, msg);
                     }
                 };
             },
             'Max': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.maxValidator(value, constraint.value, msg);
+                        return maxValidator(value, constraint.value, msg);
                     }
                 };
             },
             'DecimalMax': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.decimalMaxValidator(value, constraint.value, msg);
+                        return decimalMaxValidator(value, constraint.value, msg);
                     }
                 };
             },
@@ -190,7 +184,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             'URL': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.urlValidator(value, constraint.protocol, constraint.host, constraint.port, constraint.regexp, msg);
+                        return urlValidator(value, constraint.protocol, constraint.host, constraint.port, constraint.regexp, msg);
                     }
                 };
             },
@@ -215,10 +209,18 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             'CreditCardNumber': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return ResthubValidation.creditCardNumberValidator(value, msg);
+                        return creditCardNumberValidator(value, msg);
                     }
                 };
             }
+        };
+
+        ResthubValidation.options.URL = {
+            // regular expression used to validate urls
+            urlPattern: /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
+
+            // regular expression used to parse urls
+            urlParser: /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
         };
 
         // add or replace the validator associated to the given constraintType.
@@ -233,7 +235,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         };
 
         // implementation of Luhn algorithm
-        ResthubValidation.creditCardNumberValidator = function(value, msg) {
+        var creditCardNumberValidator = function(value, msg) {
             if (value == null || isNaN(value - 0) || !(_.isString(value) || _.isNumber(value))) return msg;
 
             var sum = value.split('').reverse().map(Number).reduce(function(s, d, i) {
@@ -246,7 +248,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         // retrieves a message key in the client side defined messages map if any
         // returns the value contained in messages map if any (e.g. for localization
         // purposes) or the original message if no data found in messages object
-        ResthubValidation.constraintMessage = function(propKey, constraint, messages) {
+        var constraintMessage = function(propKey, constraint, messages) {
             var msg = constraint.message;
 
             var msgKey = 'validation.' + constraint.type + '.message';
@@ -262,74 +264,74 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             return msg;
         };
 
-        ResthubValidation.nullValidator = function(value, msg) {
-            if (ResthubValidation.hasValue(value)) {
+        var nullValidator = function(value, msg) {
+            if (ResthubValidation._hasValue(value)) {
                 return msg;
             }
         };
 
-        ResthubValidation.notBlankOrEmptyValidator = function(value, msg) {
-            if (!ResthubValidation.hasValue(value)) {
+        var notBlankOrEmptyValidator = function(value, msg) {
+            if (!ResthubValidation._hasValue(value)) {
                 return msg;
             }
         };
 
-        ResthubValidation.assertTrueValidator = function(value, msg) {
-            if (ResthubValidation.hasValue(value) && ((_.isString(value) && value.toLowerCase() != "true") || !value)) {
+        var assertTrueValidator = function(value, msg) {
+            if (ResthubValidation._hasValue(value) && ((_.isString(value) && value.toLowerCase() != "true") || !value)) {
                 return msg;
             }
         };
 
-        ResthubValidation.assertFalseValidator = function(value, msg) {
-            if (ResthubValidation.hasValue(value) && ((_.isString(value) && value.toLowerCase() == "true") || (_.isBoolean(value) && value))) {
+        var assertFalseValidator = function(value, msg) {
+            if (ResthubValidation._hasValue(value) && ((_.isString(value) && value.toLowerCase() == "true") || (_.isBoolean(value) && value))) {
                 return msg;
             }
         };
 
-        ResthubValidation.minValidator = function(value, min, msg) {
+        var minValidator = function(value, min, msg) {
             var numValue = parseInt(value);
-            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
                 return msg;
             }
         };
 
-        ResthubValidation.maxValidator = function(value, max, msg) {
+        var maxValidator = function(value, max, msg) {
             var numValue = parseInt(value);
-            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
                 return msg;
             }
         };
 
-        ResthubValidation.decimalMinValidator = function(value, min, msg) {
+        var decimalMinValidator = function(value, min, msg) {
             var numValue = parseFloat(value);
-            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
                 return msg;
             }
         };
 
-        ResthubValidation.decimalMaxValidator = function(value, max, msg) {
+        var decimalMaxValidator = function(value, max, msg) {
             var numValue = parseFloat(value);
-            if (ResthubValidation.hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
                 return msg;
             }
         };
 
-        ResthubValidation.sizeValidator = function(value, min, max, msg) {
+        var sizeValidator = function(value, min, max, msg) {
             if (!(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value === ''))
                 && (!(_.isString(value) || _.isArray(value)) || (value.length < min || value.length > max))) {
                 return msg;
             }
         };
 
-        ResthubValidation.urlValidator = function(value, protocol, host, port, regexp, msg) {
-            if (!_.isString(value) || !value.match(ResthubValidation.options.urlPattern)) {
+        var urlValidator = function(value, protocol, host, port, regexp, msg) {
+            if (!_.isString(value) || !value.match(ResthubValidation.options.URL.urlPattern)) {
                 return msg;
             }
             if (regexp && !value.match(regexp)) {
                 return msg;
             }
 
-            var urlParts = value.match(ResthubValidation.options.urlParser);
+            var urlParts = value.match(ResthubValidation.options.URL.urlParser);
             var protocolValue = urlParts[2];
 
             if (protocol && protocol != protocolValue) {
@@ -361,13 +363,13 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         };
 
         // returns true if the value parameter is defined, not null and not empty (in case of a String or an Array)
-        ResthubValidation.hasValue = function(value) {
+        ResthubValidation._hasValue = function(value) {
             return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value === '') || _.isArray(value) && value.length == 0);
         };
 
         // removes trailing spaces and tabs on a String.
         // use native String trim function if defined.
-        ResthubValidation.trim = String.prototype.trim ?
+        ResthubValidation._trim = String.prototype.trim ?
             function(text) {
                 return text === null ? '' : String.prototype.trim.call(text);
             } :
@@ -404,7 +406,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
                 var msgs = {};
 
-                $.get(ResthubValidation.options.url + '/' + model.prototype.className, {locale: locale})
+                $.get(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
                         buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, messages));
                         synchronizedClasses[model.prototype.className] = true;
