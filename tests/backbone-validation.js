@@ -478,7 +478,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(model1.validate({"notEmpty": undefined}), "notEmpty should be required");
         ok(model1.validate({"notEmpty": null}), "notEmpty should be required");
         ok(model1.validate({"notEmpty": ""}), "invalid notEmpty should not be valid");
-        ok(model1.validate({"notEmpty": "   "}), "valid notEmpty should be valid");
+        ok(model1.validate({"notEmpty": "   "}), "valid notEmpty should not be valid");
         var validationErrs = model1.validate({"notEmpty": []});
         ok(validationErrs && validationErrs.notEmpty, "invalid notEmpty should not be valid");
         equal(validationErrs.notEmpty, "may not be empty", "invalid notEmpty should hold the correct error message");
@@ -769,6 +769,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
     test("change locale", 6, function() {
         Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
+        Resthub.Validation.locale("fr");
 
         $.get = this.mockedGet3;
 
@@ -811,7 +812,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         // test overriding global error handler
         Resthub.Validation.options.errorCallback = function (resp) {
             ok(resp.statusCode = 404, "status code should be provided");
-        }
+        };
 
         new this.Model1();
         new this.Model7();

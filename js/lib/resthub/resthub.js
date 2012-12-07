@@ -358,6 +358,8 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             }
         };
 
+        // force synchronization to be relaunched on the next model instantiation
+        // holding a className attribute equals to this className parameter
         ResthubValidation.forceSynchroForClass = function(className) {
             if (synchronizedClasses[className]) synchronizedClasses[className] = false;
         };
