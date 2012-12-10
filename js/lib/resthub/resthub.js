@@ -382,14 +382,8 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 return text === null ? '' : text.toString().replace(trimLeft, '').replace(trimRight, '');
             };
 
-        // retrieves validation constraints from server from the given model and considering
-        // the client side defined messages
-        ResthubValidation.synchronize = function(model, messages, errorCallback) {
-
-            if (arguments.length === 2 && _.isFunction(messages)) {
-                errorCallback = messages;
-                messages = {};
-            }
+        // retrieves validation constraints from server
+        ResthubValidation.synchronize = function(model, errorCallback) {
 
             // perform effective synchronization by sending a REST GET request
             // only if the current model was not already synchronized or if the client
@@ -410,11 +404,11 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
 
                 $.get(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
-                        buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, messages));
+                        buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, model.prototype.messages));
                         synchronizedClasses[model.prototype.className] = true;
                     }, this))
                     .error(function (resp) {
-                        if (errorCallback) errorCallback(resp);
+                        if (errorCallback && _.isFunction(errorCallback)) errorCallback(resp);
                         else ResthubValidation.options.errorCallback(resp);
                     });
             }

@@ -34,12 +34,12 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
             this.Model4 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
+                messages: {
+                    'validation.Min.message': 'should be greater than {value} or equals'
+                },
 
                 initialize: _.bind(function() {
-                    var messages = {
-                        'validation.Min.message': 'should be greater than {value} or equals'
-                    };
-                    Resthub.Validation.synchronize(this.Model4, messages);
+                    Resthub.Validation.synchronize(this.Model4);
                 }, this),
 
                 validation: {
@@ -76,7 +76,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                 className: 'org.resthub.validation.model.User',
 
                 initialize: _.bind(function() {
-                    Resthub.Validation.synchronize(this.Model7, function (resp) {
+                    Resthub.Validation.synchronize(this.Model7, function(resp) {
                         ok(resp.statusCode = 404, "status code should be provided");
                     });
                 }, this)
@@ -86,7 +86,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                 className: 'org.resthub.validation.model.User',
 
                 initialize: _.bind(function() {
-                    Resthub.Validation.synchronize(this.Model8, {'validation.NotNull.message': 'not null message'}, function (resp) {
+                    Resthub.Validation.synchronize(this.Model8, {'validation.NotNull.message': 'not null message'}, function(resp) {
                         ok(resp.statusCode = 404, "status code should be provided");
                     });
                 }, this)
@@ -98,7 +98,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                         callback(model1);
                         return this;
                     },
-                    error: function() {}
+                    error: function() {
+                    }
                 };
             };
 
@@ -108,7 +109,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                         callback(model2);
                         return this;
                     },
-                    error: function() {}
+                    error: function() {
+                    }
                 };
             };
 
@@ -119,13 +121,16 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                         callback({});
                         return this;
                     },
-                    error: function() {}
+                    error: function() {
+                    }
                 };
             };
 
             this.mockedGet4 = function(url, data) {
                 return {
-                    success: function() {return this;},
+                    success: function() {
+                        return this;
+                    },
                     error: function(callback) {
                         callback({statusCode: 404});
                     }
@@ -137,7 +142,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         teardown: function() {
             Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
         }
-    });
+    })
+    ;
 
     test("Resthub.Validation should be defined", 1, function() {
         ok(Resthub.Validation, "local variable should be defined");
@@ -153,7 +159,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                     callback({});
                     return this;
                 },
-                error: function() {}
+                error: function() {
+                }
             };
         }
 
@@ -167,7 +174,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
                     callback({});
                     return this;
                 },
-                error: function() {}
+                error: function() {
+                }
             };
         }
 
@@ -810,7 +818,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(true, "no exception should be thrown");
 
         // test overriding global error handler
-        Resthub.Validation.options.errorCallback = function (resp) {
+        Resthub.Validation.options.errorCallback = function(resp) {
             ok(resp.statusCode = 404, "status code should be provided");
         };
 
@@ -820,4 +828,5 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
     });
 
-});
+})
+;
