@@ -1,11 +1,431 @@
 define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
 
-	var Resthub = { };
+    var Resthub = { };
+
+    Resthub.Validation = (function() {
+
+        var ResthubValidation = {};
+
+        // store the list of already synchronizedClasses models class names
+        var synchronizedClasses = {};
+
+        // locale initialization
+        var locale = window.navigator.language || window.navigator.userLanguage;
+
+        // is locale changed ?
+        var localeChanged = false;
+
+        ResthubValidation.options = {
+            // server url for the web service exporting validation constraints
+            apiUrl: 'api/validation'
+        };
+
+        ResthubValidation.messages = {};
+
+        // Function to be called by end user once the locale changed on client.
+        // set the current locale and a flag
+        ResthubValidation.locale = function(loc) {
+            if (loc != locale) localeChanged = true;
+            locale = loc;
+        };
+
+        // Constructs the array of validation constraints in Backbone Validation format
+        // from the response sent by the server for the current model.
+        // This method consider an optional messages object containing the custom or localized
+        // messages, if any.
+        var buildValidation = function(resp, model, messages) {
+
+            // copy existing validation object, if any
+            var validation = _.clone(model.prototype.validation) || {};
+
+            for (var propKey in resp.constraints) {
+
+                // ignore property if already defined in client model
+                if (validation[propKey]) continue;
+
+                // manage eventual inclusions and exclusions
+                if (model.prototype.excludes && _.indexOf(model.prototype.excludes, propKey) != -1) {
+                    continue;
+                } else if (model.prototype.includes && _.indexOf(model.prototype.includes, propKey) == -1) {
+                    continue;
+                }
+
+                var prop = [];
+                var constraints = resp.constraints[propKey];
+                var constraint;
+                var required = null;
+
+                for (var idx in constraints) {
+                    constraint = null;
+                    var currentConstraint = constraints[idx];
+                    // replace returned message by the client custom provided message, if any
+                    var msg = constraintMessage(propKey, currentConstraint, messages);
+
+                    // get the validator for the current constraint type
+                    // and execute callback if defined.
+                    // provides a concrete Backbone Validation constraint
+                    var validator = validators[currentConstraint.type];
+                    if (validator) {
+                        constraint = validator(currentConstraint, msg);
+                    }
+
+                    if (constraint) {
+                        // is the current constraint contains a requirement to true ?
+                        if (constraint.required) required = constraint.required;
+                        prop.push(constraint);
+                    }
+                }
+
+                if (constraint) {
+                    // Manage requirements because, by default, any expressed constraint in
+                    // Backbone Validation implies a requirement to true.
+                    // To manage a constraint with a requirement to false, we add a required false
+                    // constraint to the current property if no true requirement was originally expressed
+                    if (!required) {
+                        prop.push({required: false});
+                    }
+
+                    validation[propKey] = prop;
+                }
+            }
+
+            // Set the built validation constraint to the current model but also save the original client
+            // validation to be able to rebuild this later (e.g. when the locale changed)
+            model.prototype.originalValidation = model.prototype.originalValidation || model.prototype.validation;
+            model.prototype.validation = validation;
+        };
+
+        // map a constraint type to a concrete validator function
+        var validators = {
+            'NotNull': function(constraint, msg) {
+                return {
+                    required: true,
+                    msg: msg
+                };
+            },
+            'NotEmpty': function(constraint, msg) {
+                return {
+                    required: true,
+                    fn: function(value) {
+                        return notBlankOrEmptyValidator(value, msg);
+                    }
+                };
+            },
+            'NotBlank': function(constraint, msg) {
+                return {
+                    required: true,
+                    fn: function(value) {
+                        return notBlankOrEmptyValidator(value, msg);
+                    }
+                };
+            },
+            'Null': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return nullValidator(value, msg);
+                    }
+                };
+            },
+            'AssertTrue': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return assertTrueValidator(value, msg);
+                    }
+                };
+            },
+            'AssertFalse': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return assertFalseValidator(value, msg);
+                    }
+                };
+            },
+            'Size': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return sizeValidator(value, constraint.min, constraint.max, msg);
+                    }
+                };
+            },
+            'Min': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return minValidator(value, constraint.value, msg);
+                    }
+                };
+            },
+            'DecimalMin': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return decimalMinValidator(value, constraint.value, msg);
+                    }
+                };
+            },
+            'Max': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return maxValidator(value, constraint.value, msg);
+                    }
+                };
+            },
+            'DecimalMax': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return decimalMaxValidator(value, constraint.value, msg);
+                    }
+                };
+            },
+            'Pattern': function(constraint, msg) {
+                return {
+                    pattern: constraint.regexp,
+                    msg: msg
+                };
+            },
+            'URL': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return urlValidator(value, constraint.protocol, constraint.host, constraint.port, constraint.regexp, msg);
+                    }
+                };
+            },
+            'Range': function(constraint, msg) {
+                return {
+                    range: [constraint.min || 0, constraint.max || 0x7fffffffffffffff],
+                    msg: msg
+                };
+            },
+            'Length': function(constraint, msg) {
+                return {
+                    rangeLength: [constraint.min || 0, constraint.max || 0x7fffffff],
+                    msg: msg
+                };
+            },
+            'Email': function(constraint, msg) {
+                return {
+                    pattern: 'email',
+                    msg: msg
+                };
+            },
+            'CreditCardNumber': function(constraint, msg) {
+                return {
+                    fn: function(value) {
+                        return creditCardNumberValidator(value, msg);
+                    }
+                };
+            }
+        };
+
+        ResthubValidation.options.URL = {
+            // regular expression used to validate urls
+            urlPattern: /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[.\!\/\\w]*))?)/,
+
+            // regular expression used to parse urls
+            urlParser: /^(([^:/?#]+):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
+        };
+
+        // add or replace the validator associated to the given constraintType.
+        // validator parameter should be a function
+        ResthubValidation.addValidator = function(constraintType, validator) {
+            validators[constraintType] = validator;
+        };
+
+        // retrieve the validator associated to a given constraint type
+        ResthubValidation.getValidator = function(constraintType) {
+            return validators[constraintType];
+        };
+
+        // implementation of Luhn algorithm
+        var creditCardNumberValidator = function(value, msg) {
+            if (value == null || isNaN(value - 0) || !(_.isString(value) || _.isNumber(value))) return msg;
+
+            var sum = value.split('').reverse().map(Number).reduce(function(s, d, i) {
+                return s + (i % 2 == 1 ? (d == 9 ? 9 : (d * 2) % 9) : d);
+            }, 0);
+
+            if (sum % 10 != 0) return msg;
+        };
+
+        // retrieves a message key in the client side defined messages map if any
+        // returns the value contained in messages map if any (e.g. for localization
+        // purposes) or the original message if no data found in messages object
+        var constraintMessage = function(propKey, constraint, messages) {
+            var msg = constraint.message;
+
+            var msgKey = 'validation.' + constraint.type + '.message';
+
+            if (messages && messages[msgKey]) {
+                msg = messages[msgKey];
+
+                for (var p in constraint) {
+                    msg = msg.replace(new RegExp('{' + p + '}', 'g'), constraint[p]);
+                }
+            }
+
+            return msg;
+        };
+
+        var nullValidator = function(value, msg) {
+            if (ResthubValidation._hasValue(value)) {
+                return msg;
+            }
+        };
+
+        var notBlankOrEmptyValidator = function(value, msg) {
+            if (!ResthubValidation._hasValue(value)) {
+                return msg;
+            }
+        };
+
+        var assertTrueValidator = function(value, msg) {
+            if (ResthubValidation._hasValue(value) && ((_.isString(value) && value.toLowerCase() != "true") || !value)) {
+                return msg;
+            }
+        };
+
+        var assertFalseValidator = function(value, msg) {
+            if (ResthubValidation._hasValue(value) && ((_.isString(value) && value.toLowerCase() == "true") || (_.isBoolean(value) && value))) {
+                return msg;
+            }
+        };
+
+        var minValidator = function(value, min, msg) {
+            var numValue = parseInt(value);
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
+                return msg;
+            }
+        };
+
+        var maxValidator = function(value, max, msg) {
+            var numValue = parseInt(value);
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
+                return msg;
+            }
+        };
+
+        var decimalMinValidator = function(value, min, msg) {
+            var numValue = parseFloat(value);
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue < min))) {
+                return msg;
+            }
+        };
+
+        var decimalMaxValidator = function(value, max, msg) {
+            var numValue = parseFloat(value);
+            if (ResthubValidation._hasValue(value) && (isNaN(numValue) || (numValue != value) || (numValue > max))) {
+                return msg;
+            }
+        };
+
+        var sizeValidator = function(value, min, max, msg) {
+            if (!(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value === ''))
+                && (!(_.isString(value) || _.isArray(value)) || (value.length < min || value.length > max))) {
+                return msg;
+            }
+        };
+
+        var urlValidator = function(value, protocol, host, port, regexp, msg) {
+            if (!_.isString(value) || !value.match(ResthubValidation.options.URL.urlPattern)) {
+                return msg;
+            }
+            if (regexp && !value.match(regexp)) {
+                return msg;
+            }
+
+            var urlParts = value.match(ResthubValidation.options.URL.urlParser);
+            var protocolValue = urlParts[2];
+
+            if (protocol && protocol != protocolValue) {
+                return msg;
+            }
+
+            if (host || port != -1) {
+                var hostValue = urlParts[4];
+                if (!hostValue) return msg;
+                var indexOfPort = hostValue.indexOf(':');
+                if (indexOfPort > -1) {
+                    var portValue = hostValue.substring(indexOfPort + 1);
+                    hostValue = hostValue.substring(0, indexOfPort);
+                }
+
+                // test if a port is defined and if is a valid number
+                if (port != -1 && (isNaN(portValue - 0) || (port != portValue))) {
+                    return msg;
+                }
+
+                if (host && host != hostValue) {
+                    return msg;
+                }
+            }
+        };
+
+        // force synchronization to be relaunched on the next model instantiation
+        // holding a className attribute equals to this className parameter
+        ResthubValidation.forceSynchroForClass = function(className) {
+            if (synchronizedClasses[className]) synchronizedClasses[className] = false;
+        };
+
+        // returns true if the value parameter is defined, not null and not empty (in case of a String or an Array)
+        ResthubValidation._hasValue = function(value) {
+            return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && value === '') || _.isArray(value) && value.length == 0);
+        };
+
+        // removes trailing spaces and tabs on a String.
+        // use native String trim function if defined.
+        ResthubValidation._trim = String.prototype.trim ?
+            function(text) {
+                return text === null ? '' : String.prototype.trim.call(text);
+            } :
+            function(text) {
+                var trimLeft = /^\s+/,
+                    trimRight = /\s+$/;
+
+                return text === null ? '' : text.toString().replace(trimLeft, '').replace(trimRight, '');
+            };
+
+        // retrieves validation constraints from server
+        ResthubValidation.synchronize = function(model, errorCallback) {
+
+            // perform effective synchronization by sending a REST GET request
+            // only if the current model was not already synchronized or if the client
+            // locale changed
+            if (localeChanged) {
+                localeChanged = false;
+                synchronizedClasses = {};
+            }
+            if (!synchronizedClasses[model.prototype.className]) {
+                // if any, re-populate validation constraints with original client side
+                // expressed constraints (used in case of re-build when the first client
+                // side validation array was already overrided)
+                if (model.prototype.originalValidation) {
+                    model.prototype.validation = model.prototype.originalValidation;
+                }
+
+                var msgs = {};
+
+                $.get(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
+                    .success(_.bind(function(resp) {
+                        buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, model.prototype.messages));
+                        synchronizedClasses[model.prototype.className] = true;
+                    }, this))
+                    .error(function (resp) {
+                        if (errorCallback && _.isFunction(errorCallback)) errorCallback(resp);
+                        else ResthubValidation.options.errorCallback(resp);
+                    });
+            }
+        };
+
+        ResthubValidation.options.errorCallback = function (resp) {
+            console.error("error calling server : status code " + resp.status + " and text '" + resp.statusText + "'");
+        };
+
+        return ResthubValidation;
+
+    })();
 
     // extend **Backbone.View** properties and methods.
     Resthub.View = Backbone.View.extend({
-        
-        resthubViewOptions : ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'],
+
+        resthubViewOptions: ['model', 'collection', 'el', 'id', 'attributes', 'className', 'tagName', 'root', 'strategy', 'context'],
 
         globalEventsIdentifier: '!',
 
@@ -43,38 +463,38 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
             // If context provided as parameter is undefined or not an object, use this.context attribute
             if ((typeof context === "undefined") || (typeof context !== 'object')) {
                 // Dynamic context provided as a function
-                if(_.isFunction(this.context)) {
+                if (_.isFunction(this.context)) {
                     context = this.context();
-                // Context provided as a context object
+                    // Context provided as a context object
                 } else if (typeof this.context === 'object') {
                     context = this.context;
-                // Else we automatically populate it with a custom property name set in this.context, model property or collection property
-                } else context = {};                    
+                    // Else we automatically populate it with a custom property name set in this.context, model property or collection property
+                } else context = {};
             }
             // If context provided as parameter is a Model or Collection instance, we save it for later use
-            if(context instanceof Backbone.Model) {
+            if (context instanceof Backbone.Model) {
                 var jsonModel = context.toJSON();
                 context = {};
             }
-            if(context instanceof Backbone.Collection) {
+            if (context instanceof Backbone.Collection) {
                 var jsonCollection = context.toJSON();
                 context = {};
             }
             // Add in the context the property named by this.context String, this.model, this.collection and this.labels if they exist.
             _.each([this.context, 'model', 'collection', 'labels'], function(key) {
-                 if(typeof this[key] !== "undefined")
-                     if (this[key].toJSON) {
+                if (typeof this[key] !== "undefined")
+                    if (this[key].toJSON) {
                         context[key] = this[key].toJSON();
                     } else {
                         context[key] = this[key];
                     }
-                
+
             }, this);
             // Eventually override default model and collection attribute with the one passed as parameter
-            if(context instanceof Backbone.Model) {
+            if (context instanceof Backbone.Model) {
                 context['model'] = jsonModel;
             }
-            if(context instanceof Backbone.Collection) {
+            if (context instanceof Backbone.Collection) {
                 context['collection'] = jsonCollection;
             }
             // Maybe throw an error if the context could not be determined
@@ -83,12 +503,12 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         },
 
         _configure: function(options) {
-          if (this.options) options = _.extend({}, this.options, options);
-          for (var i = 0, l = this.resthubViewOptions.length; i < l; i++) {
-            var attr = this.resthubViewOptions[i];
-            if (options[attr]) this[attr] = options[attr];
-          }
-          this.options = options;
+            if (this.options) options = _.extend({}, this.options, options);
+            for (var i = 0, l = this.resthubViewOptions.length; i < l; i++) {
+                var attr = this.resthubViewOptions[i];
+                if (options[attr]) this[attr] = options[attr];
+            }
+            this.options = options;
         },
 
         // Override Backbone delegateEvents() method
@@ -210,12 +630,12 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 } else if ($this.is(':checkbox')) {
                     if (!attributes[name]) {
                         attributes[name] = null;
-                        var checkboxes = form.find("input[type='checkbox'][name='"+name+"']");
+                        var checkboxes = form.find("input[type='checkbox'][name='" + name + "']");
                         if (checkboxes.length > 1) {
                             attributes[name] = [];
                         }
                     }
-                    if ($this.is(':checked')){
+                    if ($this.is(':checked')) {
                         if (_.isArray(attributes[name])) {
                             attributes[name].push($this.val());
                         } else {
@@ -240,7 +660,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
     // --------------------------
 
     var originalHistPrototype = Backbone.History.prototype;
-    var originalStart         = originalHistPrototype.start;
+    var originalStart = originalHistPrototype.start;
 
     // extend **Backbone.History** properties and methods.
     _.extend(Backbone.History.prototype, {
