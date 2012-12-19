@@ -10,9 +10,9 @@ require(['handlebars', 'moment-fr'], function(Handlebars) {
         ok(Handlebars.helpers.unlessequalsinline, "unlessequalsinline helper exists and is not undefined");
         ok(Handlebars.helpers.ifequals, "ifequals helper exists and is not undefined");
         ok(Handlebars.helpers.unlessequals, "unlessequals helper exists and is not undefined");
-        ok(Handlebars.helpers.for, "for helper exists and is not undefined");
         ok(Handlebars.helpers.sprintf, "sprintf helper exists and is not undefined");
         ok(Handlebars.helpers.modulo, "modulo helper exists and is not undefined");
+        ok(Handlebars.helpers['for'], "for helper exists and is not undefined"); // for is a keyword and makes IE unhappy
     });
 
     test('sprintf with 2 params', function() {
