@@ -94,3 +94,5 @@ require(['../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions'
     '../tests/require-handlebars', '../tests/backbone-pubsub', '../tests/backbone-remove',
     '../tests/backbone-populate-model', '../tests/backbone-history', '../tests/console',
     '../tests/backbone-i18n', '../tests/backbone-validation']);
+
+//require(['console', '../tests/pubsub', '../tests/handlebars-helpers', '../tests/backbone-validation']);
