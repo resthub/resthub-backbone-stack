@@ -5,7 +5,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
     module("resthub-backbone-validation", {
         setup: function() {
             nbGetCalled = 0;
-
+            
             this.Model1 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
 
@@ -142,8 +142,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         teardown: function() {
             Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
         }
-    })
-    ;
+    });
 
     test("Resthub.Validation should be defined", 1, function() {
         ok(Resthub.Validation, "local variable should be defined");
@@ -753,12 +752,13 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
     test("synchronize lifecycle", 5, function() {
         Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
+        nbGetCalled = 0;
 
         $.get = this.mockedGet3;
 
         new this.Model1();
         equal(nbGetCalled, 1, "get should have been called once");
-
+        
         new this.Model1();
         equal(nbGetCalled, 1, "get should have been called once");
 
@@ -772,12 +772,12 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         new this.Model1();
         equal(nbGetCalled, 3, "get should have been called 3 times");
-
     });
 
     test("change locale", 6, function() {
         Resthub.Validation.forceSynchroForClass("org.resthub.validation.model.User");
         Resthub.Validation.locale("fr");
+        nbGetCalled = 0;
 
         $.get = this.mockedGet3;
 
@@ -806,7 +806,6 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         new this.Model1();
         equal(nbGetCalled, 4, "get should have been called 4 times");
-
     });
 
     test("handle errors", 4, function() {
@@ -825,8 +824,6 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         new this.Model1();
         new this.Model7();
         new this.Model8();
-
     });
 
-})
-;
+});

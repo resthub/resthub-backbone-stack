@@ -238,7 +238,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         var creditCardNumberValidator = function(value, msg) {
             if (value == null || isNaN(value - 0) || !(_.isString(value) || _.isNumber(value))) return msg;
 
-            var sum = value.split('').reverse().map(Number).reduce(function(s, d, i) {
+            var sum = _.reduce(_.map(value.split('').reverse(), Number), function(s, d, i) {
                 return s + (i % 2 == 1 ? (d == 9 ? 9 : (d * 2) % 9) : d);
             }, 0);
 
@@ -401,7 +401,6 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 }
 
                 var msgs = {};
-
                 $.get(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
                         buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, model.prototype.messages));
