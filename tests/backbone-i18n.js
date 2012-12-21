@@ -1,10 +1,9 @@
 require(["jquery",
-         "backbone",
          "resthub",
          "i18n!../tests/nls/labels",
          "i18n!../tests/nls/zz-qq/labels",
          "hbs!../tests/templates/template2"],
-function($, Backbone, Resthub, labels, labels_zzqq, template2) {
+function($, Resthub, labels, labels_zzqq, template2) {
 
     module("backbone-i18n", {
         setup: function() {
@@ -50,7 +49,7 @@ function($, Backbone, Resthub, labels, labels_zzqq, template2) {
     test("'labels.val' should not be rendered", 1, function() {
         new this.TestView2();
 
-        equal($("#qunit-fixture > #main > div").html(), "This is a  from labels.");
+        ok($("#qunit-fixture > #main > div").html().indexOf("valeur") === -1);
     });
 
     test("'labels.val' should be remplaced by 'valeur'", 1, function() {
