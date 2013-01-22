@@ -1,8 +1,8 @@
-require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
+require(["backbone", "resthub"], function(Backbone, Resthub) {
 
     var TYPE5 = "type5";
 
-    module("resthub-backbone-pubsub", {
+    module("resthub-backbone-events", {
         setup: function() {
             this.TestView = Resthub.View.extend({
 
@@ -63,8 +63,8 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
                 initialize: function() {
                     this.counts = {};
-                    Pubsub.on("!global2", this.global2Fired, this);
-                    Pubsub.on("!global3", this.global3Fired, this);
+                    Backbone.on("!global2", this.global2Fired, this);
+                    Backbone.on("!global3", this.global3Fired, this);
                 },
 
                 globalFired: function() {
@@ -81,22 +81,16 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
             });
         },
         teardown: function() {
-            pubsub.off();
+            Backbone.off();
         }
     });
 
-    test("Pubsub should be defined", 3, function() {
-        ok(pubsub, "local variable defined");
-        ok(window.Pubsub, "global variable defined");
-        ok(Pubsub, "global variable defined");
-    });
-
-    test("Pubsub correct inheritance", 5, function() {
-        ok(pubsub.bind, "pubsub.bind defined");
-        ok(pubsub.on, "pubsub.on defined");
-        ok(pubsub.off, "pubsub.off defined");
-        ok(pubsub.trigger, "pubsub.trigger defined");
-        ok(pubsub.unbind, "pubsub.unbind defined");
+    test("Backbone correct inheritance", 5, function() {
+        ok(Backbone.bind, "Backbone.bind defined");
+        ok(Backbone.on, "Backbone.on defined");
+        ok(Backbone.off, "Backbone.off defined");
+        ok(Backbone.trigger, "Backbone.trigger defined");
+        ok(Backbone.unbind, "Backbone.unbind defined");
     });
 
     test("should trigger regular Backbone events", 2, function() {
@@ -117,7 +111,7 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView = new this.TestView();
 
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
 
         equal(testView.counts.globalFired, 1, "globalFired called once and only once");
 
@@ -130,10 +124,10 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView = new this.TestView();
 
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
         equal(testView.counts.globalFired, 1, "globalFired called once and only once");
 
-        pubsub.trigger("!global1");
+        Backbone.trigger("!global1");
         equal(testView.counts.globalFired, 2, "globalFired called once and only once");
     });
 
@@ -142,7 +136,7 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
         var testView = new this.TestView();
         var testView2 = new this.TestView();
 
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
 
         equal(testView.counts.globalFired, 1, "globalFired called on testView");
         equal(testView2.counts.globalFired, 1, "globalFired called on testView2");
@@ -153,7 +147,7 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
         var testView = new this.TestView();
         var testView2 = new this.TestView2();
 
-        pubsub.trigger("!global1");
+        Backbone.trigger("!global1");
 
         equal(testView.counts.globalFired, 1, "globalFired called on testView");
         equal(testView2.counts.globalFired, undefined, "globalFired not called on testView2");
@@ -163,7 +157,7 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView = new this.TestView();
 
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
         equal(testView.counts.globalFired, 1, "globalFired called once and only once");
 
         testView.undelegateEvents();
@@ -175,12 +169,12 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView = new this.TestView();
 
-        pubsub.trigger("!global");
-        pubsub.trigger("!global1");
+        Backbone.trigger("!global");
+        Backbone.trigger("!global1");
         equal(testView.counts.globalFired, 2, "globalFired called twice");
 
         testView.undelegateEvents();
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
 
         equal(testView.counts.globalFired, 2, "globalFired not called after unbind of all");
     });
@@ -190,41 +184,41 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
         var testView = new this.TestView();
         var testView2 = new this.TestView2();
 
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
 
         equal(testView.counts.globalFired, 1, "globalFired called on testView");
         equal(testView2.counts.globalFired, 1, "globalFired called on testView2");
 
         testView.undelegateEvents();
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
 
         equal(testView.counts.globalFired, 1, "globalFired not called on testView");
         equal(testView2.counts.globalFired, 2, "globalFired called on testView2");
 
     });
 
-    test("should publish pubsub events declared on initialize", 6, function() {
+    test("should publish Backbone events declared on initialize", 6, function() {
 
         var testView = new this.TestView3();
 
-        pubsub.trigger("!global2");
-        pubsub.trigger("!global3");
+        Backbone.trigger("!global2");
+        Backbone.trigger("!global3");
 
         equal(testView.counts.global2Fired, 1, "global2Fired called on testView");
         equal(testView.counts.global3Fired, 1, "global3Fired called on testView");
 
         testView.undelegateEvents();
 
-        pubsub.trigger("!global2");
-        pubsub.trigger("!global3");
+        Backbone.trigger("!global2");
+        Backbone.trigger("!global3");
 
         equal(testView.counts.global2Fired, 2, "global2Fired called on testView");
         equal(testView.counts.global3Fired, 2, "global3Fired called on testView");
 
         testView.dispose();
 
-        pubsub.trigger("!global2");
-        pubsub.trigger("!global3");
+        Backbone.trigger("!global2");
+        Backbone.trigger("!global3");
 
         equal(testView.counts.global2Fired, 2, "global2Fired not called on testView");
         equal(testView.counts.global3Fired, 2, "global3Fired not called on testView");
@@ -235,19 +229,19 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView = new this.TestView();
 
-        pubsub.trigger("!globalParams");
+        Backbone.trigger("!globalParams");
 
         ok(testView.counts.globalFiredParams, 1, "globalFiredParams called");
         equal(testView.counts.globalFiredParams.arg1, undefined, "globalFiredParams param1 ok");
         equal(testView.counts.globalFiredParams.arg2, undefined, "globalFiredParams param2 ok");
 
-        pubsub.trigger("!globalParams", "param1");
+        Backbone.trigger("!globalParams", "param1");
 
         ok(testView.counts.globalFiredParams, 1, "globalFiredParams called");
         equal(testView.counts.globalFiredParams.arg1, "param1", "globalFiredParams param1 ok");
         equal(testView.counts.globalFiredParams.arg2, undefined, "globalFiredParams param2 ok");
 
-        pubsub.trigger("!globalParams", "param1", "param2");
+        Backbone.trigger("!globalParams", "param1", "param2");
 
         ok(testView.counts.globalFiredParams, 1, "globalFiredParams called");
         equal(testView.counts.globalFiredParams.arg1, "param1", "globalFiredParams param1 ok");
@@ -259,16 +253,16 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView3 = new this.TestView3();
 
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
         equal(testView3.counts.globalFired, undefined, "globalFired never called");
 
         testView3.delegateEvents({"!global": "globalFired"});
-        pubsub.trigger("!global");
+        Backbone.trigger("!global");
 
         equal(testView3.counts.globalFired, 1, "globalFired called");
 
         testView3.delegateEvents({"!global1": "globalFired", "!global2": "globalFired"});
-        pubsub.trigger("!global1 !global2");
+        Backbone.trigger("!global1 !global2");
 
         equal(testView3.counts.globalFired, 3, "globalFired called");
     });
@@ -277,7 +271,7 @@ require(["backbone", "pubsub", "resthub"], function(Backbone, pubsub, Resthub) {
 
         var testView = new this.TestView2();
 
-        pubsub.trigger("!globalInline");
+        Backbone.trigger("!globalInline");
 
         equal(testView.counts.globalInline, 1, "globalInline called once and only once");
     });

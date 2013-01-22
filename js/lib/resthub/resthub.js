@@ -1,4 +1,4 @@
-define(['underscore', 'backbone', 'pubsub', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub, $) {
+define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, $) {
 
     var Resthub = { };
 
@@ -540,7 +540,7 @@ define(['underscore', 'backbone', 'pubsub', 'jquery', 'lib/resthub/jquery-event-
                 if (key.indexOf(this.globalEventsIdentifier) != 0) return;
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
-                PubSub.on(key, method, this);
+                Backbone.on(key, method, this);
                 this._eventsSubscriptions.push(key);
             }, this));
         },
@@ -548,7 +548,7 @@ define(['underscore', 'backbone', 'pubsub', 'jquery', 'lib/resthub/jquery-event-
         undelegateEvents: function() {
 
             if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
-                PubSub.off(this._eventsSubscriptions.join(' '), null, this);
+                Backbone.off(this._eventsSubscriptions.join(' '), null, this);
             }
             Resthub.View.__super__.undelegateEvents.call(this);
         },
@@ -591,8 +591,7 @@ define(['underscore', 'backbone', 'pubsub', 'jquery', 'lib/resthub/jquery-event-
             // perform actions before effective close
             this.onDispose();
 
-            Resthub.View.__super__.dispose.call(this);
-            PubSub.off(null, null, this);
+            Backbone.off(null, null, this);
 
             if (Backbone.Validation) {
                 Backbone.Validation.unbind(this);

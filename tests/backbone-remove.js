@@ -47,21 +47,6 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
         equal($("#qunit-fixture #main").html(), "", "no HTML content should be rendered");
     });
 
-    test("remove should call dispose", 3, function() {
-        var testView = new this.TestView2();
-
-        testView.remove();
-        equal(testView.counts.dispose, 1, "dispose called only once");
-
-        testView.$el.remove();
-        equal(testView.counts.dispose, 2, "dispose called once again");
-
-        testView = new this.TestView2();
-
-        testView.$el.remove();
-        equal(testView.counts.dispose, 1, "dispose called once again");
-    });
-
     test("remove on parent should call dispose", 1, function() {
         var testView = new this.TestView2();
 
