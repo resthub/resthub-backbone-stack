@@ -1,6 +1,11 @@
-define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
+define(['underscore', 'backbone', 'pubsub', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub, $) {
 
     var Resthub = { };
+
+    // Avoid GET caching issues with Internet Explorer
+    if($.browser.msie) {
+        $.ajaxSetup({ cache: false });
+    }
 
     Resthub.Validation = (function() {
 
