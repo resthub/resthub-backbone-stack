@@ -405,7 +405,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                     .success(_.bind(function(resp) {
                         buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, model.prototype.messages));
                         synchronizedClasses[model.prototype.className] = true;
-						if (successCallback && _.isFunction(successCallback)) successCallback(resp);
+                        if (successCallback && _.isFunction(successCallback)) successCallback(resp);
                     }, this))
                     .error(function (resp) {
                         if (errorCallback && _.isFunction(errorCallback)) errorCallback(resp);
