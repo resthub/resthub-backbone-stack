@@ -401,7 +401,7 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 }
 
                 var msgs = {};
-                $.get(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
+                $.getJSON(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
                         buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, model.prototype.messages));
                         synchronizedClasses[model.prototype.className] = true;
