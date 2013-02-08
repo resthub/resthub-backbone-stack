@@ -539,8 +539,7 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
                 if (key.indexOf(this.globalEventsIdentifier) != 0) return;
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
-                Backbone.listenTo(this, key, method);
-
+                this.listenTo(Backbone, key, method);
             }, this));
         },
 
@@ -554,11 +553,8 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
                 this._insertRoot();
             }
 
-            var self = this;
             // call backbone stopListening method on el DOM removing
-            this.$el.on("destroyed", function() {
-                self.stopListening();
-            });
+            this.$el.on("destroyed", _.bind(this.stopListening, this));
 
             return this;
         },
@@ -568,11 +564,6 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
         remove: function() {
             this.$el.off("destroyed");
             Resthub.View.__super__.remove.call(this);
-            var self = this;
-            // call backbone destroyed method on el DOM removing
-            this.$el.on("destroyed", function() {
-                self.stopListening();
-            });
         },
 
         stopListening: function() {
