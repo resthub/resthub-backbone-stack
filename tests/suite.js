@@ -90,6 +90,6 @@ require.config({
 });
 
 require(['console', '../tests/handlebars-helpers', '../tests/inclusions',
-    '../tests/require-handlebars', '../tests/backbone-events', '../tests/backbone-remove',
+    '../tests/require-handlebars', '../tests/backbone-remove',
     '../tests/backbone-populate-model', '../tests/backbone-history', '../tests/console',
     '../tests/backbone-i18n', '../tests/backbone-validation']);
