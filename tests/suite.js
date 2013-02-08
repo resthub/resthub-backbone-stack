@@ -70,7 +70,6 @@ require.config({
         localstorage: 'lib/localstorage',
         text: 'lib/text',
         i18n: 'lib/i18n',
-        pubsub: 'lib/resthub/pubsub',
         'bootstrap': 'lib/bootstrap',
         'backbone-validation-orig': 'lib/backbone-validation',
         'backbone-validation': 'lib/resthub/backbone-validation-ext',
@@ -90,7 +89,7 @@ require.config({
     }
 });
 
-require(['console', '../tests/pubsub', '../tests/handlebars-helpers', '../tests/inclusions',
-    '../tests/require-handlebars', '../tests/backbone-pubsub', '../tests/backbone-remove',
+require(['console', '../tests/handlebars-helpers', '../tests/inclusions',
+    '../tests/require-handlebars', '../tests/backbone-remove',
     '../tests/backbone-populate-model', '../tests/backbone-history', '../tests/console',
     '../tests/backbone-i18n', '../tests/backbone-validation']);

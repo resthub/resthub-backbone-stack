@@ -25,8 +25,8 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
                     $("#qunit-fixture #main").html(this.el);
                 },
 
-                dispose: function() {
-                    this.counts.dispose = (this.counts.dispose || 0) + 1;
+                stopListening: function() {
+                    this.counts.stopListening = (this.counts.stopListening || 0) + 1;
                 }
             });
         },
@@ -47,64 +47,49 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
         equal($("#qunit-fixture #main").html(), "", "no HTML content should be rendered");
     });
 
-    test("remove should call dispose", 3, function() {
-        var testView = new this.TestView2();
-
-        testView.remove();
-        equal(testView.counts.dispose, 1, "dispose called only once");
-
-        testView.$el.remove();
-        equal(testView.counts.dispose, 2, "dispose called once again");
-
-        testView = new this.TestView2();
-
-        testView.$el.remove();
-        equal(testView.counts.dispose, 1, "dispose called once again");
-    });
-
-    test("remove on parent should call dispose", 1, function() {
+    test("remove on parent should call stopListening", 1, function() {
         var testView = new this.TestView2();
 
         testView.$el.parent().remove();
-        equal(testView.counts.dispose, 1, "dispose called");
+        equal(testView.counts.stopListening, 1, "stopListening called");
     });
 
-    test("html should not call dispose", 1, function() {
+    test("html should not call stopListening", 1, function() {
         var testView = new this.TestView2();
 
         testView.$el.html("test");
-        equal(testView.counts.dispose, undefined, "dispose not called");
+        equal(testView.counts.stopListening, undefined, "stopListening not called");
     });
 
-    test("html on parents should call dispose", 2, function() {
+    test("html on parents should call stopListening", 2, function() {
         var testView = new this.TestView2();
 
         testView.$el.parent().html("test");
-        equal(testView.counts.dispose, 1, "dispose called");
+        equal(testView.counts.stopListening, 1, "stopListening called");
 
         testView = new this.TestView2();
 
         testView.$el.parent().parent().html("test");
-        equal(testView.counts.dispose, 1, "dispose called");
+        equal(testView.counts.stopListening, 1, "stopListening called");
     });
 
-    test("empty should not call dispose", 1, function() {
+    test("empty should not call stopListening", 1, function() {
         var testView = new this.TestView2();
 
         testView.$el.empty();
-        equal(testView.counts.dispose, undefined, "dispose not called");
+        equal(testView.counts.stopListening, undefined, "stopListening not called");
     });
 
-    test("empty on parents should call dispose", 2, function() {
+    test("empty on parents should call stopListening", 2, function() {
         var testView = new this.TestView2();
 
         testView.$el.parent().empty();
-        equal(testView.counts.dispose, 1, "dispose called");
+        equal(testView.counts.stopListening, 1, "stopListening called");
 
         testView = new this.TestView2();
 
         testView.$el.parent().parent().empty();
-        equal(testView.counts.dispose, 1, "dispose called");
+        equal(testView.counts.stopListening, 1, "stopListening called");
     });
 
 });

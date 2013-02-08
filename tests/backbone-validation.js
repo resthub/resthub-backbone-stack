@@ -500,8 +500,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.notBlank), "validation should contain notBlank");
 
-        ok(!model1.set({"notBlank": undefined}), "notBlank should be required");
-        ok(!model1.set({"notBlank": null}), "notBlank should be required");
+        ok(model1.validate({"notBlank": undefined}), "notBlank should be required");
+        ok(model1.validate({"notBlank": null}), "notBlank should be required");
         ok(model1.validate({"notBlank": ""}), "invalid notBlank should not be valid");
         ok(model1.validate({"notBlank": "  "}), "invalid notBlank should not be valid");
         var validationErrs = model1.validate({"notBlank": []});
@@ -540,9 +540,9 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.notNull), "validation should contain notNull");
 
-        ok(!model1.set({"notNull": undefined}), "notNull should be required");
+        ok(model1.validate({"notNull": undefined}), "notNull should be required");
         var validationErrs = model1.validate({"notNull": null});
-        ok(validationErrs && validationErrs.notBlank, "invalid notNull should not be valid");
+        ok(validationErrs && validationErrs.notNull, "invalid notNull should not be valid");
         equal(validationErrs.notNull, "may not be null", "invalid notNull should hold the correct error message");
 
         ok(!model1.validate({"notNull": "aaa"}), "valid notNull should be valid");
@@ -590,8 +590,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.minMax), "validation should contain minMax");
 
-        ok(!model1.set({"minMax": undefined}), "minMax should be required");
-        ok(!model1.set({"minMax": null}), "minMax should be required");
+        ok(model1.validate({"minMax": undefined}), "minMax should be required");
+        ok(model1.validate({"minMax": null}), "minMax should be required");
         var validationErrs = model1.validate({"minMax": ""});
         ok(validationErrs && validationErrs.minMax, "invalid minMax should not be valid");
         equal(validationErrs.minMax, "may not be null", "invalid minMax should hold the correct error message");
