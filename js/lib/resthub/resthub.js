@@ -3,7 +3,7 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
     var Resthub = { };
 
     // Avoid GET caching issues with Internet Explorer
-    if($.browser.msie) {
+    if (XMLHttpRequest) {
         $.ajaxSetup({ cache: false });
     }
 
