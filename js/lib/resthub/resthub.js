@@ -1,6 +1,11 @@
-define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, PubSub) {
+define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, $) {
 
     var Resthub = { };
+
+    // Avoid GET caching issues with Internet Explorer
+    if (XMLHttpRequest) {
+        $.ajaxSetup({ cache: false });
+    }
 
     Resthub.Validation = (function() {
 
@@ -529,24 +534,13 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
         delegateEvents: function(events) {
 
             Resthub.View.__super__.delegateEvents.call(this, events);
-            this._eventsSubscriptions = [];
-
             if (!(events || (events = getValue(this, 'events')))) return;
             _.each(events, _.bind(function(method, key) {
                 if (key.indexOf(this.globalEventsIdentifier) != 0) return;
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
-                PubSub.on(key, method, this);
-                this._eventsSubscriptions.push(key);
+                this.listenTo(Backbone, key, method);
             }, this));
-        },
-
-        undelegateEvents: function() {
-
-            if (this._eventsSubscriptions && this._eventsSubscriptions.length > 0) {
-                PubSub.off(this._eventsSubscriptions.join(' '), null, this);
-            }
-            Resthub.View.__super__.undelegateEvents.call(this);
         },
 
         // Override backbone setElement to bind a destroyed special event
@@ -559,45 +553,24 @@ define(['underscore', 'backbone', 'pubsub', 'lib/resthub/jquery-event-destroyed'
                 this._insertRoot();
             }
 
-            var self = this;
-            // call backbone dispose method on el DOM removing
-            this.$el.on("destroyed", function() {
-                self.dispose();
-            });
+            // call backbone stopListening method on el DOM removing
+            this.$el.on("destroyed", _.bind(this.stopListening, this));
 
             return this;
         },
 
         // Override Backbone method unbind destroyed special event
-        // after remove : this prevents dispose to be called twice
+        // after remove : this prevents stopListening to be called twice
         remove: function() {
             this.$el.off("destroyed");
             Resthub.View.__super__.remove.call(this);
-            var self = this;
-            // call backbone dispose method on el DOM removing
-            this.$el.on("destroyed", function() {
-                self.dispose();
-            });
         },
 
-        // Override Backbone dispose method to unbind Backbone Validation
-        // Bindings if defined
-        dispose: function() {
-
-            // perform actions before effective close
-            this.onDispose();
-
-            Resthub.View.__super__.dispose.call(this);
-            PubSub.off(null, null, this);
-
+        stopListening: function() {
+            Resthub.View.__super__.stopListening.call(this);
             if (Backbone.Validation) {
                 Backbone.Validation.unbind(this);
             }
-
-            return this;
-        },
-
-        onDispose: function() {
             return this;
         },
 
