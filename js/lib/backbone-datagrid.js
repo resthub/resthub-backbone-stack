@@ -1,4 +1,4 @@
-// backbone.datagrid v0.3.0
+// backbone.datagrid v0.3.2
 //
 // Copyright (c) 2012 Loïc Frering <loic.frering@gmail.com>
 // Distributed under the MIT license
@@ -12,7 +12,8 @@ var Datagrid = Backbone.View.extend({
       paginated:      false,
       page:           1,
       perPage:        10,
-      tableClassName: 'table'
+      tableClassName: 'table',
+      emptyMessage:   '<p>No results found.</p>'
     });
 
     this.collection.on('reset', this.render, this);
@@ -38,7 +39,11 @@ var Datagrid = Backbone.View.extend({
 
     $table.append('<tbody></tbody>');
 
-    this.collection.forEach(this.renderRow, this);
+    if (this.collection.isEmpty()) {
+      this.$el.append(this.options.emptyMessage);
+    } else {
+      this.collection.forEach(this.renderRow, this);
+    }
   },
 
   renderPagination: function() {
@@ -59,6 +64,21 @@ var Datagrid = Backbone.View.extend({
 
     var row = new Row(options);
     this.$('tbody').append(row.render(this.columns).el);
+  },
+
+  refresh: function(options) {
+    if (this.options.paginated) {
+      this._page(options);
+    } else {
+      if (this.options.inMemory) {
+        this.collection.trigger('reset', this.collection);
+        if (options && options.success) {
+          options.success();
+        }
+      } else {
+        this._request(options);
+      }
+    }
   },
 
   sort: function(column, order) {
@@ -85,12 +105,7 @@ var Datagrid = Backbone.View.extend({
     if (this.options.paginated) {
       this._originalCollection.comparator = _.bind(this._comparator, this);
       this._originalCollection.sort();
-      // Force rendering even if we already are on page 1
-      if (this.pager.get('currentPage') === 1) {
-        this.pager.trigger('change:currentPage');
-      } else {
-        this.page(1);
-      }
+      this.page(1);
     } else {
       this.collection.comparator = _.bind(this._comparator, this);
       this.collection.sort();
@@ -133,10 +148,15 @@ var Datagrid = Backbone.View.extend({
 
     options.data = this._getRequestData();
     options.success = _.bind(function(collection) {
+      if (!this.columns || _.isEmpty(this.columns)) {
+        this._prepareColumns();
+      }
       if (success) {
         success();
       }
-      this.pager.update(collection);
+      if (this.options.paginated) {
+        this.pager.update(collection);
+      }
       if (!silent) {
         collection.trigger('reset', collection);
       }
@@ -158,12 +178,14 @@ var Datagrid = Backbone.View.extend({
         data[param] = value;
       }, this);
       return data;
+    } else if (this.options.paginated) {
+      return {
+        page:     this.pager.get('currentPage'),
+        per_page: this.pager.get('perPage')
+      };
     }
 
-    return {
-      page:     this.pager.get('currentPage'),
-      per_page: this.pager.get('perPage')
-    };
+    return {};
   },
 
   _pageInMemory: function(options) {
@@ -187,15 +209,9 @@ var Datagrid = Backbone.View.extend({
 
   _prepare: function() {
     this._prepareSorter();
-    if (this.options.paginated) {
-      this._preparePager();
-      this._page({
-        //silent: true,
-        success: _.bind(this._prepareColumns, this)
-      });
-    } else {
-      this._prepareColumns();
-    }
+    this._preparePager();
+    this._prepareColumns();
+    this.refresh();
   },
 
   _prepareSorter: function() {
@@ -211,16 +227,11 @@ var Datagrid = Backbone.View.extend({
       perPage:     this.options.perPage
     });
 
-    this.pager.on('change:currentPage', function() {
+    this.pager.on('change:currentPage', function () {
       this._page();
     }, this);
     this.pager.on('change:perPage', function() {
-      // Force rendering even if we already are on page 1
-      if (this.pager.get('currentPage') === 1) {
-        this.pager.trigger('change:currentPage');
-      } else {
-        this.page(1);
-      }
+      this.page(1);
     }, this);
   },
 
@@ -551,7 +562,11 @@ var Pager = Datagrid.Pager = Backbone.Model.extend({
 
   page: function(page) {
     if (this.inBounds(page)) {
-      this.set('currentPage', page);
+      if (page === this.get('currentPage')) {
+        this.trigger('change:currentPage');
+      } else {
+        this.set('currentPage', page);
+      }
     }
   },
 
@@ -585,6 +600,15 @@ var Pager = Datagrid.Pager = Backbone.Model.extend({
 
   inBounds: function(page) {
     return !this.hasTotal() || page > 0 && page <= this.get('totalPages');
+  },
+
+  set: function() {
+    var args = [];
+    for (var i = 0; i < arguments.length; i++) {
+      args.push(arguments[i]);
+    }
+    args[2] = _.extend({}, args[2], {validate: true});
+    Backbone.Model.prototype.set.apply(this, args);
   },
 
   validate: function(attrs) {
