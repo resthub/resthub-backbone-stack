@@ -1,6 +1,6 @@
-define(['jquery'], function ($) {
+define(['jquery', 'underscore'], function ($, _) {
     
-// In case we forget to take out console statements. IE becomes very unhappy when we forget. Let's not make IE unhappy
+    // In case we forget to take out console statements. IE becomes very unhappy when we forget. Let's not make IE unhappy
     if(typeof(window.console) === 'undefined') {
         window.console = {};
         window.console.log = window.console.error = window.console.info = window.console.debug = window.console.warn = window.console.trace = window.console.dir = window.console.dirxml = window.console.group = window.console.groupEnd = window.console.time = window.console.timeEnd = window.console.assert = window.console.profile = function() {};
@@ -9,11 +9,15 @@ define(['jquery'], function ($) {
     var console = window.console;
 
     // manage IE8 & 9
-    var methods = ['log','info','warn','error','assert','dir','clear','profile','profileEnd'];
-    if (Function.prototype.bind && console && typeof console.log === 'object') {
-		_.each(methods, function (method) {
-            console[method] = this.call(console[method], console);
-        }, Function.prototype.bind);
+    var methods = ['log', 'debug', 'info','warn','error','assert','dir','clear','profile','profileEnd'];
+    if (typeof console.log === 'object') {
+        // create debug method
+        console.debug = console.log;
+
+        _.each(methods, function (method) {
+            console['_' + method] = console[method];
+            console[method] = function(msg) { console['_' + method](msg); };
+        });
     }
 
     // Can be customized if needed
