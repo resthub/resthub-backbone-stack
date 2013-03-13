@@ -607,6 +607,9 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
                         if (checkboxes.length > 1) {
                             attributes[name] = [];
                         }
+                        else if (checkboxes.length === 1) {
+                            attributes[name] = "false";
+                        }
                     }
                     if ($this.is(':checked')) {
                         if (_.isArray(attributes[name])) {

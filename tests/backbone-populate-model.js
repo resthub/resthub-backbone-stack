@@ -1,4 +1,4 @@
-require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
+require(["jquery", "underscore", "backbone", "resthub"], function($, _, Backbone, Resthub) {
 
     module("backbone-populate-model", {
         setup: function() {
@@ -82,6 +82,54 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
 
                 render: function() {
                     this.$el.html("<form id='myForm'><input type='text' name='name' value='myName'/><input type='email' name='email' value='email@email.fr'/><textarea name='description'>description</textarea><select name='list'><option selected='selected' value='7'>value</option></select></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView7 = Resthub.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='radio' name='myRadio' value='myRadio1' checked='true'/><input type='radio' name='myRadio' value='myRadio2'/><input type='radio' name='myRadio' value='myRadio3'/></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView8 = Resthub.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='checkbox' name='check' value='check1' checked='true'/><input type='checkbox' name='check' value='check2' checked='true'/><input type='checkbox' name='check' value='check3'/></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView9 = Resthub.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='checkbox' name='check' value='true' checked='true'/></form>");
+                    $("#qunit-fixture #main").html(this.el);
+                }
+            });
+
+            this.TestView10 = Resthub.View.extend({
+                initialize: function() {
+                    this.model = new Person();
+                    this.render();
+                },
+
+                render: function() {
+                    this.$el.html("<form id='myForm'><input type='checkbox' name='check' value='true'/></form>");
                     $("#qunit-fixture #main").html(this.el);
                 }
             });
@@ -209,5 +257,51 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
         equal(testView.model.get('email'), "email@email.fr", "model email set");
         equal(testView.model.get('description'), "description", "model description set");
         equal(testView.model.get('list'), "7", "model list set");
+    });
+
+    test("radio should not be ignored", 3, function() {
+        var testView = new this.TestView7();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        var modelRadio = testView.model.get('myRadio');
+        ok(modelRadio != undefined && modelRadio != null, "model check set");
+        equal(modelRadio, "myRadio1", "model radio option is correct");
+    });
+
+    test("checkbox with multiple values should not be ignored and managed as array", 6, function() {
+        var testView = new this.TestView8();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        var modelCheck = testView.model.get('check');
+        ok(modelCheck != undefined && modelCheck != null, "model check set");
+        ok(_.isArray(modelCheck), "model check is array");
+        equal(modelCheck.length, 2, "model check size is correct an contains only checked values");
+        equal(modelCheck[0], "check1", "model check value [0] is correct");
+        equal(modelCheck[1], "check2", "model check value [1] is correct");
+    });
+
+    test("checkbox with selected single value should not be ignored", 4, function() {
+        var testView = new this.TestView9();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        var modelCheck = testView.model.get('check');
+        ok(modelCheck != undefined && modelCheck != null, "model check set");
+        ok(!_.isArray(modelCheck), "model check is not array");
+        equal(modelCheck, "true", "model check selected value correct");
+    });
+
+    test("checkbox with unselected single value should not be ignored and managed as boolean string", 5, function() {
+        var testView = new this.TestView10();
+        testView.populateModel();
+
+        ok(testView.model, "model defined");
+        var modelCheck = testView.model.get('check');
+        ok(modelCheck != undefined && modelCheck != null, "model check set");
+        ok(!_.isArray(modelCheck), "model check is not array");
+        ok(!_.string.isBlank(modelCheck), "model check is not blank");
+        equal(modelCheck, "false", "model check selected value correct");
     });
 });
