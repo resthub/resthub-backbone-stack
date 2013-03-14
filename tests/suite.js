@@ -89,7 +89,11 @@ require.config({
     }
 });
 
+QUnit.config.autostart = false;
+
 require(['console', '../tests/handlebars-helpers', '../tests/inclusions',
     '../tests/require-handlebars', '../tests/backbone-remove',
-    '../tests/backbone-populate-model', '../tests/backbone-history', '../tests/console',
-    '../tests/backbone-i18n', '../tests/backbone-validation']);
+    '../tests/backbone-populate-model', '../tests/console',
+    '../tests/backbone-i18n', '../tests/backbone-validation'], function() {
+    QUnit.start();
+});
