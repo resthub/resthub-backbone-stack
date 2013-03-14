@@ -21,11 +21,6 @@ require.config({
             ],
             exports: 'Backbone'
         },
-        'backbone-queryparams': {
-            deps: [
-                'backbone'
-            ]
-        },
         'backbone-datagrid': {
             deps: [
                 'backbone'
