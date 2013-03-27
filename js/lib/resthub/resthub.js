@@ -1,3 +1,4 @@
+// RESThub Backbone stack 2.1.1
 define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, $) {
 
     var Resthub = { };
