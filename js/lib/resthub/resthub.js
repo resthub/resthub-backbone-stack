@@ -257,10 +257,16 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
         var constraintMessage = function(propKey, constraint, messages) {
             var msg = constraint.message;
 
+            var msgPropKey = 'validation.' + propKey + '.' +  constraint.type + '.message';
             var msgKey = 'validation.' + constraint.type + '.message';
 
-            if (messages && messages[msgKey]) {
-                msg = messages[msgKey];
+            if (messages) {
+
+                if (messages[msgPropKey]) {
+                    msg = messages[msgPropKey];
+                } else if (messages[msgKey]) {
+                    msg = messages[msgKey];
+                }
 
                 for (var p in constraint) {
                     msg = msg.replace(new RegExp('{' + p + '}', 'g'), constraint[p]);
