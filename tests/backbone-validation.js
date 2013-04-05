@@ -5,7 +5,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
     module("resthub-backbone-validation", {
         setup: function() {
             nbGetCalled = 0;
-            
+
             this.Model1 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
 
@@ -35,7 +35,9 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
             this.Model4 = Backbone.Model.extend({
                 className: 'org.resthub.validation.model.User',
                 messages: {
-                    'validation.Min.message': 'should be greater than {value} or equals'
+                    'validation.Min.message': 'should be greater than {value} or equals',
+                    'validation.AssertTrue.message': 'must not be false',
+                    'validation.assertTrue.AssertTrue.message': 'assertTrue must be true'
                 },
 
                 initialize: _.bind(function() {
@@ -675,6 +677,18 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         equal(validationErrs.minMax, "should be greater than 1 or equals", "invalid minMax should hold the correct error message");
     });
 
+    test("custom property messages", 3, function() {
+        $.get = this.mockedGet2;
+
+        var model4 = new this.Model4();
+
+        ok(!_.isEmpty(model4.validation.assertTrue), "validation should contain assertTrue");
+
+        var validationErrs = model4.validate({"assertTrue": false});
+        ok(validationErrs && validationErrs.assertTrue, "invalid assertTrue should not be valid");
+        equal(validationErrs.assertTrue, "assertTrue must be true", "invalid assertTrue should hold the correct error message");
+    });
+
     test("adding constraints", 8, function() {
         $.get = this.mockedGet2;
 
@@ -758,7 +772,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         new this.Model1();
         equal(nbGetCalled, 1, "get should have been called once");
-        
+
         new this.Model1();
         equal(nbGetCalled, 1, "get should have been called once");
 
