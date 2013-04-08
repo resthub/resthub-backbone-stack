@@ -654,7 +654,7 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
 
             if (options && options.pushState) {
                 // force all links to be handled by Backbone pushstate - no get will be send to server
-                $(window.document).on('click', 'a:not([data-bypass])', function(evt) {
+                $(window.document).on('click', 'a[href]:not([data-bypass])', function(evt) {
 
                     var protocol = this.protocol + '//';
                     var href = this.href;
