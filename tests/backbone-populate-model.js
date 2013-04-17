@@ -1,4 +1,4 @@
-require(["jquery", "underscore", "backbone", "resthub"], function($, _, Backbone, Resthub) {
+require(["jquery", "underscore", "backbone", "resthub", "underscore.string"], function($, _, Backbone, Resthub, _s) {
 
     module("backbone-populate-model", {
         setup: function() {
@@ -301,7 +301,7 @@ require(["jquery", "underscore", "backbone", "resthub"], function($, _, Backbone
         var modelCheck = testView.model.get('check');
         ok(modelCheck != undefined && modelCheck != null, "model check set");
         ok(!_.isArray(modelCheck), "model check is not array");
-        ok(!_.string.isBlank(modelCheck), "model check is not blank");
+        ok(!_s.isBlank(modelCheck), "model check is not blank");
         equal(modelCheck, "false", "model check selected value correct");
     });
 });
