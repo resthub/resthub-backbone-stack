@@ -1,7 +1,7 @@
 /**
  * Set of generic handlebars helpers
  */
-define(['handlebars-orig', 'moment', 'underscore-string'], function(Handlebars, moment) {
+define(['handlebars-orig', 'moment', 'underscore-string'], function(Handlebars, moment, _s) {
 
     /**
      * This helper provides a more fluent syntax for inline ifs. i.e. if
@@ -132,7 +132,7 @@ define(['handlebars-orig', 'moment', 'underscore-string'], function(Handlebars, 
      * Usage: class='{{sprintf "Welcome %s !" username}}'
      */
     Handlebars.registerHelper('sprintf', function() {
-        return _.str.sprintf.apply(this, arguments);
+        return _s.sprintf.apply(this, arguments);
     });
     
     /**
@@ -147,7 +147,7 @@ define(['handlebars-orig', 'moment', 'underscore-string'], function(Handlebars, 
      */
     Handlebars.registerHelper('modulo', function(n, m, block) {
         if((n % m) == 0) {
-            return block();
+            return block.fn();
         }
         else {
             return block.inverse();
