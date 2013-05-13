@@ -1,4 +1,4 @@
-// Backbone.Validation v0.7.1
+// Backbone.Validation v0.7.1 + patch from https://github.com/magnusvk/backbone.validation/commit/70f20fc0aab32cb66fbb4d88d0cae2ad036f795e
 //
 // Copyright (c) 2011-2012 Thomas Pedersen
 // Distributed under MIT License
@@ -71,6 +71,12 @@
   
       _.each(obj, function(val, key) {
         if(obj.hasOwnProperty(key)) {
+          // play nice with associations -- don't flatten an entire Backbone.Model,
+          // including event bindings etc. that would lead to a call stack overflow
+          if (val && (val instanceof Backbone.Model)) {
+            val = val.attributes
+          }
+
           if (val && typeof val === 'object' && !(val instanceof Date || val instanceof RegExp || val instanceof Array)) {
             flatten(val, into, prefix + key + '.');
           }
