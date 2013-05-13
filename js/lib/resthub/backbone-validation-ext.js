@@ -28,6 +28,7 @@
             view.$(attrSelector).closest('.control-group').removeClass('error');
             // get the controls element
             view.$(attrSelector).closest('.control-group').find('.help-inline').text('');
+            view.$(attrSelector).closest('.control-group').find('.help-inline').hide();
         },
         invalid: function(view, attr, error, selector) {
 
@@ -37,6 +38,7 @@
             view.$(attrSelector).closest('.control-group').addClass('error');
             // get the controls element
             view.$(attrSelector).closest('.control-group').find('.help-inline').text(error);
+            view.$(attrSelector).closest('.control-group').find('.help-inline').show();
         }
     });
 
