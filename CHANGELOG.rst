@@ -31,6 +31,7 @@ Following libraries updated and may lead to some minor incompatibility, most sig
   * View.dispose() has been replaced by View.stopListening()
   * You should use listenTo() and stopListening() instead of on() and off() since they allow automatic event cleanup when the view is destroyed
   * Model validation is now only enforced by default in Model#save and no longer enforced by default upon construction or in Model#set, unless the {validate:true} option is passed.
+  * PubSub has been removed and replaced by using directly Backbone, which now extends Events so it can be used as a global event bus
  * jQuery 1.8.2 to 1.9.1 (`Upgrade guide <http://jquery.com/upgrade-guide/1.9/>`_)
  * Bootstrap 2.1.1 to 2.3 (`Blog post <http://blog.getbootstrap.com/2013/02/07/bootstrap-2-3-released/>`_)
  * Underscore 1.3.3 to 1.4.4 (`Changelog <http://underscorejs.org/#changelog>`_)
