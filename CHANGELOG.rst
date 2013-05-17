@@ -6,7 +6,7 @@ Some changes break backwards compatibility, check out the UPGRADE section before
 
 To get the full diff between two versions, go to https://github.com/resthub/resthub-backbone-stack/compare/resthub-2.0.0...resthub-2.1.0
 
-2.1.1 version (MM-DD-2013)
+2.1.1 version (05-17-2013)
 --------------------------
 
 Following libraries updated and may lead to some minor incompatibility, most significant ones are detailed bellow :
