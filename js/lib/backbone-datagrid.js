@@ -1,4 +1,4 @@
-// backbone.datagrid v0.3.2
+// backbone.datagrid v0.3.2 + patch for option initialization
 //
 // Copyright (c) 2012 Loïc Frering <loic.frering@gmail.com>
 // Distributed under the MIT license
@@ -6,7 +6,8 @@
 (function() {
 
 var Datagrid = Backbone.View.extend({
-  initialize: function() {
+  initialize: function(options) {
+    this.options = options;
     this.columns = this.options.columns;
     this.options = _.defaults(this.options, {
       paginated:      false,
