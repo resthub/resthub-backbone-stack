@@ -1,4 +1,4 @@
-require(["jquery", "underscore", "backbone", "resthub", "underscore.string"], function($, _, Backbone, Resthub, _s) {
+require(["jquery", "underscore", "backbone", "resthub", "underscore-string"], function($, _, Backbone, Resthub, _s) {
 
     module("backbone-populate-model", {
         setup: function() {
