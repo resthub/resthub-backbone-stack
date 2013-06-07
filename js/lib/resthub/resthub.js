@@ -631,7 +631,8 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             });
 
             if (model) {
-                model.set(attributes, {validate: true});
+                model.set(attributes, {silent: true});
+                model.set({});
             }
         }
 
