@@ -602,7 +602,7 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
 
                 // specific test for radio to get only checked option or null is no option checked
                 if ($this.is(':radio')) {
-                    if ($this.attr('checked')) {
+                    if ($this.is(':checked')) {
                         attributes[name] = $this.val();
                     } else if (!attributes[name]) {
                         attributes[name] = null;
