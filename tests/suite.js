@@ -93,6 +93,7 @@ QUnit.config.autostart = false;
 
 require(['console', '../tests/handlebars-helpers', '../tests/inclusions',
     '../tests/require-handlebars', '../tests/backbone-remove',
+    '../tests/backbone-view',
     '../tests/backbone-populate-model', '../tests/console',
     '../tests/backbone-i18n', '../tests/backbone-validation'], function() {
     QUnit.start();
