@@ -1,4 +1,4 @@
-// RESThub Backbone stack 2.1.1
+// RESThub Backbone stack 2.1.2
 define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, $) {
 
     var Resthub = { };
@@ -631,8 +631,7 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             });
 
             if (model) {
-                model.set(attributes, {silent: true});
-                model.set({});
+                model.set(attributes, {validate: true});
             }
         }
 
