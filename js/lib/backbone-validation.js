@@ -111,7 +111,14 @@
           return memo;
         }, {});
       };
-  
+
+      // Returns an object with attributes on model that has defined one or more
+      // validation rules. If attrs is not empty, filters also on attributes
+      // contained in attrs
+      var getAttrsThatAreValidated = function(model, attrs) {
+        return _.pick(attrs || model.attributes, _.keys(model.validation || {}));
+      }
+
       // Looks on the model for validations for a specified
       // attribute. Returns an array of any validators defined,
       // or an empty array if none is defined.
@@ -177,7 +184,7 @@
             invalidAttrs = {},
             isValid = true,
             computed = _.clone(attrs),
-            flattened = flatten(attrs);
+            flattened = flatten(getAttrsThatAreValidated(model, attrs));
   
         _.each(flattened, function(val, attr) {
           error = validateAttr(model, attr, val, computed);
@@ -207,8 +214,8 @@
           // entire model is valid. Passing true will force a validation
           // of the model.
           isValid: function(option) {
-            var flattened = flatten(this.attributes);
-  
+            var flattened = flatten(getAttrsThatAreValidated(this));
+
             if(_.isString(option)){
               return !validateAttr(this, option, flattened[option], _.extend({}, this.attributes));
             }
@@ -232,7 +239,7 @@
                 opt = _.extend({}, options, setOptions),
                 validatedAttrs = getValidatedAttrs(model),
                 allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
-                changedAttrs = flatten(attrs || allAttrs),
+                changedAttrs = flatten(getAttrsThatAreValidated(model, attrs  || allAttrs)),
   
                 result = validateModel(model, allAttrs);
   

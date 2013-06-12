@@ -223,7 +223,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.urlDefault), "validation should contain urlDefault");
 
-        ok(model1.set({"urlDefault": undefined}), "urlDefault should not be required");
+        ok(model1.set({"urlDefault": undefined}, {validate: true}), "urlDefault should not be required");
         var validationErrs = model1.validate({"urlDefault": "bad url"});
         ok(validationErrs && validationErrs.urlDefault, "invalid urlDefault should not be valid");
         equal(validationErrs.urlDefault, "must be a valid URL", "invalid urlDefault should hold the correct error message");
@@ -233,7 +233,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.url), "validation should contain urlDefault");
 
-        ok(model1.set({"url": undefined}), "url should not be required");
+        ok(model1.set({"url": undefined}, {validate: true}), "url should not be required");
         var validationErrs = model1.validate({"url": "bad url"});
         ok(validationErrs && validationErrs.url, "invalid url should not be valid");
         validationErrs = model1.validate({"url": "ftp://localhost:8080"});
@@ -247,7 +247,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.urlRegexp), "validation should contain urlRegexp");
 
-        ok(model1.set({"urlRegexp": undefined}), "urlRegexp should not be required");
+        ok(model1.set({"urlRegexp": undefined}, {validate: true}), "urlRegexp should not be required");
         var validationErrs = model1.validate({"urlRegexp": "bad url"});
         ok(validationErrs && validationErrs.urlRegexp, "invalid urlRegexp should not be valid");
         validationErrs = model1.validate({"urlRegexp": "http://localhost:8080/test"});
@@ -257,7 +257,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.urlComplete), "validation should contain urlComplete");
 
-        ok(model1.set({"urlComplete": undefined}), "urlComplete should not be required");
+        ok(model1.set({"urlComplete": undefined}, {validate: true}), "urlComplete should not be required");
         var validationErrs = model1.validate({"urlComplete": "bad url"});
         ok(validationErrs && validationErrs.urlComplete, "invalid urlComplete should not be valid");
         validationErrs = model1.validate({"urlComplete": "http://resthub:8080/url-test.fr"});
@@ -277,8 +277,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.assertTrue), "validation should contain assertTrue");
 
-        ok(model1.set({"assertTrue": undefined}), "assertTrue should not be required");
-        ok(model1.set({"assertTrue": null}), "assertTrue should not be required");
+        ok(model1.set({"assertTrue": undefined}, {validate: true}), "assertTrue should not be required");
+        ok(model1.set({"assertTrue": null}, {validate: true}), "assertTrue should not be required");
         ok(model1.validate({"assertTrue": "false"}), "invalid assertTrue should not be valid");
         ok(model1.validate({"assertTrue": "no"}), "invalid assertTrue should not be valid");
         var validationErrs = model1.validate({"assertTrue": false});
@@ -296,8 +296,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.assertFalse), "validation should contain assertFalse");
 
-        ok(model1.set({"assertFalse": undefined}), "assertFalse should not be required");
-        ok(model1.set({"assertFalse": null}), "assertFalse should not be required");
+        ok(model1.set({"assertFalse": undefined}, {validate: true}), "assertFalse should not be required");
+        ok(model1.set({"assertFalse": null}, {validate: true}), "assertFalse should not be required");
         ok(model1.validate({"assertFalse": "true"}), "invalid assertFalse should not be valid");
         var validationErrs = model1.validate({"assertFalse": true});
         ok(validationErrs && validationErrs.assertFalse, "invalid assertFalse should not be valid");
@@ -315,8 +315,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.min), "validation should contain min");
 
-        ok(model1.set({"min": undefined}), "min should not be required");
-        ok(model1.set({"min": null}), "min should not be required");
+        ok(model1.set({"min": undefined}, {validate: true}), "min should not be required");
+        ok(model1.set({"min": null}, {validate: true}), "min should not be required");
         ok(model1.validate({"min": "test"}), "invalid min should not be valid");
         var validationErrs = model1.validate({"min": 0});
         ok(validationErrs && validationErrs.min, "invalid min should not be valid");
@@ -333,8 +333,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.decimalMin), "validation should contain decimalMin");
 
-        ok(model1.set({"decimalMin": undefined}), "decimalMin should not be required");
-        ok(model1.set({"decimalMin": null}), "decimalMin should not be required");
+        ok(model1.set({"decimalMin": undefined}, {validate: true}), "decimalMin should not be required");
+        ok(model1.set({"decimalMin": null}, {validate: true}), "decimalMin should not be required");
         ok(model1.validate({"decimalMin": "test"}), "invalid decimalMin should not be valid");
         var validationErrs = model1.validate({"decimalMin": 0.4});
         ok(validationErrs && validationErrs.decimalMin, "invalid decimalMin should not be valid");
@@ -351,8 +351,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.max), "validation should contain max");
 
-        ok(model1.set({"max": undefined}), "max should not be required");
-        ok(model1.set({"max": null}), "max should not be required");
+        ok(model1.set({"max": undefined}, {validate: true}), "max should not be required");
+        ok(model1.set({"max": null}, {validate: true}), "max should not be required");
         ok(model1.validate({"max": "test"}), "invalid max should not be valid");
         var validationErrs = model1.validate({"max": 1001});
         ok(validationErrs && validationErrs.max, "invalid max should not be valid");
@@ -369,8 +369,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.decimalMax), "validation should contain decimalMax");
 
-        ok(model1.set({"decimalMax": undefined}), "decimalMax should not be required");
-        ok(model1.set({"decimalMax": null}), "decimalMax should not be required");
+        ok(model1.set({"decimalMax": undefined}, {validate: true}), "decimalMax should not be required");
+        ok(model1.set({"decimalMax": null}, {validate: true}), "decimalMax should not be required");
         ok(model1.validate({"decimalMax": "test"}), "invalid decimalMax should not be valid");
         var validationErrs = model1.validate({"decimalMax": 100.5});
         ok(validationErrs && validationErrs.decimalMax, "invalid decimalMax should not be valid");
@@ -387,8 +387,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.range), "validation should contain range");
 
-        ok(model1.set({"range": undefined}), "range should not be required");
-        ok(model1.set({"range": null}), "range should not be required");
+        ok(model1.set({"range": undefined}, {validate: true}), "range should not be required");
+        ok(model1.set({"range": null}, {validate: true}), "range should not be required");
         ok(model1.validate({"range": "test"}), "invalid range should not be valid");
         ok(model1.validate({"range": -12}), "invalid range should not be valid");
         var validationErrs = model1.validate({"range": 250});
@@ -408,8 +408,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         // string size validator
         ok(!_.isEmpty(model1.validation.stringSize), "validation should contain stringSize");
 
-        ok(model1.set({"stringSize": undefined}), "stringSize should not be required");
-        ok(model1.set({"stringSize": null}), "stringSize should not be required");
+        ok(model1.set({"stringSize": undefined}, {validate: true}), "stringSize should not be required");
+        ok(model1.set({"stringSize": null}, {validate: true}), "stringSize should not be required");
         ok(model1.validate({"stringSize": true}), "invalid stringSize should not be valid");
         ok(model1.validate({"stringSize": "t"}), "invalid stringSize should not be valid");
         var validationErrs = model1.validate({"stringSize": "testtest"});
@@ -423,8 +423,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         // collection size validator
         ok(!_.isEmpty(model1.validation.collSize), "validation should contain collSize");
 
-        ok(model1.set({"collSize": undefined}), "collSize should not be required");
-        ok(model1.set({"collSize": null}), "collSize should not be required");
+        ok(model1.set({"collSize": undefined}, {validate: true}), "collSize should not be required");
+        ok(model1.set({"collSize": null}, {validate: true}), "collSize should not be required");
         ok(model1.validate({"collSize": true}), "invalid collSize should not be valid");
         ok(model1.validate({"collSize": []}), "invalid collSize should not be valid");
         ok(model1.validate({"collSize": [1]}), "invalid collSize should not be valid");
@@ -444,8 +444,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.pattern), "validation should contain pattern");
 
-        ok(model1.set({"pattern": undefined}), "pattern should not be required");
-        ok(model1.set({"pattern": null}), "pattern should not be required");
+        ok(model1.set({"pattern": undefined}, {validate: true}), "pattern should not be required");
+        ok(model1.set({"pattern": null}, {validate: true}), "pattern should not be required");
         ok(model1.validate({"pattern": "test"}), "invalid pattern should not be valid");
         ok(model1.validate({"pattern": true}), "invalid pattern should not be valid");
         var validationErrs = model1.validate({"pattern": "01"});
@@ -464,8 +464,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.email), "validation should contain email");
 
-        ok(model1.set({"email": undefined}), "email should not be required");
-        ok(model1.set({"email": null}), "email should not be required");
+        ok(model1.set({"email": undefined}, {validate: true}), "email should not be required");
+        ok(model1.set({"email": null}, {validate: true}), "email should not be required");
         ok(model1.validate({"email": "test"}), "invalid email should not be valid");
         ok(model1.validate({"email": true}), "invalid email should not be valid");
         var validationErrs = model1.validate({"email": "01"});
@@ -520,8 +520,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.creditCardNumber), "validation should contain creditCardNumber");
 
-        ok(model1.set({"creditCardNumber": undefined}), "creditCardNumber should not be required");
-        ok(model1.set({"creditCardNumber": null}), "creditCardNumber should not be required");
+        ok(model1.set({"creditCardNumber": undefined}, {validate: true}), "creditCardNumber should not be required");
+        ok(model1.set({"creditCardNumber": null}, {validate: true}), "creditCardNumber should not be required");
         ok(model1.validate({"creditCardNumber": true}), "invalid creditCardNumber should not be valid");
         ok(model1.validate({"creditCardNumber": "aaaa"}), "invalid creditCardNumber should not be valid");
         ok(model1.validate({"creditCardNumber": "1234"}), "invalid creditCardNumber should not be valid");
@@ -557,7 +557,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.nullValue), "validation should contain nullValue");
 
-        ok(model1.set({"nullValue": undefined}), "nullValue should not be required");
+        ok(model1.set({"nullValue": undefined}, {validate: true}), "nullValue should not be required");
 
         var validationErrs = model1.validate({"nullValue": "aa"});
         ok(validationErrs && validationErrs.nullValue, "invalid nullValue should not be valid");
@@ -573,8 +573,8 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
 
         ok(!_.isEmpty(model1.validation.length), "validation should contain length");
 
-        ok(model1.set({"length": undefined}), "length should not be required");
-        ok(model1.set({"length": null}), "length should not be required");
+        ok(model1.set({"length": undefined}, {validate: true}), "length should not be required");
+        ok(model1.set({"length": null}, {validate: true}), "length should not be required");
         ok(model1.validate({"length": "a"}), "invalid length should not be valid");
         var validationErrs = model1.validate({"length": "aaaaaaaaaaa"});
         ok(validationErrs && validationErrs.length, "invalid length should not be valid");
