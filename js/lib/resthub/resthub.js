@@ -561,15 +561,23 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             }
 
             // call backbone stopListening method on el DOM removing
-            this.$el.on("destroyed", _.bind(this.stopListening, this));
+            this.$el.on("destroyed", _.bind(this._destroy, this));
 
             return this;
+        },
+
+        _destroy: function() {
+            // Trigger destroy event on the view
+            this.trigger("destroy");
+            this.stopListening();
         },
 
         // Override Backbone method unbind destroyed special event
         // after remove : this prevents stopListening to be called twice
         remove: function() {
             this.$el.off("destroyed");
+            // Trigger destroy event on the view
+            this.trigger("destroy");
             Resthub.View.__super__.remove.call(this);
         },
 
