@@ -17,6 +17,7 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
                 initialize: function() {
                     this.counts = {};
                     this.text = 'HTML Content 2';
+                    this.listenTo(this, 'destroy', function() { this.counts.destroy = (this.counts.destroy || 0) + 1; });
                     this.render();
                 },
 
@@ -90,6 +91,51 @@ require(["jquery", "backbone", "resthub"], function($, Backbone, Resthub) {
 
         testView.$el.parent().parent().empty();
         equal(testView.counts.stopListening, 1, "stopListening called");
+    });
+
+     test("remove on parent should trigger destroy event", 1, function() {
+        var testView = new this.TestView2();
+
+        testView.$el.parent().remove();
+        equal(testView.counts.destroy, 1, "destroy triggered");
+    });
+
+     test("html should not trigger destroy event", 1, function() {
+        var testView = new this.TestView2();
+
+        testView.$el.html("test");
+        equal(testView.counts.destroy, undefined, "destroy not triggered");
+    });
+
+     test("html on parents should trigger destroy event", 2, function() {
+        var testView = new this.TestView2();
+
+        testView.$el.parent().html("test");
+        equal(testView.counts.destroy, 1, "destroy triggered");
+
+        testView = new this.TestView2();
+
+        testView.$el.parent().parent().html("test");
+        equal(testView.counts.destroy, 1, "destroy triggered");
+    });
+
+    test("empty should not trigger destroy event", 1, function() {
+        var testView = new this.TestView2();
+
+        testView.$el.empty();
+        equal(testView.counts.destroy, undefined, "destroy not triggered");
+    });
+
+    test("empty on parents should trigger destroy event", 2, function() {
+        var testView = new this.TestView2();
+
+        testView.$el.parent().empty();
+        equal(testView.counts.destroy, 1, "destroy triggered");
+
+        testView = new this.TestView2();
+
+        testView.$el.parent().parent().empty();
+        equal(testView.counts.destroy, 1, "destroy triggered");
     });
 
 });
