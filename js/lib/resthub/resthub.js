@@ -551,11 +551,6 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
                 this.listenTo(Backbone, key, method);
             }, this));
 
-            // Bind Backbone Validation if used
-            if (Backbone.Validation) {
-                Backbone.Validation.bind(this);
-            }
-
             return this;
         },
 
