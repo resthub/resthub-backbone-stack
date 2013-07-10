@@ -1,7 +1,8 @@
-// RESThub Backbone stack 2.1.2
 define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'], function(_, Backbone, $) {
 
     var Resthub = { };
+
+    Resthub.VERSION = '2.1.2';
 
     // Avoid GET caching issues with Internet Explorer
     if (XMLHttpRequest) {
@@ -540,20 +541,32 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
         //
         delegateEvents: function(events) {
 
-            Resthub.View.__super__.delegateEvents.call(this, events);
+            Resthub.View.__super__.delegateEvents.apply(this, arguments);
             if (!(events || (events = getValue(this, 'events')))) return;
+            
             _.each(events, _.bind(function(method, key) {
                 if (key.indexOf(this.globalEventsIdentifier) != 0) return;
                 if (!_.isFunction(method)) method = this[method];
                 if (!method) throw new Error('Method "' + key + '" does not exist');
                 this.listenTo(Backbone, key, method);
             }, this));
+
+            return this;
+        },
+
+        // Override backbone setElement to unbind Backbone Validation
+        undelegateEvents: function() {
+            Resthub.View.__super__.undelegateEvents.apply(this, arguments);
+            if (Backbone.Validation) {
+                Backbone.Validation.unbind(this);
+            }
+            return this;
         },
 
         // Override backbone setElement to bind a destroyed special event
         // when el is detached from DOM
         setElement: function(element, delegate) {
-            Resthub.View.__super__.setElement.call(this, element, delegate);
+            Resthub.View.__super__.setElement.apply(this, arguments);
 
             if (this.root) {
                 this._ensureRoot();
@@ -578,14 +591,12 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             this.$el.off("destroyed");
             // Trigger destroy event on the view
             this.trigger("destroy");
-            Resthub.View.__super__.remove.call(this);
-        },
-
-        stopListening: function() {
-            Resthub.View.__super__.stopListening.call(this);
+            // Unbind Backbone Validation is needed
             if (Backbone.Validation) {
                 Backbone.Validation.unbind(this);
             }
+            Resthub.View.__super__.remove.apply(this, arguments);
+
             return this;
         },
 
@@ -641,6 +652,8 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             if (model) {
                 model.set(attributes, {validate: true});
             }
+
+            return this;
         }
 
     });
