@@ -475,42 +475,64 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
         _ensureContext: function(context) {
             // If context provided as parameter is undefined or not an object, use this.context attribute
             if ((typeof context === "undefined") || (typeof context !== 'object')) {
-                // Context provided as a context object
-                if (typeof this.context === 'object') {
-                    context = this.context;
-                    // Else we automatically populate it with a custom property name set in this.context, model property or collection property
-                } else context = {};
+                context = {};
             }
+
+            // Context provided as a context object
+            if (typeof this.context === 'object') {
+                _.extend(context, this.context);
             // Dynamic context provided as a function
-            if (_.isFunction(this.context)) {
+            } else if (_.isFunction(this.context)) {
                 // Merge the result of this.context() into context
                 _.extend(context, this.context());
             }
             // If context provided as parameter is a Model or Collection instance, we save it for later use
             if (context instanceof Backbone.Model) {
                 var jsonModel = context.toJSON();
-                context = {};
             }
             if (context instanceof Backbone.Collection) {
                 var jsonCollection = context.toJSON();
-                context = {};
             }
             // Add in the context the property named by this.context String, this.model, this.collection and this.labels if they exist.
             _.each([this.context, 'model', 'collection', 'labels'], function(key) {
                 if (typeof this[key] !== "undefined")
                     if (this[key].toJSON) {
-                        context[key] = this[key].toJSON();
+                        // Create or merge
+                        if (typeof context[key] === "undefined") {
+                            context[key] = this[key].toJSON();
+                        } else {
+                            _.extend(context[key], this[key].toJSON());
+                        }
                     } else {
-                        context[key] = this[key];
+                        // Create or merge
+                        if (typeof context[key] === "undefined") {
+                            context[key] = this[key];
+                        } else {
+                            _.extend(context[key], this[key]);
+                        }
+                        
                     }
 
             }, this);
-            // Eventually override default model and collection attribute with the one passed as parameter
+            // Eventually merge default model and collection attribute with the one passed as parameter
             if (context instanceof Backbone.Model) {
-                context['model'] = jsonModel;
+                // Create or merge
+                if (typeof context['model'] === "undefined") {
+                    context['model'] = jsonModel;
+                } else {
+                    _.extend(context['model'], jsonModel);
+                }
+                
             }
+
             if (context instanceof Backbone.Collection) {
-                context['collection'] = jsonCollection;
+                  // Create or merge
+                  if (typeof context['collection'] === "undefined") {
+                    context['collection'] = jsonCollection;
+                } else {
+                    _.extend(context['collection'], jsonCollection);
+                }
+
             }
             // Maybe throw an error if the context could not be determined
             // instead of returning {}
