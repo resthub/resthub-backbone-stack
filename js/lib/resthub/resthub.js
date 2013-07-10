@@ -475,14 +475,16 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
         _ensureContext: function(context) {
             // If context provided as parameter is undefined or not an object, use this.context attribute
             if ((typeof context === "undefined") || (typeof context !== 'object')) {
-                // Dynamic context provided as a function
-                if (_.isFunction(this.context)) {
-                    context = this.context();
-                    // Context provided as a context object
-                } else if (typeof this.context === 'object') {
+                // Context provided as a context object
+                if (typeof this.context === 'object') {
                     context = this.context;
                     // Else we automatically populate it with a custom property name set in this.context, model property or collection property
                 } else context = {};
+            }
+            // Dynamic context provided as a function
+            if (_.isFunction(this.context)) {
+                // Merge the result of this.context() into context
+                _.extend(context, this.context());
             }
             // If context provided as parameter is a Model or Collection instance, we save it for later use
             if (context instanceof Backbone.Model) {

@@ -16,6 +16,20 @@ require(["jquery", "underscore", "backbone", "resthub", "handlebars"], function 
         }
       });
 
+      this.TestViewWithDynamicContext = Resthub.View.extend({
+          attributes: {
+            id: 'myDynamicElement'
+          },
+          context: function() {
+                      return {
+                          custom:  5, // Or anything else, just an example
+                          model:   this.model,
+                          labels:  this.labels
+                      };
+          }
+               
+    });
+
     },
     teardown: function () {
     }
@@ -163,6 +177,24 @@ require(["jquery", "underscore", "backbone", "resthub", "handlebars"], function 
 
     equal($("#qunit-fixture > #main").find("#myElement").length, 1, "HTML content should be rendered in root");
     ok($("#qunit-fixture > #main").find("#myElement li").length === 2 && $($("#qunit-fixture > #main").find("#myElement li").get(0)).html() == "this is a test", "root should contain rendered template with collection in render");
+  });
+
+  test("View default render should work with dynamic context", 2, function () {
+    var testView = new this.TestViewWithDynamicContext({root: $("#qunit-fixture > #main"), model: new Backbone.Model({name: 'test'})});
+    testView.template = Handlebars.compile("<p>this is a {{model.name}} number {{custom}}</p>");
+    testView.render();
+
+    equal($("#qunit-fixture > #main").find("#myDynamicElement").length, 1, "HTML content should be rendered in root");
+    ok($("#qunit-fixture > #main").find("#myDynamicElement p").length === 1 && $("#qunit-fixture > #main").find("#myDynamicElement p").html() == "this is a test number 5", "root should contain rendered template with dynamic context");
+  });
+
+  test("View default render should work with dynamic context + render called with params", 2, function () {
+    var testView = new this.TestViewWithDynamicContext({root: $("#qunit-fixture > #main")});
+    testView.template = Handlebars.compile("<p>this is a {{name}} number {{custom}}</p>");
+    testView.render({name: 'test'});
+
+    equal($("#qunit-fixture > #main").find("#myDynamicElement").length, 1, "HTML content should be rendered in root");
+    ok($("#qunit-fixture > #main").find("#myDynamicElement p").length === 1 && $("#qunit-fixture > #main").find("#myDynamicElement p").html() == "this is a test number 5", "root should contain rendered template with dynamic context");
   });
 
 });
