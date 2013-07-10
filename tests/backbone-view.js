@@ -16,6 +16,36 @@ require(["jquery", "underscore", "backbone", "resthub", "handlebars"], function 
         }
       });
 
+      this.TestViewWithDynamicContext = Resthub.View.extend({
+        attributes: {
+          id: 'myElement'
+        },
+        context: function() {
+                    return {
+                        custom:  5
+                    };
+        }    
+      });
+
+      this.TestViewWithContext = Resthub.View.extend({
+        attributes: {
+          id: 'myElement'
+        },
+        context: {
+                      custom:  5
+                  }
+      });
+
+      this.TestViewWithModelAndContext = Resthub.View.extend({
+        attributes: {
+          id: 'myElement'
+        },
+        model: new Backbone.Model({name: "test"}),
+        context: {
+                      custom:  5
+                  }
+      });
+
     },
     teardown: function () {
     }
@@ -164,5 +194,34 @@ require(["jquery", "underscore", "backbone", "resthub", "handlebars"], function 
     equal($("#qunit-fixture > #main").find("#myElement").length, 1, "HTML content should be rendered in root");
     ok($("#qunit-fixture > #main").find("#myElement li").length === 2 && $($("#qunit-fixture > #main").find("#myElement li").get(0)).html() == "this is a test", "root should contain rendered template with collection in render");
   });
+
+  test("View default render should work with dynamic context", 2, function () {
+    var testView = new this.TestViewWithDynamicContext({root: $("#qunit-fixture > #main"), model: new Backbone.Model({name: 'test'})});
+    testView.template = Handlebars.compile("<p>this is a {{model.name}} number {{custom}}</p>");
+    testView.render();
+
+    equal($("#qunit-fixture > #main").find("#myElement").length, 1, "HTML content should be rendered in root");
+    ok($("#qunit-fixture > #main").find("#myElement p").length === 1 && $("#qunit-fixture > #main").find("#myElement p").html() == "this is a test number 5", "root should contain rendered template with dynamic context");
+  });
+
+  test("View default render should work with both this.context + render called with params", 2, function () {
+    var testView = new this.TestViewWithContext({root: $("#qunit-fixture > #main")});
+    testView.template = Handlebars.compile("<p>this is a {{name}} number {{custom}}</p>");
+    testView.render({name: 'test'});
+
+    equal($("#qunit-fixture > #main").find("#myElement").length, 1, "HTML content should be rendered in root");
+    ok($("#qunit-fixture > #main").find("#myElement p").length === 1 && $("#qunit-fixture > #main").find("#myElement p").html() == "this is a test number 5", "root should contain rendered template with both context and this.context values");
+  });
+
+  test("View default render should work with this.model, this.context + render called with model params", 2, function () {
+    var testView = new this.TestViewWithModelAndContext({root: $("#qunit-fixture > #main")});
+    testView.template = Handlebars.compile("<p>this is a {{model.name}} number {{custom}} with {{model.name2}}</p>");
+    testView.render(new Backbone.Model({name2: 'test2'}));
+
+    equal($("#qunit-fixture > #main").find("#myElement").length, 1, "HTML content should be rendered in root");
+    ok($("#qunit-fixture > #main").find("#myElement p").length === 1 && $("#qunit-fixture > #main").find("#myElement p").html() == "this is a test number 5 with test2", "root should contain rendered template with both context and this.context values");
+  });
+
+  
 
 });
