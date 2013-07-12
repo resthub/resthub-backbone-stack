@@ -1,5 +1,7 @@
 //     Backbone.js 1.0.0 + patches :
 //      - https://github.com/gsamokovarov/backbone/commit/3bfbcd4123a19f9ec31c5d64d3d4322140adc2fa
+//      - https://github.com/jashkenas/backbone/commit/4db26764779e942b9c02d114e9836508da800f44
+//      - https://github.com/jashkenas/backbone/commit/8e7208e0d8bed32528751e176a96fabdc60b5802
 
 //     (c) 2010-2013 Jeremy Ashkenas, DocumentCloud Inc.
 //     Backbone may be freely distributed under the MIT license.
@@ -452,15 +454,18 @@
         options = val;
       } else {
         (attrs = {})[key] = val;
-      }
-
-      // If we're not waiting and attributes exist, save acts as `set(attr).save(null, opts)`.
-      if (attrs && (!options || !options.wait) && !this.set(attrs, options)) return false;
+      }    
 
       options = _.extend({validate: true}, options);
 
-      // Do not persist invalid models.
-      if (!this._validate(attrs, options)) return false;
+      // If we're not waiting and attributes exist, save acts as
+      // `set(attr).save(null, opts)` with validation. Otherwise, check if
+      // the model will be valid when the attributes, if any, are set.
+      if (attrs && !options.wait) {
+        if (!this.set(attrs, options)) return false;
+      } else {
+        if (!this._validate(attrs, options)) return false;
+      }
 
       // Set temporary attributes if `{wait: true}`.
       if (attrs && options.wait) {
