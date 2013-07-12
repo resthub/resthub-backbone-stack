@@ -69,7 +69,7 @@ require.config({
         'backbone-queryparams': 'lib/backbone-queryparams',
         'backbone-datagrid': 'lib/backbone-datagrid',
         'backbone-paginator': 'lib/backbone-paginator',
-        'backbone-relational': 'lib/backbone-relational',
+        'backbone-associations': 'lib/backbone-associations',
         'backbone-localstorage': 'lib/backbone-localstorage',
         async: 'lib/async',
         keymaster: 'lib/keymaster',
