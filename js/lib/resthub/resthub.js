@@ -578,15 +578,6 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             return this;
         },
 
-        // Override backbone setElement to unbind Backbone Validation
-        undelegateEvents: function() {
-            Resthub.View.__super__.undelegateEvents.apply(this, arguments);
-            if (Backbone.Validation) {
-                Backbone.Validation.unbind(this);
-            }
-            return this;
-        },
-
         // Override backbone setElement to bind a destroyed special event
         // when el is detached from DOM
         setElement: function(element, delegate) {
