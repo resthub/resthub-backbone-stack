@@ -414,13 +414,14 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
                 }
 
                 var msgs = {};
+                synchronizedClasses[model.prototype.className] = true;
                 $.getJSON(ResthubValidation.options.apiUrl + '/' + model.prototype.className, {locale: locale})
                     .success(_.bind(function(resp) {
                         buildValidation(resp, model, _.extend(msgs, ResthubValidation.messages, model.prototype.messages));
-                        synchronizedClasses[model.prototype.className] = true;
                         if (successCallback && _.isFunction(successCallback)) successCallback();
                     }, this))
                     .error(function (resp) {
+                        synchronizedClasses.unset(model.prototype.className);
                         if (errorCallback && _.isFunction(errorCallback)) errorCallback(resp);
                         else ResthubValidation.options.errorCallback(resp);
                     });
