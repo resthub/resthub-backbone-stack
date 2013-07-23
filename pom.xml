@@ -102,7 +102,7 @@
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <warSourceDirectory>${basedir}</warSourceDirectory>
-                    <packagingExcludes>pom.xml,license.txt,.gitignore,tests,WEB-INF/**,META-INF/**,target/**</packagingExcludes>
+                    <packagingExcludes>pom.xml,LICENSE.txt,.gitignore,tests/**,WEB-INF/**,META-INF/**,target/**,.travis.yml,CHANGELOG.rst,README.rst</packagingExcludes>
                 </configuration>
             </plugin>
             <plugin>
