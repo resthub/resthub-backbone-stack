@@ -38,7 +38,7 @@ require.config({
                 'jquery'
             ]
         },
-        'backbone-relational': {
+        'backbone-associations': {
             deps: [
                 'backbone'
             ]
