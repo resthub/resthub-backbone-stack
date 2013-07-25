@@ -421,7 +421,7 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
                         if (successCallback && _.isFunction(successCallback)) successCallback();
                     }, this))
                     .error(function (resp) {
-                        synchronizedClasses.unset(model.prototype.className);
+                        synchronizedClasses[model.prototype.className] = false;
                         if (errorCallback && _.isFunction(errorCallback)) errorCallback(resp);
                         else ResthubValidation.options.errorCallback(resp);
                     });
