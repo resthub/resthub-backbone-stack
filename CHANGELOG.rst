@@ -4,8 +4,24 @@ RESThub Backbone stack changelog
 This changelog references the major changes (features, important bugs and security fixes) of resthub-spring-stack project.
 Some changes break backwards compatibility, check out the UPGRADE section before you upgrade your application.  
 
-To get the full diff between two versions, go to https://github.com/resthub/resthub-backbone-stack/compare/resthub-2.0.0...resthub-2.1.0
+2.1.2 version (07-26-2013)
+--------------------------
 
+ * Replace Backbone Relational by Backbone Associations
+ * Default RESThub View render improvements : merge instead of replace behaviour
+ * Backbone 1.0 critical patches
+  * `urlRoot override issue <https://github.com/gsamokovarov/backbone/commit/3bfbcd4123a19f9ec31c5d64d3d4322140adc2fa>`_
+  * `Don't validate twice <https://github.com/jashkenas/backbone/commit/4db26764779e942b9c02d114e9836508da800f44>`_
+  * `Save should always set with validate:true by default <https://github.com/jashkenas/backbone/commit/8e7208e0d8bed32528751e176a96fabdc60b5802>`_
+ * Change synchronization policy of validation api
+ * Fix war packaging configuration
+ * Fix Backbone localstorage adapter
+ * Fix Backbone Validation infinite loop
+ * Upgrade Handlebars to 1.0
+ * Upgrade Twitter Bootstrap to 2.3.2
+ * Fix tutorial
+ * Fix todo example
+ 
 2.1.1 version (05-17-2013)
 --------------------------
 
