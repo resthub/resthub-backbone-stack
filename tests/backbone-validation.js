@@ -400,7 +400,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(!model1.validate({"range": 200}), "valid range should be valid");
     });
 
-    test("size validator", 21, function() {
+    test("size validator", 20, function() {
         $.get = this.mockedGet1;
 
         var model1 = new this.Model1();
@@ -426,7 +426,6 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(model1.set({"collSize": undefined}, {validate: true}), "collSize should not be required");
         ok(model1.set({"collSize": null}, {validate: true}), "collSize should not be required");
         ok(model1.validate({"collSize": true}), "invalid collSize should not be valid");
-        ok(model1.validate({"collSize": []}), "invalid collSize should not be valid");
         ok(model1.validate({"collSize": [1]}), "invalid collSize should not be valid");
         var validationErrs = model1.validate({"collSize": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]});
         ok(validationErrs && validationErrs.collSize, "invalid collSize should not be valid");
@@ -490,7 +489,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(model1.validate({"notEmpty": "   "}), "valid notEmpty should not be valid");
         var validationErrs = model1.validate({"notEmpty": []});
         ok(validationErrs && validationErrs.notEmpty, "invalid notEmpty should not be valid");
-        equal(validationErrs.notEmpty, "may not be empty", "invalid notEmpty should hold the correct error message");
+        equal(validationErrs.notEmpty, "Not empty is required", "invalid notEmpty should hold the correct error message");
 
         ok(!model1.validate({"notEmpty": "aaa"}), "valid notEmpty should be valid");
     });
@@ -508,7 +507,7 @@ require(["backbone", "resthub", "jquery", "underscore", "../tests/validation/mod
         ok(model1.validate({"notBlank": "  "}), "invalid notBlank should not be valid");
         var validationErrs = model1.validate({"notBlank": []});
         ok(validationErrs && validationErrs.notBlank, "invalid notBlank should not be valid");
-        equal(validationErrs.notBlank, "may not be empty", "invalid notBlank should hold the correct error message");
+        equal(validationErrs.notBlank, "Not blank is required", "invalid notBlank should hold the correct error message");
 
         ok(!model1.validate({"notBlank": "aaa"}), "valid notBlank should be valid");
     });

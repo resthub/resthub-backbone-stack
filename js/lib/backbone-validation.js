@@ -1,8 +1,6 @@
-// Backbone.Validation v0.7.1 + patches from :
-//  - https://github.com/magnusvk/backbone.validation/commit/70f20fc0aab32cb66fbb4d88d0cae2ad036f795e
-//  - https://github.com/asgeo1/backbone.validation/commit/7df0a9385bc78d20cd518da18f289b2526e293d9
+// Backbone.Validation v0.8.1
 //
-// Copyright (c) 2011-2012 Thomas Pedersen
+// Copyright (c) 2011-2013 Thomas Pedersen
 // Distributed under MIT License
 //
 // Documentation and full license available at:
@@ -73,19 +71,13 @@
   
       _.each(obj, function(val, key) {
         if(obj.hasOwnProperty(key)) {
-          // play nice with associations -- don't flatten an entire Backbone.Model,
-          // including event bindings etc. that would lead to a call stack overflow
-          if (val && (val instanceof Backbone.Model)) {
-            val = val.attributes
-          }
-
           if (val && typeof val === 'object' && !(
-                val instanceof Date ||
-                val instanceof RegExp ||
-                val instanceof Array ||
-                val instanceof Backbone.Model ||
-                val instanceof Backbone.Collection)
-             ) {
+            val instanceof Array ||
+            val instanceof Date ||
+            val instanceof RegExp ||
+            val instanceof Backbone.Model ||
+            val instanceof Backbone.Collection)
+          ) {
             flatten(val, into, prefix + key + '.');
           }
           else {
@@ -111,14 +103,7 @@
           return memo;
         }, {});
       };
-
-      // Returns an object with attributes on model that has defined one or more
-      // validation rules. If attrs is not empty, filters also on attributes
-      // contained in attrs
-      var getAttrsThatAreValidated = function(model, attrs) {
-        return _.pick(attrs || model.attributes, _.keys(model.validation || {}));
-      }
-
+  
       // Looks on the model for validations for a specified
       // attribute. Returns an array of any validators defined,
       // or an empty array if none is defined.
@@ -184,7 +169,7 @@
             invalidAttrs = {},
             isValid = true,
             computed = _.clone(attrs),
-            flattened = flatten(getAttrsThatAreValidated(model, attrs));
+            flattened = flatten(attrs);
   
         _.each(flattened, function(val, attr) {
           error = validateAttr(model, attr, val, computed);
@@ -214,8 +199,8 @@
           // entire model is valid. Passing true will force a validation
           // of the model.
           isValid: function(option) {
-            var flattened = flatten(getAttrsThatAreValidated(this));
-
+            var flattened = flatten(this.attributes);
+  
             if(_.isString(option)){
               return !validateAttr(this, option, flattened[option], _.extend({}, this.attributes));
             }
@@ -239,7 +224,7 @@
                 opt = _.extend({}, options, setOptions),
                 validatedAttrs = getValidatedAttrs(model),
                 allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
-                changedAttrs = flatten(getAttrsThatAreValidated(model, attrs  || allAttrs)),
+                changedAttrs = flatten(attrs || allAttrs),
   
                 result = validateModel(model, allAttrs);
   
@@ -311,7 +296,7 @@
       return {
   
         // Current version of the library
-        version: '0.7.1',
+        version: '0.8.1',
   
         // Called to configure the default options
         configure: function(options) {
@@ -453,7 +438,7 @@
       sentenceCase: function(attrName) {
         return attrName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(match, index) {
           return index === 0 ? match.toUpperCase() : ' ' + match.toLowerCase();
-        }).replace('_', ' ');
+        }).replace(/_/g, ' ');
       },
   
       // Looks for a label configured on the model and returns it
@@ -496,9 +481,9 @@
         return _.isNumber(value) || (_.isString(value) && value.match(defaultPatterns.number));
       };
   
-      // Determines whether or not not a value is empty
+      // Determines whether or not a value is empty
       var hasValue = function(value) {
-        return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && trim(value) === ''));
+        return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && trim(value) === '') || (_.isArray(value) && _.isEmpty(value)));
       };
   
       return {
@@ -626,6 +611,5 @@
   
     return Validation;
   }(_));
-  
   return Backbone.Validation;
 }));
