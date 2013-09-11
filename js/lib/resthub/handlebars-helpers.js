@@ -178,6 +178,9 @@ define(['handlebars-orig', 'moment', 'underscore-string'], function(Handlebars, 
                 }
                 momentDate = moment(date, inputPattern);
             }
+            else if(typeof(date) === 'number') {
+                momentDate = moment(date);
+            }
             else {
                 return date;
             }
