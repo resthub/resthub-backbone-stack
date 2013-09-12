@@ -445,6 +445,13 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
 
         strategy: 'replace',
 
+        initialize: function(options){
+            Resthub.View.__super__.initialize.apply(this);
+            if(options && options.__name__){
+                this.cid = options.__name__ + '_' + this.cid;
+            }
+        },
+
         _ensureRoot: function() {
             this.$root = this.root instanceof $ ? this.root : $(this.root);
             if (this.$root.length != 1) {
