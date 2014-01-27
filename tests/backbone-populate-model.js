@@ -5,9 +5,9 @@ require(["jquery", "underscore", "backbone", "resthub", "underscore-string"], fu
 
             var Person = Backbone.Model.extend({initialize: function() {
             }});
-
-            this.TestView = Resthub.View.extend({
+            var TestView = this.TestView = Resthub.View.extend({
                 initialize: function() {
+                    TestView.__super__.initialize.apply(this, arguments);
                     this.render();
                 },
 
@@ -149,6 +149,12 @@ require(["jquery", "underscore", "backbone", "resthub", "underscore-string"], fu
         testView.populateModel();
 
         ok(true, "no error");
+    });
+
+    test("View cid should contain its name", 1, function() {
+        var testView = new this.TestView({__name__:'TestView'});
+
+        ok(true, _s.startsWith( testView.cid,'TestView'));
     });
 
     test("model should be set with default values", 3, function() {
