@@ -4,7 +4,7 @@ Backbone Bootstrap is a Javascript stack based on :
  * `Backbone.js <https://github.com/jashkenas/backbone>`_
  * `Underscore.js <https://github.com/jashkenas/underscore>`_
 
-`RESThub Backbone stack documentation <http://resthub.org/backbone-stack.html>`_.
+`RESThub Backbone stack documentation <http://resthub.org/docs/backbone/>`_.
 
 Build status on Travis CI:
 
