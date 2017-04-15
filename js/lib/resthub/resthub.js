@@ -150,60 +150,60 @@ define(['underscore', 'backbone', 'jquery', 'lib/resthub/jquery-event-destroyed'
             'Size': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return sizeValidator(value, constraint.min, constraint.max, msg);
+                        return sizeValidator(value, constraint.attributes.min, constraint.attributes.max, msg);
                     }
                 };
             },
             'Min': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return minValidator(value, constraint.value, msg);
+                        return minValidator(value, constraint.attributes.value, msg);
                     }
                 };
             },
             'DecimalMin': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return decimalMinValidator(value, constraint.value, msg);
+                        return decimalMinValidator(value, constraint.attributes.value, msg);
                     }
                 };
             },
             'Max': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return maxValidator(value, constraint.value, msg);
+                        return maxValidator(value, constraint.attributes.value, msg);
                     }
                 };
             },
             'DecimalMax': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return decimalMaxValidator(value, constraint.value, msg);
+                        return decimalMaxValidator(value, constraint.attributes.value, msg);
                     }
                 };
             },
             'Pattern': function(constraint, msg) {
                 return {
-                    pattern: constraint.regexp,
+                    pattern: constraint.attributes.regexp,
                     msg: msg
                 };
             },
             'URL': function(constraint, msg) {
                 return {
                     fn: function(value) {
-                        return urlValidator(value, constraint.protocol, constraint.host, constraint.port, constraint.regexp, msg);
+                        return urlValidator(value, constraint.attributes.protocol, constraint.attributes.host, constraint.attributes.port, constraint.attributes.regexp, msg);
                     }
                 };
             },
             'Range': function(constraint, msg) {
                 return {
-                    range: [constraint.min || 0, constraint.max || 0x7fffffffffffffff],
+                    range: [constraint.attributes.min || 0, constraint.attributes.max || 0x7fffffffffffffff],
                     msg: msg
                 };
             },
             'Length': function(constraint, msg) {
                 return {
-                    rangeLength: [constraint.min || 0, constraint.max || 0x7fffffff],
+                    rangeLength: [constraint.attributes.min || 0, constraint.attributes.max || 0x7fffffff],
                     msg: msg
                 };
             },
